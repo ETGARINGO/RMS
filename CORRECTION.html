@@ -1,0 +1,219 @@
+MAKE THIS FOR 
+Correction of Entry
+
+REWRITE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="1 LOGO 3D.png">
+    <link rel="apple-touch-icon" href="1 LOGO 3D.png">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <title>PRO9 RPRMD | HEA AUDIT</title>
+    <style>
+        :root {
+            --pnp-blue: #000b1a;
+            --pnp-gold: #d4af37;
+            --audit-red: #ff3c3c;
+            --interface-bg: #02060c;
+            --terminal-green: #00ff9d;
+            --sidebar-width: 300px;
+        }
+
+        /* Essential for mobile full-screen */
+        * { box-sizing: border-box; }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            height: 100%; 
+            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            width: 100vw; 
+            background-color: var(--interface-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: #e0e0e0; 
+            overflow: hidden; /* Prevents body bounce on mobile */
+            position: fixed; /* Keeps the UI locked */
+        }
+
+        /* --- THE BOOT TERMINAL --- */
+        #boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .scan-ring {
+            position: absolute;
+            width: 200px; height: 200px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--pnp-gold);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        /* --- MAIN INTERFACE GRID --- */
+        .main-container {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            height: 100dvh;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        body.ready .main-container { opacity: 1; }
+        body.ready #boot-screen { opacity: 0; pointer-events: none; }
+
+        /* Sidebar: Hidden on mobile, visible on desktop */
+        .sidebar {
+            background: rgba(4, 12, 24, 0.98);
+            border-right: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Content Area */
+        .document-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 10px; /* Reduced for mobile */
+            position: relative;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 5px;
+        }
+
+        .doc-label { font-size: 8px; color: var(--pnp-gold); letter-spacing: 2px; }
+        .doc-title { font-weight: 900; font-size: 14px; letter-spacing: 1px; }
+
+        /* The Frame Container (Chassis) */
+        .content-chassis {
+            flex: 1;
+            background: #fff;
+            border-radius: 4px;
+            position: relative;
+            border: 4px solid #1a1e26; /* Thinner border for mobile */
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
+        }
+
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            display: block;
+        }
+
+        /* Tactical Corners */
+        .corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--pnp-gold); z-index: 5; pointer-events: none; }
+        .tl { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
+        .tr { top: 5px; right: 5px; border-left: 0; border-bottom: 0; }
+        .bl { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
+        .br { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- MOBILE REFINEMENTS --- */
+        @media (max-width: 900px) {
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar { display: none; } /* Completely hide sidebar on phones to maximize form space */
+            
+            .document-area {
+                padding: 5px; /* Ultra-thin padding */
+                height: 100dvh;
+            }
+            
+            .doc-title { font-size: 12px; }
+            .top-nav { margin-bottom: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <div class="scan-ring"></div>
+        <div class="boot-content" style="text-align: center;">
+            <img src="1 LOGO 3D.png" style="width: 120px;" alt="PNP">
+            <div id="status" style="font-family: 'Share Tech Mono'; color: var(--pnp-gold); font-size: 10px; letter-spacing: 3px; margin-top: 15px;">
+                OPTIMIZING FOR MOBILE...
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="1 LOGO 3D.png" style="width: 80px;">
+                <div style="font-weight: 900; color: #fff; font-size: 14px;">RPRMD-IX</div>
+            </div>
+            <div style="font-family: 'Share Tech Mono'; font-size: 11px; border-left: 3px solid var(--audit-red); padding-left: 10px; background: rgba(0,0,0,0.3); padding: 10px;">
+                <span style="color:var(--pnp-gold)">TASK:</span> HEA AUDIT<br>
+                <span style="color:var(--pnp-gold)">STATUS:</span> ENCRYPTED<br>
+                <span style="color:var(--pnp-gold)">NODE:</span> TERMINAL-09
+            </div>
+        </aside>
+
+        <main class="document-area">
+            <header class="top-nav">
+                <div>
+                    <div class="doc-label">OFFICIAL AUDIT PORTAL</div>
+                    <div class="doc-title">HIGHEST EDUCATIONAL ATTAINMENT</div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="clock" style="font-family: 'Share Tech Mono'; font-size: 12px; color: var(--pnp-gold);">00:00:00</div>
+                </div>
+            </header>
+
+            <div class="content-chassis">
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
+                
+                <iframe 
+                    src="https://script.google.com/macros/s/AKfycbxEx5kFkd9Uz3QXE9aQQIEALeQlKmMI3UGrEJDlyDdB1-HBVisrGb6uFdoWhVjFX03A/exec" 
+                    allow="geolocation; microphone; camera">
+                </iframe>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Boot Logic
+        window.addEventListener('load', () => {
+            const status = document.getElementById('status');
+            const messages = ["CONNECTING...", "UPLINK STABLE", "ACCESS GRANTED"];
+            let i = 0;
+            const interval = setInterval(() => {
+                if(i < messages.length) { status.innerText = messages[i++]; }
+                else { 
+                    clearInterval(interval);
+                    document.body.classList.add('ready');
+                }
+            }, 500);
+        });
+
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
