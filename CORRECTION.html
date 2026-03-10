@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
-    <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
+    
+    <link rel="icon" type="image/png" href="1 LOGO 3D.png">
+    <link rel="apple-touch-icon" href="1 LOGO 3D.png">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <title>PRO9 RPRMD | HEA AUDIT</title>
+    <title>PRO9 RPRMD | COE & BIRTH RECORD</title>
     <style>
         :root {
             --pnp-blue: #000b1a;
@@ -24,13 +25,13 @@
         body, html { 
             margin: 0; padding: 0; 
             height: 100%; 
-            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            height: 100dvh; 
             width: 100vw; 
             background-color: var(--interface-bg);
             font-family: 'Montserrat', sans-serif;
             color: #e0e0e0; 
-            overflow: hidden; /* Prevents body bounce on mobile */
-            position: fixed; /* Keeps the UI locked */
+            overflow: hidden; 
+            position: fixed; 
         }
 
         /* --- THE BOOT TERMINAL --- */
@@ -67,7 +68,6 @@
         body.ready .main-container { opacity: 1; }
         body.ready #boot-screen { opacity: 0; pointer-events: none; }
 
-        /* Sidebar: Hidden on mobile, visible on desktop */
         .sidebar {
             background: rgba(4, 12, 24, 0.98);
             border-right: 1px solid rgba(212, 175, 55, 0.3);
@@ -77,13 +77,12 @@
             overflow-y: auto;
         }
 
-        /* Content Area */
         .document-area {
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
-            padding: 10px; /* Reduced for mobile */
+            padding: 10px;
             position: relative;
         }
 
@@ -96,17 +95,16 @@
         }
 
         .doc-label { font-size: 8px; color: var(--pnp-gold); letter-spacing: 2px; }
-        .doc-title { font-weight: 900; font-size: 14px; letter-spacing: 1px; }
+        .doc-title { font-weight: 900; font-size: 14px; letter-spacing: 1px; color: #fff; }
 
-        /* The Frame Container (Chassis) */
         .content-chassis {
             flex: 1;
             background: #fff;
             border-radius: 4px;
             position: relative;
-            border: 4px solid #1a1e26; /* Thinner border for mobile */
+            border: 4px solid #1a1e26;
             overflow: hidden;
-            -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
+            -webkit-overflow-scrolling: touch;
         }
 
         iframe { 
@@ -125,17 +123,16 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- MOBILE REFINEMENTS --- */
         @media (max-width: 900px) {
             .main-container { grid-template-columns: 1fr; }
-            .sidebar { display: none; } /* Completely hide sidebar on phones to maximize form space */
+            .sidebar { display: none; } 
             
             .document-area {
-                padding: 5px; /* Ultra-thin padding */
+                padding: 5px;
                 height: 100dvh;
             }
             
-            .doc-title { font-size: 12px; }
+            .doc-title { font-size: 11px; }
             .top-nav { margin-bottom: 5px; }
         }
     </style>
@@ -145,9 +142,9 @@
     <div id="boot-screen">
         <div class="scan-ring"></div>
         <div class="boot-content" style="text-align: center;">
-            <img src="1 LOGO 3D (1).png" style="width: 120px;" alt="PNP">
+            <img src="1 LOGO 3D.png" style="width: 120px;" alt="PNP">
             <div id="status" style="font-family: 'Share Tech Mono'; color: var(--pnp-gold); font-size: 10px; letter-spacing: 3px; margin-top: 15px;">
-                OPTIMIZING FOR MOBILE...
+                INITIALIZING COE SYSTEM...
             </div>
         </div>
     </div>
@@ -155,21 +152,24 @@
     <div class="main-container">
         <aside class="sidebar">
             <div style="text-align: center; margin-bottom: 20px;">
-                <img src="1 LOGO 3D (1).png" style="width: 80px;">
+                <img src="1 LOGO 3D.png" style="width: 80px;">
                 <div style="font-weight: 900; color: #fff; font-size: 14px;">RPRMD-IX</div>
             </div>
-            <div style="font-family: 'Share Tech Mono'; font-size: 11px; border-left: 3px solid var(--audit-red); padding-left: 10px; background: rgba(0,0,0,0.3); padding: 10px;">
-                <span style="color:var(--pnp-gold)">TASK:</span> HEA AUDIT<br>
-                <span style="color:var(--pnp-gold)">STATUS:</span> ENCRYPTED<br>
+            <div style="font-family: 'Share Tech Mono'; font-size: 11px; border-left: 3px solid var(--terminal-green); padding-left: 10px; background: rgba(0,0,0,0.3); padding: 10px;">
+                <span style="color:var(--pnp-gold)">SYSTEM:</span> COE & BIRTH RECORD<br>
+                <span style="color:var(--pnp-gold)">STATUS:</span> UPLINK ACTIVE<br>
                 <span style="color:var(--pnp-gold)">NODE:</span> TERMINAL-09
+            </div>
+            <div style="margin-top: 20px; font-size: 9px; color: rgba(255,255,255,0.5); line-height: 1.5;">
+                This portal is for the official correction of entry and birth record management. Unauthorized access is strictly prohibited.
             </div>
         </aside>
 
         <main class="document-area">
             <header class="top-nav">
                 <div>
-                    <div class="doc-label">OFFICIAL AUDIT PORTAL</div>
-                    <div class="doc-title">HIGHEST EDUCATIONAL ATTAINMENT</div>
+                    <div class="doc-label">OFFICIAL RMD PORTAL</div>
+                    <div class="doc-title">CORRECTION OF ENTRY & BIRTH RECORD SYSTEM</div>
                 </div>
                 <div style="text-align: right;">
                     <div id="clock" style="font-family: 'Share Tech Mono'; font-size: 12px; color: var(--pnp-gold);">00:00:00</div>
@@ -189,21 +189,30 @@
     </div>
 
     <script>
-        // Boot Logic
+        // Boot Animation Logic
         window.addEventListener('load', () => {
             const status = document.getElementById('status');
-            const messages = ["CONNECTING...", "UPLINK STABLE", "ACCESS GRANTED"];
+            const messages = [
+                "AUTHENTICATING...", 
+                "SYNCING BIRTH RECORDS...", 
+                "STABLIZING UPLINK...", 
+                "ACCESS GRANTED"
+            ];
             let i = 0;
             const interval = setInterval(() => {
-                if(i < messages.length) { status.innerText = messages[i++]; }
+                if(i < messages.length) { 
+                    status.innerText = messages[i++]; 
+                }
                 else { 
                     clearInterval(interval);
-                    document.body.classList.add('ready');
+                    setTimeout(() => {
+                        document.body.classList.add('ready');
+                    }, 300);
                 }
-            }, 500);
+            }, 600);
         });
 
-        // Live Clock
+        // Real-time Tactical Clock
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString();
