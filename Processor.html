@@ -1,312 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <title>PRO9 RPRMD | Admin Dashboard</title>
-    <style>
-        :root {
-            --primary: #0f172a;
-            --accent: #2563eb;
-            --sidebar-bg: #ffffff;
-            --bg-light: #f1f5f9;
-            --border-color: #e2e8f0;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 80px;
-            --header-height: 70px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
+    <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <title>PRO9 RPRMD | Admin Dashboard</title>
+    <style>
+        :root {
+            --primary: #0f172a; /* Deep Slate Blue */
+            --accent: #2563eb;  /* Professional Blue */
+            --sidebar-bg: #1e293b;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        
-        body, html { 
-            margin: 0; padding: 0; 
-            height: 100dvh; width: 100vw; 
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            overflow: hidden;
-        }
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            height: 100dvh; 
+            width: 100vw; 
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            overflow: hidden;
+        }
 
-        /* --- MODERN LOADING SCREEN --- */
-        #boot-screen {
-            position: fixed; inset: 0;
-            background: #ffffff; z-index: 9999;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            transition: opacity 0.5s ease;
-        }
+        /* --- MODERN LOADING SCREEN --- */
+        #boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
 
-        .loader {
-            width: 32px; height: 32px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
 
-        /* --- DASHBOARD LAYOUT --- */
-        .main-container {
-            display: flex; height: 100dvh; width: 100%;
-            opacity: 0; transition: opacity 0.6s ease-in-out;
-        }
+        /* --- DASHBOARD LAYOUT --- */
+        .main-container {
+            display: flex;
+            height: 100dvh;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
 
-        body.ready .main-container { opacity: 1; }
-        body.ready #boot-screen { opacity: 0; pointer-events: none; }
+        body.ready .main-container { opacity: 1; }
+        body.ready #boot-screen { opacity: 0; pointer-events: none; }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column;
-            z-index: 100;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            z-index: 100;
+        }
 
-        .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
 
-        .sidebar-header {
-            padding: 0 24px;
-            height: var(--header-height);
-            display: flex; align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            overflow: hidden;
-            white-space: nowrap;
-        }
+        .sidebar-header img { width: 40px; height: auto; }
+        .sidebar-header span { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px; }
 
-        .sidebar-header span { 
-            font-weight: 800; font-size: 1.2rem; 
-            color: var(--primary); letter-spacing: -0.5px;
-            transition: opacity 0.2s;
-        }
+        .nav-links {
+            padding: 20px 12px;
+            flex-grow: 1;
+        }
 
-        .sidebar.collapsed .sidebar-header span { opacity: 0; pointer-events: none; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
 
-        .nav-links { padding: 20px 12px; flex-grow: 1; }
+        .nav-item i { margin-right: 12px; font-size: 1.2rem; }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
 
-        .nav-item {
-            display: flex; align-items: center;
-            padding: 12px 18px; color: var(--text-muted);
-            text-decoration: none; border-radius: 8px;
-            margin-bottom: 4px; transition: all 0.2s;
-            font-size: 0.9rem; font-weight: 500;
-            white-space: nowrap;
-        }
+        .sidebar-footer {
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
 
-        .nav-item i { min-width: 24px; margin-right: 12px; font-size: 1.4rem; }
-        
-        .sidebar.collapsed .nav-item i { margin-right: 30px; }
-        .sidebar.collapsed .nav-text { display: none; }
+        /* --- CONTENT AREA --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0; /* Prevents flex items from overflowing */
+        }
 
-        .nav-item:hover, .nav-item.active {
-            background: #f8fafc; color: var(--accent);
-        }
+        .top-header {
+            height: var(--header-height);
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
 
-        /* --- CONTENT AREA --- */
-        .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .page-title h1 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 600;
+            color: var(--primary);
+        }
 
-        .top-header {
-            height: var(--header-height);
-            background: #fff;
-            border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-        }
+        .page-title p {
+            font-size: 0.8rem;
+            margin: 2px 0 0 0;
+            color: var(--text-muted);
+        }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
+        /* --- IFRAME CONTAINER --- */
+        .content-body {
+            flex: 1;
+            padding: 20px;
+            background: var(--bg-light);
+            overflow: hidden;
+        }
 
-        .menu-toggle {
-            background: none; border: none;
-            font-size: 1.5rem; color: var(--text-main);
-            cursor: pointer; padding: 8px;
-            display: flex; align-items: center;
-            border-radius: 8px; transition: 0.2s;
-        }
-        .menu-toggle:hover { background: #f1f5f9; }
+        .iframe-wrapper {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
 
-        /* Search Bar */
-        .search-container { position: relative; width: 350px; }
-        .search-container input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: #f8fafc;
-            outline: none;
-            font-size: 0.85rem;
-        }
-        .search-container input:focus { border-color: var(--accent); background: #fff; }
-        .search-container i {
-            position: absolute; left: 14px; top: 50%;
-            transform: translateY(-50%); color: var(--text-muted);
-        }
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+        }
 
-        /* Header Right */
-        .header-right { display: flex; align-items: center; gap: 20px; }
+        #clock {
+            font-weight: 600;
+            color: var(--accent);
+            background: #eff6ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
 
-        #clock {
-            font-weight: 600; color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 6px 12px; background: #f8fafc;
-            border-radius: 6px;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .user-profile {
-            display: flex; align-items: center; gap: 10px;
-            padding: 6px 10px; border-radius: 8px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .user-profile:hover { background: #f8fafc; }
-        .user-info { text-align: right; line-height: 1.2; }
-        .user-name { font-size: 0.85rem; font-weight: 600; display: block; }
-        .user-role { font-size: 0.7rem; color: var(--text-muted); display: block; }
-        .avatar {
-            width: 36px; height: 36px;
-            background: var(--primary); color: #fff;
-            border-radius: 8px; display: flex;
-            align-items: center; justify-content: center;
-            font-weight: 600; font-size: 0.9rem;
-        }
-
-        /* --- IFRAME CONTAINER --- */
-        .content-body { flex: 1; padding: 20px; overflow: hidden; }
-
-        .iframe-wrapper {
-            width: 100%; height: 100%;
-            background: #fff; border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        iframe { width: 100%; height: 100%; border: none; }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        @media (max-width: 900px) {
-            .sidebar { position: absolute; left: -260px; }
-            .sidebar.active { left: 0; width: 260px; }
-            .search-container, .user-info { display: none; }
-        }
-    </style>
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .top-header { padding: 0 15px; }
+            .content-body { padding: 10px; }
+        }
+    </style>
 </head>
 <body>
 
-    <div id="boot-screen">
-        <div class="loader"></div>
-        <div id="status" style="color: var(--text-muted); font-size: 0.75rem; margin-top: 15px; font-weight: 500; letter-spacing: 0.5px;">
-            SECURE LOGIN INITIALIZING...
-        </div>
-    </div>
+    <div id="boot-screen">
+        <img src="1 LOGO 3D (1).png" style="width: 80px;" alt="PNP Logo">
+        <div class="loader"></div>
+        <div id="status" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 15px; font-weight: 500;">
+            SECURE LOGIN INITIALIZING...
+        </div>
+    </div>
 
-    <div class="main-container">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <span>RPRMD-IX</span>
-            </div>
-            
-            <nav class="nav-links">
-                <a href="#" class="nav-item active">
-                    <i class="ph ph-squares-four"></i> 
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="ph ph-file-text"></i> 
-                    <span class="nav-text">Birth Records</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="ph ph-user-gear"></i> 
-                    <span class="nav-text">Corrections</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="ph ph-chart-bar"></i> 
-                    <span class="nav-text">Analytics</span>
-                </a>
-            </nav>
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="1 LOGO 3D (1).png" alt="Logo">
+                <span>RPRMD-IX</span>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-item active">
+                    <i class="ph ph-squares-four"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-file-text"></i> Birth Records
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-user-gear"></i> Corrections
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-chart-bar"></i> Analytics
+                </a>
+            </nav>
 
-            <div style="padding: 20px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-color); white-space: nowrap;">
-                <span class="nav-text">Official RMD Portal v2.0</span>
-            </div>
-        </aside>
+            <div class="sidebar-footer">
+                Official RMD Portal v2.0<br>
+                Zamboanga Peninsula
+            </div>
+        </aside>
 
-        <main class="main-content">
-            <header class="top-header">
-                <div class="header-left">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
-                        <i class="ph ph-list"></i>
-                    </button>
-                    <div class="search-container">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" placeholder="Search records...">
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <div id="clock">00:00:00</div>
-                    <div class="user-profile">
-                        <div class="user-info">
-                            <span class="user-name">Admin User</span>
-                            <span class="user-role">Administrator</span>
-                        </div>
-                        <div class="avatar">AD</div>
-                        <i class="ph ph-caret-down" style="font-size: 0.8rem; color: var(--text-muted);"></i>
-                    </div>
-                </div>
-            </header>
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h1>Correction of Entry</h1>
+                    <p>Birth Record Management System</p>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="clock">00:00:00</div>
+                    <div style="width: 35px; height: 35px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="ph ph-user" style="color: #64748b;"></i>
+                    </div>
+                </div>
+            </header>
 
-            <div class="content-body">
-                <div class="iframe-wrapper">
-                    <iframe 
-                        src="https://script.google.com/macros/s/AKfycbxVtTpv977fyX266Fk21-KY0Xy0ZJXZcVdqVAEfnPjJTFvBMjnX2NqS9GIO_DK790Tu/exec?page=admindashboard" 
-                        allow="geolocation; microphone; camera">
-                    </iframe>
-                </div>
-            </div>
-        </main>
-    </div>
+            <div class="content-body">
+                <div class="iframe-wrapper">
+                    <iframe 
+                        src="https://script.google.com/macros/s/AKfycbxVtTpv977fyX266Fk21-KY0Xy0ZJXZcVdqVAEfnPjJTFvBMjnX2NqS9GIO_DK790Tu/exec?page=admindashboard" 
+                        allow="geolocation; microphone; camera">
+                    </iframe>
+                </div>
+            </div>
+        </main>
+    </div>
 
-    <script>
-        // Toggle Sidebar Logic
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth > 900) {
-                sidebar.classList.toggle('collapsed');
-            } else {
-                sidebar.classList.toggle('active');
-            }
-        }
+    <script>
+        // Smooth Loading Logic
+        window.addEventListener('load', () => {
+            const status = document.getElementById('status');
+            const messages = ["ESTABLISHING SECURE CONNECTION...", "SYNCING DATABASE...", "ACCESS GRANTED"];
+            let i = 0;
+            
+            const interval = setInterval(() => {
+                if(i < messages.length) { 
+                    status.innerText = messages[i++]; 
+                } else { 
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.classList.add('ready');
+                    }, 400);
+                }
+            }, 700);
+        });
 
-        // Smooth Loading Logic
-        window.addEventListener('load', () => {
-            const status = document.getElementById('status');
-            const messages = ["AUTHORIZING...", "SYNCING DATABASE...", "ACCESS GRANTED"];
-            let i = 0;
-            const interval = setInterval(() => {
-                if(i < messages.length) { 
-                    status.innerText = messages[i++]; 
-                } else { 
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.body.classList.add('ready');
-                    }, 400);
-                }
-            }, 600);
-        });
-
-        // Professional Clock
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
+        // Professional Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 </body>
 </html>
