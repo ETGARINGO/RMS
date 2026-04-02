@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PRO9 Anniversary Participation Portal</title>
+    <title>PNP-PRO9 Anniversary Participation Form</title>
     <style>
         :root {
-            --bg-color: #0a1f44; /* Matches your form background */
-            --accent: #4da3ff;
+            /* Vintage Palette to match your form */
+            --paper-bg: #f4e4bc;
+            --ink-dark: #2c2c2c;
+            --wax-red: #7a2a1e;
+            --border-tan: #8d7d5d;
         }
 
         body, html {
@@ -16,11 +19,13 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            background-color: var(--bg-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--paper-bg);
+            /* Matching the subtle texture of the form */
+            background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+            font-family: 'Georgia', serif;
         }
 
-        /* Loading Spinner */
+        /* Vintage Loader Overlay */
         .loader-wrapper {
             position: fixed;
             top: 0; left: 0;
@@ -29,40 +34,45 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1;
-            transition: opacity 0.5s ease;
+            z-index: 10;
+            transition: opacity 0.6s ease-in-out;
+            background-color: var(--paper-bg);
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-left-color: var(--accent);
+        /* Spinning Seal Effect */
+        .seal-spinner {
+            width: 60px;
+            height: 60px;
+            border: 2px double var(--border-tan);
+            border-top: 3px solid var(--wax-red);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1.2s linear infinite;
         }
 
         .loading-text {
-            color: white;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            opacity: 0.8;
+            color: var(--ink-dark);
+            margin-top: 25px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            text-align: center;
+            max-width: 80%;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Iframe Container */
+        /* Iframe Container Management */
         .iframe-container {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
-            z-index: 2;
+            z-index: 1;
             background: transparent;
-            /* Fixes iOS scroll lag */
             -webkit-overflow-scrolling: touch;
         }
 
@@ -70,24 +80,27 @@
             width: 100%;
             height: 100%;
             border: none;
-            opacity: 0; /* Hidden until loaded */
-            transition: opacity 0.4s ease;
+            opacity: 0; /* Stay invisible until document is 'filed' */
+            transition: opacity 0.8s ease-in;
         }
 
-        /* Error Message if Blocked */
-        .error-msg {
-            display: none;
-            color: #ffbaba;
-            padding: 20px;
-            text-align: center;
+        /* Subtle "Aged" Vignette on the edges */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.1);
+            pointer-events: none;
+            z-index: 5;
         }
     </style>
 </head>
 <body>
 
+    <div class="vignette"></div>
+
     <div class="loader-wrapper" id="loader">
-        <div class="spinner"></div>
-        <div class="loading-text">CONNECTING TO PRO9 SECURE PORTAL...</div>
+        <div class="seal-spinner"></div>
+        <div class="loading-text">Accessing Official Archives...<br><span style="font-size: 0.7rem; font-weight: normal; opacity: 0.7;">Please wait while the document loads.</span></div>
     </div>
 
     <div class="iframe-container">
@@ -104,16 +117,19 @@
             const frame = document.getElementById('appFrame');
             const loader = document.getElementById('loader');
             
-            // Fade in the app and remove the loader
+            // 1. Reveal the Iframe
             frame.style.opacity = "1";
-            loader.style.opacity = "0";
+            
+            // 2. Smoothly fade out the archival loader
             setTimeout(() => {
-                loader.style.display = "none";
-            }, 500);
+                loader.style.opacity = "0";
+                setTimeout(() => {
+                    loader.style.display = "none";
+                }, 600);
+            }, 300);
         }
 
-        // Auto-refresh fix: Some mobile browsers cache iframes incorrectly.
-        // This ensures the latest version of your script always loads.
+        // Ensure the vintage look doesn't break on back-button navigation
         window.onpageshow = function(event) {
             if (event.persisted) {
                 window.location.reload();
