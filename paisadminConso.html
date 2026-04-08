@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Dashboard | Full View</title>
+    <title>Pais Admin</title>
     
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
@@ -11,147 +11,97 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #2ecc71;
-            --bg: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --text: #ffffff;
-        }
-
-        body {
+        /* Modern Reset */
+        body, html {
             margin: 0;
-            padding: 20px;
-            background-color: var(--bg);
-            color: var(--text);
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
             font-family: 'Montserrat', sans-serif;
+            background-color: #f4f7f6;
         }
 
-        header {
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Enhanced Header */
+        .header {
+            padding: 12px 30px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--card-bg);
-            margin-bottom: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            z-index: 10;
         }
 
-        h1 {
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 0;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .mono {
+        .logo {
+            max-height: 50px; /* Scaled for a cleaner admin bar */
+            width: auto;
+        }
+
+        .admin-label {
             font-family: 'Share Tech Mono', monospace;
-            color: var(--primary);
+            font-size: 1.2rem;
+            color: #2c3e50;
+            letter-spacing: 1px;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
         }
 
-        .table-container {
+        /* Iframe optimization */
+        .sheet-container {
+            flex-grow: 1;
+            background-color: #e5e5e5;
+            position: relative;
+        }
+
+        iframe {
             width: 100%;
-            overflow-x: auto;
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            height: 100%;
+            border: none;
+            display: block;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-        th {
-            background: #252525;
-            text-align: left;
-            padding: 15px;
-            font-family: 'Share Tech Mono', monospace;
+        /* Status Indicator */
+        .status {
+            font-size: 10px;
             text-transform: uppercase;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #333;
-            font-size: 0.9rem;
-        }
-
-        tr:hover {
-            background: #222;
-        }
-
-        #loading {
-            text-align: center;
-            padding: 50px;
-            font-family: 'Share Tech Mono', monospace;
+            color: #27ae60;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>
-            <h1>Data <span class="mono">Terminal</span></h1>
-        </div>
-        <div class="mono" id="timestamp"></div>
-    </header>
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="1 LOGO 3D (1).png" alt="Logo" class="logo">
+                <span class="admin-label">PAIS_ADMIN_v1.0</span>
+            </div>
+            <div class="status">
+                ● System Active
+            </div>
+        </header>
 
-    <div class="table-container">
-        <div id="loading">INITIALIZING DATA STREAM...</div>
-        <table id="data-table" style="display:none;">
-            <thead><tr id="table-head"></tr></thead>
-            <tbody id="table-body"></tbody>
-        </table>
+        <div class="sheet-container">
+            <iframe 
+                src="https://docs.google.com/spreadsheets/d/1DChX2lwMfE5t5gSPku5aRB66KiP1rcKSo2WSAmUi0p0/preview?rm=minimal">
+            </iframe>
+        </div>
     </div>
 
-    <script>
-        // PASTE YOUR PUBLISHED CSV URL HERE
-        const csvUrl = 'YOUR_CSV_URL_HERE';
-
-        async function fetchData() {
-            try {
-                const response = await fetch(csvUrl);
-                const data = await response.text();
-                const rows = data.split('\n').map(row => row.split(','));
-                
-                renderTable(rows);
-            } catch (error) {
-                document.getElementById('loading').innerText = 'ERROR LOADING DATA';
-                console.error(error);
-            }
-        }
-
-        function renderTable(rows) {
-            const head = document.getElementById('table-head');
-            const body = document.getElementById('table-body');
-            const loading = document.getElementById('loading');
-            const table = document.getElementById('data-table');
-
-            // Set Headers
-            rows[0].forEach(col => {
-                const th = document.createElement('th');
-                th.innerText = col.replace(/"/g, "");
-                head.appendChild(th);
-            });
-
-            // Set Body (skipping header row)
-            for (let i = 1; i < rows.length; i++) {
-                if (rows[i].length < rows[0].length) continue; // Skip empty rows
-                const tr = document.createElement('tr');
-                rows[i].forEach(cell => {
-                    const td = document.createElement('td');
-                    td.innerText = cell.replace(/"/g, "");
-                    tr.appendChild(td);
-                });
-                body.appendChild(tr);
-            }
-
-            loading.style.display = 'none';
-            table.style.display = 'table';
-            document.getElementById('timestamp').innerText = `LAST_SYNC: ${new Date().toLocaleTimeString()}`;
-        }
-
-        fetchData();
-    </script>
 </body>
 </html>
