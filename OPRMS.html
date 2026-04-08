@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .logo-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .logo-container img {
+            max-width: 200px; /* Adjust size as needed */
+            height: auto;
+            filter: drop-shadow(0px 5px 15px rgba(0,0,0,0.2));
+        }
+
+        /* The magic for mobile responsiveness */
+        .iframe-container {
+            position: relative;
+            width: 95%;
+            max-width: 1200px;
+            height: 80vh; /* Takes up 80% of the viewport height */
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="1 LOGO 3D (1).png" alt="Logo">
+    </div>
+
+    <div class="iframe-container">
+        <iframe 
+            src="https://script.google.com/macros/s/AKfycbywL0RJ4WbXBKFEyPfnTn0EE_xfBz4FYFw5V3Y8ah4VhfTZhqSwSW37pp7TC7y98AZ5TQ/exec" 
+            allow="geolocation; microphone; camera">
+        </iframe>
+    </div>
+
+</body>
+</html>
