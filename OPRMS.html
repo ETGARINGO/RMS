@@ -13,17 +13,13 @@
         :root {
             --pnp-blue: #000b1a;
             --pnp-gold: #d4af37;
-            --audit-red: #ff3c3c;
-            --interface-bg: #02060c;
+            --interface-bg: #010409;
             --terminal-green: #00ff9d;
-            --sidebar-width: 300px;
         }
 
-        /* Essential for mobile full-screen */
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body, html { 
-            margin: 0; padding: 0; 
             height: 100%; 
             height: 100dvh; 
             width: 100vw; 
@@ -34,7 +30,7 @@
             position: fixed; 
         }
 
-        /* --- THE BOOT TERMINAL --- */
+        /* --- LIGHTNING BOOT SCREEN --- */
         #boot-screen {
             position: fixed;
             inset: 0;
@@ -43,55 +39,39 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 1, 1); /* Faster fade out */
         }
 
         .scan-ring {
             position: absolute;
-            width: 200px; height: 200px;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--pnp-gold);
+            width: 160px; height: 160px;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--pnp-gold);
             border-radius: 50%;
-            animation: spin 2s linear infinite;
+            animation: spin 0.8s linear infinite; /* Faster spin */
         }
 
-        /* --- MAIN INTERFACE GRID --- */
+        /* --- MAIN INTERFACE (NO SIDEBAR) --- */
         .main-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
             height: 100dvh;
             width: 100%;
             opacity: 0;
-            transition: opacity 1s ease-in;
+            transform: scale(1.05); /* Slight zoom-in effect on entry */
+            transition: all 0.4s ease-out;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
         }
 
-        body.ready .main-container { opacity: 1; }
+        body.ready .main-container { opacity: 1; transform: scale(1); }
         body.ready #boot-screen { opacity: 0; pointer-events: none; }
-
-        .sidebar {
-            background: rgba(4, 12, 24, 0.98);
-            border-right: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .document-area {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            padding: 10px;
-            position: relative;
-        }
 
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 5px 10px;
             margin-bottom: 8px;
-            padding: 0 5px;
         }
 
         .doc-label { font-size: 8px; color: var(--pnp-gold); letter-spacing: 2px; }
@@ -102,7 +82,7 @@
             background: #fff;
             border-radius: 4px;
             position: relative;
-            border: 4px solid #1a1e26;
+            border: 2px solid #1a1e26;
             overflow: hidden;
             -webkit-overflow-scrolling: touch;
         }
@@ -114,8 +94,8 @@
             display: block;
         }
 
-        /* Tactical Corners */
-        .corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--pnp-gold); z-index: 5; pointer-events: none; }
+        /* Corners */
+        .corner { position: absolute; width: 10px; height: 10px; border: 2px solid var(--pnp-gold); z-index: 5; pointer-events: none; }
         .tl { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
         .tr { top: 5px; right: 5px; border-left: 0; border-bottom: 0; }
         .bl { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
@@ -123,17 +103,9 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 900px) {
-            .main-container { grid-template-columns: 1fr; }
-            .sidebar { display: none; } 
-            
-            .document-area {
-                padding: 5px;
-                height: 100dvh;
-            }
-            
+        @media (max-width: 600px) {
             .doc-title { font-size: 11px; }
-            .top-nav { margin-bottom: 5px; }
+            #clock { font-size: 11px !important; }
         }
     </style>
 </head>
@@ -142,81 +114,54 @@
     <div id="boot-screen">
         <div class="scan-ring"></div>
         <div class="boot-content" style="text-align: center;">
-            <img src="1 LOGO 3D (1).png" style="width: 120px;" alt="PNP">
-            <div id="status" style="font-family: 'Share Tech Mono'; color: var(--pnp-gold); font-size: 10px; letter-spacing: 3px; margin-top: 15px;">
-                INITIALIZING OPRMS...
+            <img src="1 LOGO 3D (1).png" style="width: 100px;" alt="PNP">
+            <div id="status" style="font-family: 'Share Tech Mono'; color: var(--pnp-gold); font-size: 10px; letter-spacing: 2px; margin-top: 15px;">
+                INIT...
             </div>
         </div>
     </div>
 
     <div class="main-container">
-        <aside class="sidebar">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="1 LOGO 3D (1).png" style="width: 80px;">
-                <div style="font-weight: 900; color: #fff; font-size: 14px;">RPRMD-IX</div>
+        <header class="top-nav">
+            <div>
+                <div class="doc-label">PRO9 RPRMD</div>
+                <div class="doc-title">OPRMS PORTAL</div>
             </div>
-            <div style="font-family: 'Share Tech Mono'; font-size: 11px; border-left: 3px solid var(--terminal-green); padding-left: 10px; background: rgba(0,0,0,0.3); padding: 10px;">
-                <span style="color:var(--pnp-gold)">SYSTEM:</span> OPRMS PORTAL<br>
-                <span style="color:var(--pnp-gold)">STATUS:</span> UPLINK ACTIVE<br>
-                <span style="color:var(--pnp-gold)">NODE:</span> TERMINAL-09
-            </div>
-            <div style="margin-top: 20px; font-size: 9px; color: rgba(255,255,255,0.5); line-height: 1.5;">
-                Official Personnel Records Management System. Authorized PRO9 RPRMD personnel only. All access is logged and monitored.
-            </div>
-        </aside>
+            <div id="clock" style="font-family: 'Share Tech Mono'; font-size: 14px; color: var(--pnp-gold);">00:00:00</div>
+        </header>
 
-        <main class="document-area">
-            <header class="top-nav">
-                <div>
-                    <div class="doc-label">OFFICIAL RMD PORTAL</div>
-                    <div class="doc-title">OPRMS | PERSONNEL RECORDS SYSTEM</div>
-                </div>
-                <div style="text-align: right;">
-                    <div id="clock" style="font-family: 'Share Tech Mono'; font-size: 12px; color: var(--pnp-gold);">00:00:00</div>
-                </div>
-            </header>
-
-            <div class="content-chassis">
-                <div class="corner tl"></div><div class="corner tr"></div>
-                <div class="corner bl"></div><div class="corner br"></div>
-                
-                <iframe 
-                    src="https://script.google.com/macros/s/AKfycbywL0RJ4WbXBKFEyPfnTn0EE_xfBz4FYFw5V3Y8ah4VhfTZhqSwSW37pp7TC7y98AZ5TQ/exec" 
-                    allow="geolocation; microphone; camera; clipboard-write"
-                    sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
-                </iframe>
-            </div>
-        </main>
+        <div class="content-chassis">
+            <div class="corner tl"></div><div class="corner tr"></div>
+            <div class="corner bl"></div><div class="corner br"></div>
+            
+            <iframe 
+                src="https://script.google.com/macros/s/AKfycbxNy4oRiyQvzlJB52DMO3TYnzC1_IjIkY0fiJPlbzWSId8ee773FLpJ2q19kdWgcam1Lw/exec" 
+                allow="geolocation; microphone; camera; clipboard-write"
+                sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
+            </iframe>
+        </div>
     </div>
 
     <script>
-        // Boot Animation Logic
-        window.addEventListener('load', () => {
+        // High-Speed Boot Sequence
+        window.addEventListener('DOMContentLoaded', () => {
             const status = document.getElementById('status');
-            const messages = [
-                "AUTHENTICATING...", 
-                "DECRYPTING DATABASE...", 
-                "SYNCING PERSONNEL DATA...", 
-                "ACCESS GRANTED"
-            ];
+            const messages = ["AUTH...", "SYNC...", "READY"];
             let i = 0;
+
             const interval = setInterval(() => {
                 if(i < messages.length) { 
                     status.innerText = messages[i++]; 
-                }
-                else { 
+                } else { 
                     clearInterval(interval);
-                    setTimeout(() => {
-                        document.body.classList.add('ready');
-                    }, 300);
+                    document.body.classList.add('ready');
                 }
-            }, 600);
+            }, 200); // 200ms per message for lightning feel
         });
 
-        // Real-time Tactical Clock
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString();
+            document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour12: false});
         }
         setInterval(updateClock, 1000);
         updateClock();
