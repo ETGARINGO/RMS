@@ -3,66 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pais Admin</title>
+    <title>Data Dashboard | Full View</title>
+    
+    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
+    <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
-        /* Remove default margins and padding */
-        body, html {
+        :root {
+            --primary: #2ecc71;
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+        }
+
+        body {
             margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; /* Prevents double scrollbars */
-            font-family: sans-serif;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
         }
 
-        /* Container for the logo and sheet */
-        .main-container {
+        header {
             display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--card-bg);
+            margin-bottom: 30px;
         }
 
-        /* Logo styling */
-        .header {
-            padding: 10px;
-            text-align: center;
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
+        h1 {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
         }
 
-        .logo {
-            max-height: 80px; /* Adjust height as needed */
-            width: auto;
+        .mono {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--primary);
         }
 
-        /* Iframe container to fill remaining space */
-        .sheet-container {
-            flex-grow: 1;
-            border: none;
-        }
-
-        iframe {
+        .table-container {
             width: 100%;
-            height: 100%;
-            border: none;
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #252525;
+            text-align: left;
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #222;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 50px;
+            font-family: 'Share Tech Mono', monospace;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <header class="header">
-            <img src="1 LOGO 3D (1).png" alt="Logo" class="logo">
-        </header>
-
-        <div class="sheet-container">
-            <iframe 
-                src="https://docs.google.com/spreadsheets/d/1DChX2lwMfE5t5gSPku5aRB66KiP1rcKSo2WSAmUi0p0/preview">
-            </iframe>
+    <header>
+        <div>
+            <h1>Data <span class="mono">Terminal</span></h1>
         </div>
+        <div class="mono" id="timestamp"></div>
+    </header>
+
+    <div class="table-container">
+        <div id="loading">INITIALIZING DATA STREAM...</div>
+        <table id="data-table" style="display:none;">
+            <thead><tr id="table-head"></tr></thead>
+            <tbody id="table-body"></tbody>
+        </table>
     </div>
 
+    <script>
+        // PASTE YOUR PUBLISHED CSV URL HERE
+        const csvUrl = 'YOUR_CSV_URL_HERE';
+
+        async function fetchData() {
+            try {
+                const response = await fetch(csvUrl);
+                const data = await response.text();
+                const rows = data.split('\n').map(row => row.split(','));
+                
+                renderTable(rows);
+            } catch (error) {
+                document.getElementById('loading').innerText = 'ERROR LOADING DATA';
+                console.error(error);
+            }
+        }
+
+        function renderTable(rows) {
+            const head = document.getElementById('table-head');
+            const body = document.getElementById('table-body');
+            const loading = document.getElementById('loading');
+            const table = document.getElementById('data-table');
+
+            // Set Headers
+            rows[0].forEach(col => {
+                const th = document.createElement('th');
+                th.innerText = col.replace(/"/g, "");
+                head.appendChild(th);
+            });
+
+            // Set Body (skipping header row)
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i].length < rows[0].length) continue; // Skip empty rows
+                const tr = document.createElement('tr');
+                rows[i].forEach(cell => {
+                    const td = document.createElement('td');
+                    td.innerText = cell.replace(/"/g, "");
+                    tr.appendChild(td);
+                });
+                body.appendChild(tr);
+            }
+
+            loading.style.display = 'none';
+            table.style.display = 'table';
+            document.getElementById('timestamp').innerText = `LAST_SYNC: ${new Date().toLocaleTimeString()}`;
+        }
+
+        fetchData();
+    </script>
 </body>
 </html>
