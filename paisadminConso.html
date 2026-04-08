@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pais Admin</title>
+    <style>
+        /* Remove default margins and padding */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevents double scrollbars */
+            font-family: sans-serif;
+        }
+
+        /* Container for the logo and sheet */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Logo styling */
+        .header {
+            padding: 10px;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .logo {
+            max-height: 80px; /* Adjust height as needed */
+            width: auto;
+        }
+
+        /* Iframe container to fill remaining space */
+        .sheet-container {
+            flex-grow: 1;
+            border: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <img src="1 LOGO 3D (1).png" alt="Logo" class="logo">
+        </header>
+
+        <div class="sheet-container">
+            <iframe 
+                src="https://docs.google.com/spreadsheets/d/1DChX2lwMfE5t5gSPku5aRB66KiP1rcKSo2WSAmUi0p0/preview">
+            </iframe>
+        </div>
+    </div>
+
+</body>
+</html>
