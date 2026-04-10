@@ -21,7 +21,7 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* CRT EFFECTS */
+        /* CRT SCANLINE & VIGNETTE OVERLAY */
         .vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 30%, black 150%);
@@ -36,6 +36,7 @@
             z-index: 60; pointer-events: none;
         }
 
+        /* FAST THUNDER LIGHTNING */
         @keyframes lightning {
             0%, 95%, 100% { opacity: 0; }
             96% { opacity: 1; background: #fff; }
@@ -48,7 +49,7 @@
             animation: lightning 5s infinite;
         }
 
-        /* HUD */
+        /* HUD ENTRANCE */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center;
@@ -65,14 +66,15 @@
         }
 
         @keyframes logoPulse {
-            from { transform: scale(1); }
+            from { transform: scale(1); filter: drop-shadow(0 0 15px var(--war-red)); }
             to { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--war-red)); }
         }
 
+        /* TACTICAL MAP */
         #map { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 10; 
-            filter: sepia(1) hue-rotate(320deg) brightness(0.4) contrast(1.4); 
+            filter: sepia(1) hue-rotate(320deg) brightness(0.5) contrast(1.4) saturate(1.2); 
         }
 
         .tactical-label { 
@@ -80,16 +82,20 @@
             border: 1px solid var(--war-red) !important; 
             color: var(--war-red) !important; 
             font-size: 12px !important; 
+            font-weight: bold;
+            letter-spacing: 1px;
             box-shadow: 0 0 8px var(--war-red);
         }
         
+        /* DATA OVERLAY */
         #status-bar {
             position: fixed; bottom: 20px; left: 20px; 
             z-index: 70; color: var(--war-red);
             font-size: 11px; text-transform: uppercase;
-            text-shadow: 0 0 5px #f00;
+            line-height: 1.5; text-shadow: 0 0 5px #f00;
         }
 
+        /* BUTTON DESIGN */
         .launch-btn {
             margin-top: 40px; padding: 15px 50px; background: #600; color: #fff;
             border: 2px solid var(--war-red); cursor: pointer; font-weight: bold; font-size: 1.2rem;
@@ -97,17 +103,16 @@
             text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
             letter-spacing: 3px;
         }
-        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); }
+        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); letter-spacing: 5px; }
 
+        /* PULSE ANIMATION */
         .pulse-ring { animation: pulse 2s infinite ease-out; stroke: var(--war-red); }
         @keyframes pulse { from { r: 4; opacity: 1; } to { r: 25; opacity: 0; } }
 
-        /* SECURE OVERLAY */
-        #secure-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 500; display: none;
-            justify-content: center; align-items: center;
-            color: var(--war-red); font-size: 1.5rem; letter-spacing: 5px;
+        #secure-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: none; visibility: hidden; opacity: 0; transition: opacity 1.2s;
+            z-index: 200; background: #000;
         }
     </style>
 </head>
@@ -116,7 +121,6 @@
     <div class="vignette"></div>
     <div class="scanlines"></div>
     <div class="storm-layer"></div>
-    <div id="secure-overlay">ESTABLISHING SECURE CONNECTION...</div>
 
     <div id="status-bar">
         SYSTEM: ARMED<br>
@@ -131,9 +135,14 @@
 
     <div id="map"></div>
 
-    <script>
-        const SECURE_LINK = "https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec";
+    <iframe 
+        id="secure-frame" 
+        src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec"
+        sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
+    </iframe>
 
+    <script>
+        // Initialize Map
         const jurisdictions = [
             { n: "SULU", p: [6.0, 121.0] },
             { n: "ISABELA", p: [6.7, 121.9] },
@@ -144,54 +153,63 @@
         ];
 
         const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.5, 122.5], 8);
+        
+        // Tactical Satellite Layer
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
         jurisdictions.forEach(j => {
-            L.circleMarker(j.p, { radius: 3, color: '#f00', fillColor: '#f00', fillOpacity: 1 }).addTo(map)
-             .bindTooltip(j.n, { permanent: true, direction: 'top', className: 'tactical-label' });
+            // Core Point
+            L.circleMarker(j.p, { radius: 3, color: '#f00', fillColor: '#f00', fillOpacity: 1, weight: 2 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'top', offset: [0, -8], className: 'tactical-label' });
+            
+            // Radar Pulse
             L.circleMarker(j.p, { radius: 15, color: '#f00', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
         });
 
-        map.on('mousemove', (e) => {
-            document.getElementById('live-coords').innerHTML = e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
+        // Live Coordinate Tracking
+        map.on('mousemove', function(e) {
+            document.getElementById('live-coords').innerHTML = 
+                e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
         });
 
         function overdriveLaunch() {
+            const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
-            const overlay = document.getElementById('secure-overlay');
 
-            // Visual Glitch Sequence
-            hud.style.filter = "invert(1) contrast(10) blur(10px)";
+            // 1. Glitch Effect
+            hud.style.filter = "invert(1) contrast(10) blur(5px)";
             document.querySelector('.storm-layer').style.animation = "lightning 0.1s infinite";
-            map.flyTo([6.92, 122.07], 14, { duration: 1.5, easeLinearity: 0.1 });
+
+            // 2. Tactical Zoom
+            map.flyTo([6.92, 122.07], 13, { duration: 1.2, easeLinearity: 0.1 });
 
             setTimeout(() => {
-                overlay.style.display = "flex";
+                frame.style.visibility = "visible";
+                frame.style.opacity = "1";
+                hud.style.opacity = "0";
                 
-                // OPEN PORTAL (Bypasses Iframe Block while staying in browser session)
-                const portal = window.open(SECURE_LINK, '_blank');
-
-                if(!portal) {
-                    alert("LINK BLOCKED: Please enable pop-ups for this tactical site.");
-                    overlay.style.display = "none";
-                    location.reload();
-                }
-
-                // Reset HUD so user stays on your GitHub DNS
-                setTimeout(() => {
-                    overlay.style.display = "none";
-                    hud.style.filter = "none";
-                    document.querySelector('.storm-layer').style.animation = "lightning 5s infinite";
-                    map.setView([7.5, 122.5], 8);
-                }, 2000);
-            }, 1000);
+                setTimeout(() => { 
+                    document.getElementById('map').remove();
+                    document.getElementById('status-bar').remove();
+                    hud.remove();
+                }, 1000);
+            }, 800);
         }
 
-        // Lockdown
+        // Standard Security Lockdown
         document.onkeydown = (e) => {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && [85, 83].includes(e.keyCode))) 
             return false;
         };
+
+        // Auto-refresh on Idle (30 mins)
+        let idleTime = 0;
+        const reset = () => idleTime = 0;
+        ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
+        setInterval(() => {
+            idleTime++;
+            if (idleTime >= 30) window.location.reload();
+        }, 60000);
     </script>
 </body>
 </html>
