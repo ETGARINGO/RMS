@@ -21,7 +21,7 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* CRT SCANLINE & VIGNETTE OVERLAY */
+        /* CRT EFFECTS */
         .vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 30%, black 150%);
@@ -36,7 +36,6 @@
             z-index: 60; pointer-events: none;
         }
 
-        /* FAST THUNDER LIGHTNING */
         @keyframes lightning {
             0%, 95%, 100% { opacity: 0; }
             96% { opacity: 1; background: #fff; }
@@ -49,7 +48,7 @@
             animation: lightning 5s infinite;
         }
 
-        /* HUD ENTRANCE */
+        /* HUD */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center;
@@ -66,36 +65,31 @@
         }
 
         @keyframes logoPulse {
-            from { transform: scale(1); filter: drop-shadow(0 0 15px var(--war-red)); }
+            from { transform: scale(1); }
             to { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--war-red)); }
         }
 
-        /* TACTICAL MAP */
         #map { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 10; 
-            filter: sepia(1) hue-rotate(320deg) brightness(0.5) contrast(1.4) saturate(1.2); 
+            filter: sepia(1) hue-rotate(320deg) brightness(0.4) contrast(1.4); 
         }
 
         .tactical-label { 
             background: var(--tactical-bg) !important; 
             border: 1px solid var(--war-red) !important; 
             color: var(--war-red) !important; 
-            font-size: 12px !important; 
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 11px !important; 
             box-shadow: 0 0 8px var(--war-red);
         }
         
-        /* DATA OVERLAY */
         #status-bar {
             position: fixed; bottom: 20px; left: 20px; 
             z-index: 70; color: var(--war-red);
             font-size: 11px; text-transform: uppercase;
-            line-height: 1.5; text-shadow: 0 0 5px #f00;
+            text-shadow: 0 0 5px #f00;
         }
 
-        /* BUTTON DESIGN */
         .launch-btn {
             margin-top: 40px; padding: 15px 50px; background: #600; color: #fff;
             border: 2px solid var(--war-red); cursor: pointer; font-weight: bold; font-size: 1.2rem;
@@ -103,16 +97,13 @@
             text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
             letter-spacing: 3px;
         }
-        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); letter-spacing: 5px; }
+        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); }
 
-        /* PULSE ANIMATION */
-        .pulse-ring { animation: pulse 2s infinite ease-out; stroke: var(--war-red); }
-        @keyframes pulse { from { r: 4; opacity: 1; } to { r: 25; opacity: 0; } }
-
-        #secure-frame {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; visibility: hidden; opacity: 0; transition: opacity 1.2s;
-            z-index: 200; background: #000;
+        #terminal-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 1000; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: var(--war-red); font-family: monospace;
         }
     </style>
 </head>
@@ -122,27 +113,29 @@
     <div class="scanlines"></div>
     <div class="storm-layer"></div>
 
+    <div id="terminal-loader">
+        <div id="loading-text">BYPASSING SECURITY PROTOCOLS...</div>
+        <div id="progress"></div>
+    </div>
+
     <div id="status-bar">
         SYSTEM: ARMED<br>
-        SIGNAL: 128-BIT ENCRYPTED<br>
+        SIGNAL: 256-BIT ENCRYPTED<br>
         LOC: <span id="live-coords">0.0000, 0.0000</span>
     </div>
 
     <div id="hud">
         <img src="SIGLAKAS.png" class="siglakas-logo" alt="SIGLAKAS">
-        <button class="launch-btn" onclick="overdriveLaunch()">ACCESS FOLDER</button>
+        <button class="launch-btn" onclick="overdriveLaunch()">DECRYPT ACCESS</button>
     </div>
 
     <div id="map"></div>
 
-    <iframe 
-        id="secure-frame" 
-        src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec"
-        sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
-    </iframe>
-
     <script>
-        // Initialize Map
+        // TARGET PORTAL
+        const PORTAL_URL = "https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec";
+
+        // Map Initialization
         const jurisdictions = [
             { n: "SULU", p: [6.0, 121.0] },
             { n: "ISABELA", p: [6.7, 121.9] },
@@ -153,63 +146,47 @@
         ];
 
         const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.5, 122.5], 8);
-        
-        // Tactical Satellite Layer
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
         jurisdictions.forEach(j => {
-            // Core Point
-            L.circleMarker(j.p, { radius: 3, color: '#f00', fillColor: '#f00', fillOpacity: 1, weight: 2 }).addTo(map)
-             .bindTooltip(j.n, { permanent: true, direction: 'top', offset: [0, -8], className: 'tactical-label' });
-            
-            // Radar Pulse
-            L.circleMarker(j.p, { radius: 15, color: '#f00', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+            L.circleMarker(j.p, { radius: 3, color: '#f00', fillColor: '#f00', fillOpacity: 1 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'top', className: 'tactical-label' });
         });
 
-        // Live Coordinate Tracking
-        map.on('mousemove', function(e) {
-            document.getElementById('live-coords').innerHTML = 
-                e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
+        map.on('mousemove', (e) => {
+            document.getElementById('live-coords').innerHTML = e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
         });
 
         function overdriveLaunch() {
-            const frame = document.getElementById('secure-frame');
+            const loader = document.getElementById('terminal-loader');
             const hud = document.getElementById('hud');
 
-            // 1. Glitch Effect
-            hud.style.filter = "invert(1) contrast(10) blur(5px)";
+            // 1. Zoom and Glitch
+            map.flyTo([6.92, 122.07], 14, { duration: 1.5 });
+            hud.style.opacity = "0";
             document.querySelector('.storm-layer').style.animation = "lightning 0.1s infinite";
 
-            // 2. Tactical Zoom
-            map.flyTo([6.92, 122.07], 13, { duration: 1.2, easeLinearity: 0.1 });
-
             setTimeout(() => {
-                frame.style.visibility = "visible";
-                frame.style.opacity = "1";
-                hud.style.opacity = "0";
-                
-                setTimeout(() => { 
-                    document.getElementById('map').remove();
-                    document.getElementById('status-bar').remove();
-                    hud.remove();
-                }, 1000);
-            }, 800);
+                loader.style.display = "flex";
+                let count = 0;
+                const interval = setInterval(() => {
+                    document.getElementById('progress').innerHTML = ">".repeat(count);
+                    count++;
+                    if (count > 20) {
+                        clearInterval(interval);
+                        
+                        // FIX: Since GitHub cannot frame Google, we redirect the TOP level.
+                        // This keeps the user in your flow but allows the folder to open.
+                        window.top.location.href = PORTAL_URL;
+                    }
+                }, 50);
+            }, 1000);
         }
 
-        // Standard Security Lockdown
+        // Lockdown Keys
         document.onkeydown = (e) => {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && [85, 83].includes(e.keyCode))) 
-            return false;
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
         };
-
-        // Auto-refresh on Idle (30 mins)
-        let idleTime = 0;
-        const reset = () => idleTime = 0;
-        ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
-        setInterval(() => {
-            idleTime++;
-            if (idleTime >= 30) window.location.reload();
-        }, 60000);
     </script>
 </body>
 </html>
