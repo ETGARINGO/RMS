@@ -2,79 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SIGLAKAS | PRO9 COMMAND</title>
-    <link rel="icon" type="image/png" href="SIGLAKAS.png">
-    <link rel="apple-touch-icon" href="SIGLAKAS.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGLAKAS | STRATEGIC MAP</title>
+    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        :root {
-            --war-red: #ff0000;
-            --tactical-blue: #00d4ff;
-            --bg-black: #00050a;
-            --flash-white: rgba(255, 255, 255, 0.9);
-        }
-
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: var(--bg-black); color: #fff; font-family: 'Arial Black', sans-serif; position: fixed; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Courier, monospace; }
 
         /* FAST THUNDER LIGHTNING EFFECT */
-        @keyframes thunderStrike {
-            0%, 15%, 85%, 100% { background: transparent; opacity: 0; }
-            7% { background: var(--flash-white); opacity: 1; }
-            10% { background: transparent; }
-            12% { background: var(--flash-white); opacity: 1; }
+        @keyframes lightning {
+            0% { background: #000; }
+            5% { background: #fff; opacity: 0.8; }
+            7% { background: #222; }
+            9% { background: #fff; opacity: 0.5; }
+            11% { background: #000; }
         }
         .storm-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 999;
-            animation: thunderStrike 3s infinite;
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events: none; z-index: 99;
+            animation: lightning 5s infinite;
         }
 
         /* 3D WAR ENTRANCE WORDING */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 100; 
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,1) 100%);
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            align-items: center; z-index: 100; background: rgba(0,0,0,0.8);
+            transition: opacity 0.8s ease;
         }
-
         .war-title {
-            text-align: center; color: #fff; text-transform: uppercase;
-            padding: 0 20px; max-width: 900px;
-            text-shadow: 
-                0 1px 0 #444, 0 2px 0 #333, 0 3px 0 #222, 
-                0 4px 0 #111, 0 5px 15px rgba(255,0,0,0.8);
-            transform: perspective(500px) rotateX(10deg);
-            animation: tremor 0.1s infinite;
+            text-align: center; font-size: 2.5rem; font-weight: 900;
+            color: #ff0000; text-transform: uppercase;
+            text-shadow: 0 0 20px #ff0000;
+            transform: perspective(1000px) rotateX(20deg) scale(0.8);
+            animation: warIn 0.5s cubic-bezier(0.17, 0.88, 0.32, 1.27) forwards;
+            padding: 20px;
+        }
+        @keyframes warIn {
+            to { transform: perspective(1000px) rotateX(0deg) scale(1); opacity: 1; }
         }
 
-        .war-title h1 { font-size: 1.5rem; margin: 0; letter-spacing: 2px; line-height: 1.1; }
-        .war-title span { font-size: 3rem; color: var(--war-red); display: block; margin-top: 10px; }
-
-        @keyframes tremor {
-            0% { transform: translate(1px, 1px) rotateX(10deg); }
-            50% { transform: translate(-1px, -1px) rotateX(10deg); }
-            100% { transform: translate(1px, -1px) rotateX(10deg); }
-        }
-
-        /* PERSISTENT WRAPPER IFRAME */
+        /* THE SECURE LOCKDOWN IFRAME */
         #secure-frame {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; visibility: hidden; opacity: 0; 
-            z-index: 200; background: #000;
+            border: none; visibility: hidden; opacity: 0; transition: opacity 0.8s;
+            z-index: 200;
         }
 
-        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; filter: brightness(0.3) contrast(2) grayscale(1) invert(1); }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
 
-        .tactical-label { 
-            background: rgba(255,0,0,0.2) !important; 
-            border: 1px solid var(--war-red) !important; 
-            color: #fff !important; font-weight: 900 !important; 
-            text-transform: uppercase; font-size: 10px !important;
+        .tactical-label { background: rgba(0,0,0,0.7); border: 1px solid #00ff66; color: #00ff66; font-weight: bold; }
+        .pulse-ring { animation: pulse 2s infinite ease-out; }
+        @keyframes pulse { from { r: 5; opacity: 1; } to { r: 25; opacity: 0; } }
+        
+        .launch-btn {
+            margin-top: 20px; padding: 15px 40px; background: #ff0000; color: #fff;
+            border: none; cursor: pointer; font-weight: bold; border-radius: 5px;
+            box-shadow: 0 0 15px #ff0000; z-index: 101;
         }
     </style>
 </head>
@@ -83,12 +70,11 @@
     <div class="storm-layer"></div>
 
     <div id="hud">
-        <img src="SIGLAKAS.png" style="width:180px; margin-bottom:30px; filter: drop-shadow(0 0 20px red);">
+        <img src="1 LOGO 3D (1).png" style="width:150px; margin-bottom:20px;">
         <div class="war-title">
-            <h1>SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD AT MAMAMAYAN</h1>
-            <span>SIGLAKAS</span>
+            SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD AT MAMAMAYAN<br>(SIGLAKAS)
         </div>
-        <p style="margin-top: 40px; color: var(--tactical-blue); font-family: monospace; letter-spacing: 5px; font-weight: bold;">UPLINKING STRIKE PROTOCOL...</p>
+        <button class="launch-btn" onclick="overdriveLaunch()">INITIALIZE WAR MAP</button>
     </div>
 
     <div id="map"></div>
@@ -96,8 +82,8 @@
     <iframe 
         id="secure-frame" 
         src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec"
-        allow="geolocation; microphone; camera; fullscreen; autoplay; display-capture;"
-        onload="strikeSequence()">
+        sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
+        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media">
     </iframe>
 
     <script>
@@ -110,42 +96,42 @@
             { n: "ZAMBO NORTE", p: [8.2, 123.0] }
         ];
 
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.4, 122.3], 8);
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 12);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
         jurisdictions.forEach(j => {
-            L.circleMarker(j.p, { radius: 6, color: '#ff0000', weight: 2, fillOpacity: 1 }).addTo(map)
-             .bindTooltip(j.n, { permanent: true, direction: 'right', className: 'tactical-label' });
+            L.circleMarker(j.p, { radius: 5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'right', offset: [12, 0], className: 'tactical-label' });
+            
+            L.circleMarker(j.p, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
         });
 
-        function strikeSequence() {
+        function overdriveLaunch() {
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
-            const storm = document.querySelector('.storm-layer');
 
-            // High-speed tactical zoom
-            map.flyTo([6.92, 122.07], 13, { duration: 0.8, easeLinearity: 0.1 });
+            // Fast pan/zoom effect
+            map.flyTo([7.4, 122.3], 8, { duration: 0.6, easeLinearity: 0.1 });
 
             setTimeout(() => {
                 frame.style.visibility = "visible";
                 frame.style.opacity = "1";
                 hud.style.opacity = "0";
-                
-                // Absolute DOM purge to prevent DNS exit / Back-button issues
                 setTimeout(() => { 
+                    document.getElementById('map').remove();
                     hud.remove();
-                    storm.remove();
-                    document.getElementById('map').remove(); 
                 }, 800);
-            }, 1200);
+            }, 700);
         }
 
-        // LockDevTools
+        // Security Lockdown: Prevents Keyboard Inspect/View Source
         document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
+                return false;
+            }
         };
 
-        // Anti-Idle
+        // Anti-Idle Auto-Reload
         let idleTime = 0;
         const reset = () => idleTime = 0;
         ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
