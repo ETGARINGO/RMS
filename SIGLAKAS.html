@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
+    <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SIGLAKAS | PRO9 COMMAND</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --tactical-blue: #00d4ff;
+            --defense-green: #00ff66;
+            --lightning-flash: rgba(255, 255, 255, 0.8);
+            --bg-black: #010b1a;
+        }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: var(--bg-black); 
+            position: fixed; font-family: 'Arial Black', sans-serif;
+        }
+
+        /* LIGHTNING EFFECT */
+        @keyframes lightning {
+            0%, 95%, 100% { background: transparent; }
+            96% { background: var(--lightning-flash); }
+            97% { background: transparent; }
+            98% { background: var(--lightning-flash); }
+        }
+
+        #lightning-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 999; pointer-events: none;
+            animation: lightning 4s infinite;
+        }
+
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; filter: brightness(0.3) contrast(2) grayscale(1) invert(1);
+        }
+
+        /* TACTICAL HUD */
+        #hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.9) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .entrance-logo {
+            width: 180px; height: auto;
+            filter: drop-shadow(0 0 20px #ff0000);
+            margin-bottom: 20px;
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* SIGLAKAS WAR TEXT */
+        .war-text {
+            text-align: center;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            padding: 0 20px;
+            text-shadow: 3px 3px 0px #ff0000, -2px -2px 0px var(--tactical-blue);
+            animation: glitch 0.2s infinite;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); filter: brightness(1) drop-shadow(0 0 10px red); }
+            to { transform: scale(1.05); filter: brightness(1.5) drop-shadow(0 0 30px red); }
+        }
+
+        #secure-frame {
+            position: absolute; width: 100%; height: 100%; border: none;
+            z-index: 100; opacity: 0; visibility: hidden;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="lightning-overlay"></div>
+    <div id="map"></div>
+
+    <div id="hud">
+        <img src="1 LOGO 3D (1).png" alt="SIGLAKAS Logo" class="entrance-logo">
+        <div class="war-text">
+            SINANAY SA ISIP AT GAWA<br>
+            <span style="font-size: 2.5rem; color: #ff0000;">LABAN SA KRIMINALIDAD</span><br>
+            AT MAMAMAYAN (SIGLAKAS)
+        </div>
+        <div style="margin-top: 30px; color: var(--defense-green); font-family: monospace; letter-spacing: 5px;">
+            INITIALIZING STRIKE PROTOCOL...
+        </div>
+    </div>
+
+    <iframe id="secure-frame" 
+            src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec" 
+            allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
+            onload="launchSequence()">
+    </iframe>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 10);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        function launchSequence() {
+            const frame = document.getElementById('secure-frame');
+            const hud = document.getElementById('hud');
+            const lightning = document.getElementById('lightning-overlay');
+
+            // Fast zoom-in "Strike" effect
+            map.flyTo([7.4, 122.3], 12, { duration: 0.8, easeLinearity: 0.1 });
+
+            setTimeout(() => {
+                frame.style.visibility = "visible";
+                frame.style.opacity = "1";
+                hud.style.opacity = "0";
+                lightning.style.display = "none";
+                
+                setTimeout(() => { 
+                    document.getElementById('map').remove();
+                    hud.remove();
+                }, 500);
+            }, 1200); // Fast load transition
+        }
+
+        // Prevent accidental exits or right-clicks
+        document.onkeydown = (e) => {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
+        };
+    </script>
+</body>
+</html>
