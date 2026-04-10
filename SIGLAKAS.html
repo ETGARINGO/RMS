@@ -12,7 +12,7 @@
     <style>
         :root {
             --war-red: #ff0000;
-            --tactical-bg: rgba(15, 0, 0, 0.9);
+            --tactical-bg: rgba(15, 0, 0, 0.95);
         }
 
         body, html { 
@@ -21,25 +21,21 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* CRT EFFECTS */
-        .vignette {
+        .vignette, .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 30%, black 150%);
             z-index: 50; pointer-events: none;
         }
-
+        .vignette { background: radial-gradient(circle, transparent 30%, black 150%); }
         .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 3px, 3px 100%;
-            z-index: 60; pointer-events: none;
+            z-index: 60;
         }
 
         @keyframes lightning {
             0%, 95%, 100% { opacity: 0; }
             96% { opacity: 1; background: #fff; }
-            97% { opacity: 0; }
             98% { opacity: 0.3; background: #4b4bdf; }
         }
         .storm-layer {
@@ -48,62 +44,36 @@
             animation: lightning 5s infinite;
         }
 
-        /* HUD */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center;
             align-items: center; z-index: 100; 
             background: radial-gradient(circle, rgba(40,0,0,0.8) 0%, rgba(0,0,0,1) 100%);
-            transition: all 0.5s ease-in-out;
-            text-align: center;
+            transition: 0.8s ease;
         }
 
-        .siglakas-logo {
-            width: 220px;
-            filter: drop-shadow(0 0 15px var(--war-red));
-            animation: logoPulse 2s infinite alternate;
+        /* DIRECTORY MENU */
+        #directory {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 600px; background: var(--tactical-bg);
+            border: 2px solid var(--war-red); box-shadow: 0 0 30px var(--war-red);
+            z-index: 200; display: none; padding: 30px;
         }
 
-        @keyframes logoPulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--war-red)); }
+        .dir-item {
+            display: block; padding: 15px; margin: 10px 0;
+            border: 1px solid #400; color: #fff; text-decoration: none;
+            background: rgba(50, 0, 0, 0.3); transition: 0.3s;
+            text-transform: uppercase; font-weight: bold; font-size: 0.9rem;
         }
+        .dir-item:hover { background: var(--war-red); color: #000; box-shadow: 0 0 15px var(--war-red); }
 
-        #map { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 10; 
-            filter: sepia(1) hue-rotate(320deg) brightness(0.4) contrast(1.4); 
-        }
-
-        .tactical-label { 
-            background: var(--tactical-bg) !important; 
-            border: 1px solid var(--war-red) !important; 
-            color: var(--war-red) !important; 
-            font-size: 11px !important; 
-            box-shadow: 0 0 8px var(--war-red);
-        }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; filter: sepia(1) hue-rotate(320deg) brightness(0.4); }
         
-        #status-bar {
-            position: fixed; bottom: 20px; left: 20px; 
-            z-index: 70; color: var(--war-red);
-            font-size: 11px; text-transform: uppercase;
-            text-shadow: 0 0 5px #f00;
-        }
-
         .launch-btn {
             margin-top: 40px; padding: 15px 50px; background: #600; color: #fff;
-            border: 2px solid var(--war-red); cursor: pointer; font-weight: bold; font-size: 1.2rem;
-            box-shadow: 0 0 15px var(--war-red); transition: 0.3s;
-            text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            letter-spacing: 3px;
-        }
-        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); }
-
-        #terminal-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 1000; display: none;
-            flex-direction: column; justify-content: center; align-items: center;
-            color: var(--war-red); font-family: monospace;
+            border: 2px solid var(--war-red); cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 15px var(--war-red); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
         }
     </style>
 </head>
@@ -113,77 +83,53 @@
     <div class="scanlines"></div>
     <div class="storm-layer"></div>
 
-    <div id="terminal-loader">
-        <div id="loading-text">BYPASSING SECURITY PROTOCOLS...</div>
-        <div id="progress"></div>
-    </div>
-
-    <div id="status-bar">
-        SYSTEM: ARMED<br>
-        SIGNAL: 256-BIT ENCRYPTED<br>
-        LOC: <span id="live-coords">0.0000, 0.0000</span>
-    </div>
-
     <div id="hud">
-        <img src="SIGLAKAS.png" class="siglakas-logo" alt="SIGLAKAS">
-        <button class="launch-btn" onclick="overdriveLaunch()">DECRYPT ACCESS</button>
+        <img src="SIGLAKAS.png" style="width:200px; filter: drop-shadow(0 0 15px #f00);" alt="SIGLAKAS">
+        <button class="launch-btn" onclick="openDirectory()">DECRYPT DIRECTORY</button>
+    </div>
+
+    <div id="directory">
+        <h2 style="color:var(--war-red); text-align:center; border-bottom: 1px solid #f00; padding-bottom: 10px;">TACTICAL ARCHIVES</h2>
+        
+        <a href="https://drive.google.com/drive/folders/1yM0T-YEKREz4ODmdwYYDh8WmGWeAtn57?usp=drive_link" target="_blank" class="dir-item">
+            [2021 DEC 20] PERM REAPP (SIGLAKAS)
+        </a>
+        
+        <a href="https://drive.google.com/drive/folders/1aMVu1dNhaRJZnGt5XALxIqVd1iDTmeub?usp=drive_link" target="_blank" class="dir-item">
+            [2021 JUL 01] TEMP REAPP (SIGLAKAS)
+        </a>
+        
+        <a href="https://drive.google.com/drive/folders/1-8iZ_JmbMpEZX7M5dQ4ISnyiDCYtXMTW?usp=drive_link" target="_blank" class="dir-item">
+            [2020 JUL 01] TEMP ORIG (SIGLAKAS)
+        </a>
+
+        <button onclick="closeDirectory()" style="width:100%; background:transparent; color:#666; border:none; margin-top:20px; cursor:pointer;">[ CLOSE SESSION ]</button>
     </div>
 
     <div id="map"></div>
 
     <script>
-        // TARGET PORTAL
-        const PORTAL_URL = "https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec";
-
-        // Map Initialization
-        const jurisdictions = [
-            { n: "SULU", p: [6.0, 121.0] },
-            { n: "ISABELA", p: [6.7, 121.9] },
-            { n: "ZAMBO CITY", p: [6.92, 122.07] },
-            { n: "SIBUGAY", p: [7.7, 122.5] },
-            { n: "ZAMBO SUR", p: [7.8, 123.3] },
-            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
-        ];
-
+        // Map Init
         const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.5, 122.5], 8);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
-        jurisdictions.forEach(j => {
-            L.circleMarker(j.p, { radius: 3, color: '#f00', fillColor: '#f00', fillOpacity: 1 }).addTo(map)
-             .bindTooltip(j.n, { permanent: true, direction: 'top', className: 'tactical-label' });
-        });
-
-        map.on('mousemove', (e) => {
-            document.getElementById('live-coords').innerHTML = e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
-        });
-
-        function overdriveLaunch() {
-            const loader = document.getElementById('terminal-loader');
-            const hud = document.getElementById('hud');
-
-            // 1. Zoom and Glitch
-            map.flyTo([6.92, 122.07], 14, { duration: 1.5 });
-            hud.style.opacity = "0";
-            document.querySelector('.storm-layer').style.animation = "lightning 0.1s infinite";
-
+        function openDirectory() {
+            document.getElementById('hud').style.opacity = "0";
             setTimeout(() => {
-                loader.style.display = "flex";
-                let count = 0;
-                const interval = setInterval(() => {
-                    document.getElementById('progress').innerHTML = ">".repeat(count);
-                    count++;
-                    if (count > 20) {
-                        clearInterval(interval);
-                        
-                        // FIX: Since GitHub cannot frame Google, we redirect the TOP level.
-                        // This keeps the user in your flow but allows the folder to open.
-                        window.top.location.href = PORTAL_URL;
-                    }
-                }, 50);
-            }, 1000);
+                document.getElementById('hud').style.display = "none";
+                document.getElementById('directory').style.display = "block";
+            }, 800);
+            map.flyTo([6.92, 122.07], 12);
         }
 
-        // Lockdown Keys
+        function closeDirectory() {
+            document.getElementById('directory').style.display = "none";
+            document.getElementById('hud').style.display = "flex";
+            setTimeout(() => { document.getElementById('hud').style.opacity = "1"; }, 10);
+            map.flyTo([7.5, 122.5], 8);
+        }
+
+        // Security
         document.onkeydown = (e) => {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
         };
