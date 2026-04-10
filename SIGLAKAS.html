@@ -5,89 +5,100 @@
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SIGLAKAS | PRO9 COMMAND</title>
+    <title>SIGLAKAS | PRO9 COMMAND TRACKER</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         :root {
             --tactical-blue: #00d4ff;
+            --war-red: #ff0000;
             --defense-green: #00ff66;
-            --lightning-flash: rgba(255, 255, 255, 0.8);
             --bg-black: #010b1a;
+            --lightning: rgba(255, 255, 255, 0.9);
         }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
             overflow: hidden; background-color: var(--bg-black); 
-            position: fixed; font-family: 'Arial Black', sans-serif;
+            position: fixed; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* LIGHTNING EFFECT */
-        @keyframes lightning {
-            0%, 95%, 100% { background: transparent; }
-            96% { background: var(--lightning-flash); }
-            97% { background: transparent; }
-            98% { background: var(--lightning-flash); }
+        /* LIGHTNING STRIKE EFFECT */
+        @keyframes strike {
+            0%, 10%, 80%, 100% { background: transparent; }
+            5% { background: var(--lightning); }
+            7% { background: transparent; }
+            8% { background: var(--lightning); }
         }
-
         #lightning-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 999; pointer-events: none;
-            animation: lightning 4s infinite;
+            animation: strike 4s infinite;
         }
 
         #map {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; filter: brightness(0.3) contrast(2) grayscale(1) invert(1);
+            z-index: 1; filter: brightness(0.4) contrast(1.8) grayscale(0.5) hue-rotate(190deg);
         }
 
         /* TACTICAL HUD */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; pointer-events: none;
-            background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.9) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(1, 11, 26, 1) 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* ENTRANCE ANIMATION */
         .entrance-logo {
-            width: 180px; height: auto;
-            filter: drop-shadow(0 0 20px #ff0000);
+            width: 140px; height: auto;
+            filter: drop-shadow(0 0 20px var(--war-red));
             margin-bottom: 20px;
-            animation: pulse 1s infinite alternate;
+            animation: logoPulse 1.5s infinite alternate;
         }
 
-        /* SIGLAKAS WAR TEXT */
+        @keyframes logoPulse {
+            from { transform: scale(1); filter: drop-shadow(0 0 10px var(--war-red)); }
+            to { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--tactical-blue)); }
+        }
+
         .war-text {
-            text-align: center;
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 1.5rem;
-            padding: 0 20px;
-            text-shadow: 3px 3px 0px #ff0000, -2px -2px 0px var(--tactical-blue);
-            animation: glitch 0.2s infinite;
-            letter-spacing: 2px;
-            line-height: 1.2;
+            text-align: center; color: white;
+            padding: 0 15px; max-width: 800px;
         }
 
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+        .war-text h1 {
+            font-size: 1.4rem; letter-spacing: 2px; font-weight: 900;
+            text-shadow: 2px 2px 0px var(--war-red);
+            margin: 0; line-height: 1.2;
+            animation: textGlitch 0.3s infinite alternate;
         }
 
-        @keyframes pulse {
-            from { transform: scale(1); filter: brightness(1) drop-shadow(0 0 10px red); }
-            to { transform: scale(1.05); filter: brightness(1.5) drop-shadow(0 0 30px red); }
+        .war-text p {
+            font-size: 0.8rem; color: var(--tactical-blue);
+            margin-top: 10px; letter-spacing: 5px; font-weight: bold;
         }
 
+        @keyframes textGlitch {
+            0% { transform: skew(0deg); }
+            100% { transform: skew(1deg); text-shadow: -2px 0 var(--tactical-blue), 2px 0 var(--war-red); }
+        }
+
+        /* NO-EXIT IFRAME WRAPPER */
         #secure-frame {
             position: absolute; width: 100%; height: 100%; border: none;
             z-index: 100; opacity: 0; visibility: hidden;
+            transition: opacity 0.8s ease-in;
+        }
+
+        /* MAP LABELS */
+        .tactical-label {
+            background: rgba(255, 0, 0, 0.2) !important;
+            border: 1px solid var(--war-red) !important;
+            color: #fff !important; font-weight: 900 !important;
+            font-size: 10px !important; text-transform: uppercase;
         }
     </style>
 </head>
@@ -99,52 +110,67 @@
     <div id="hud">
         <img src="1 LOGO 3D (1).png" alt="SIGLAKAS Logo" class="entrance-logo">
         <div class="war-text">
-            SINANAY SA ISIP AT GAWA<br>
-            <span style="font-size: 2.5rem; color: #ff0000;">LABAN SA KRIMINALIDAD</span><br>
-            AT MAMAMAYAN (SIGLAKAS)
+            <h1>SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD AT MAMAMAYAN (SIGLAKAS)</h1>
+            <p>UPLINKING STRIKE PROTOCOL...</p>
         </div>
-        <div style="margin-top: 30px; color: var(--defense-green); font-family: monospace; letter-spacing: 5px;">
-            INITIALIZING STRIKE PROTOCOL...
-        </div>
+        <div style="border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--war-red); border-radius: 50%; width: 50px; height: 50px; animation: spin 0.8s linear infinite; margin-top: 30px;"></div>
     </div>
 
     <iframe id="secure-frame" 
             src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec" 
             allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
-            onload="launchSequence()">
+            onload="overdriveLaunch()">
     </iframe>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 10);
+        // Jurisdiction Points for Visual Effect
+        const jurisdictions = [
+            { n: "ZAMBO CITY", p: [6.92, 122.07] },
+            { n: "SULU", p: [6.0, 121.0] },
+            { n: "SIBUGAY", p: [7.7, 122.5] },
+            { n: "ZAMBO SUR", p: [7.8, 123.3] },
+            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+        ];
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.4, 122.3], 8);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
-        function launchSequence() {
+        jurisdictions.forEach(j => {
+            L.circleMarker(j.p, { radius: 6, color: '#ff0000', weight: 2, fillOpacity: 1 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'right', className: 'tactical-label' });
+        });
+
+        function overdriveLaunch() {
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
-            const lightning = document.getElementById('lightning-overlay');
+            const light = document.getElementById('lightning-overlay');
 
-            // Fast zoom-in "Strike" effect
-            map.flyTo([7.4, 122.3], 12, { duration: 0.8, easeLinearity: 0.1 });
+            // Quick Tactical Zoom
+            map.flyTo([6.92, 122.07], 13, { duration: 0.8, easeLinearity: 0.1 });
 
             setTimeout(() => {
                 frame.style.visibility = "visible";
                 frame.style.opacity = "1";
                 hud.style.opacity = "0";
-                lightning.style.display = "none";
                 
                 setTimeout(() => { 
-                    document.getElementById('map').remove();
-                    hud.remove();
-                }, 500);
-            }, 1200); // Fast load transition
+                    hud.remove(); 
+                    light.remove();
+                    document.getElementById('map').remove(); 
+                }, 1000);
+            }, 1500);
         }
 
-        // Prevent accidental exits or right-clicks
-        document.onkeydown = (e) => {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
+        // Security: Lock DevTools and Right Click
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+                return false;
+            }
         };
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </script>
 </body>
 </html>
