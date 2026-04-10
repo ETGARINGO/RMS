@@ -2,135 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="SIGLAKAS.png">
-    <link rel="apple-touch-icon" href="SIGLAKAS.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SIGLAKAS | PRO9 COMMAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGLAKAS | STRATEGIC MAP</title>
+    <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        :root {
-            --war-red: #ff0000;
-            --tactical-blue: #00d4ff;
-            --bg-black: #000814;
-            --lightning-flash: rgba(255, 255, 255, 0.95);
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Courier, monospace; }
+
+        /* FAST THUNDER LIGHTNING EFFECT */
+        @keyframes lightning {
+            0% { background: #000; }
+            5% { background: #fff; opacity: 0.8; }
+            7% { background: #222; }
+            9% { background: #fff; opacity: 0.5; }
+            11% { background: #000; }
+        }
+        .storm-layer {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events: none; z-index: 99;
+            animation: lightning 5s infinite;
         }
 
-        body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
-            overflow: hidden; background-color: var(--bg-black); 
-            position: fixed; font-family: 'Arial Black', sans-serif;
-        }
-
-        /* FAST THUNDER EFFECT */
-        @keyframes strike {
-            0%, 15%, 85%, 100% { background: transparent; opacity: 0; }
-            7% { background: var(--lightning-flash); opacity: 1; }
-            10% { background: transparent; }
-            12% { background: var(--lightning-flash); opacity: 1; }
-        }
-        #lightning-bolt {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 999; pointer-events: none; animation: strike 2.5s infinite;
-        }
-
-        #map {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; filter: brightness(0.3) contrast(2) grayscale(1) invert(1);
-        }
-
-        /* TACTICAL HUD */
+        /* 3D WAR ENTRANCE WORDING */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none;
-            background: radial-gradient(circle, transparent 10%, rgba(0, 0, 0, 1) 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.4s ease-in;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 100; background: rgba(0,0,0,0.8);
+            transition: opacity 0.8s ease;
+        }
+        .war-title {
+            text-align: center; font-size: 2.5rem; font-weight: 900;
+            color: #ff0000; text-transform: uppercase;
+            text-shadow: 0 0 20px #ff0000;
+            transform: perspective(1000px) rotateX(20deg) scale(0.8);
+            animation: warIn 0.5s cubic-bezier(0.17, 0.88, 0.32, 1.27) forwards;
+            padding: 20px;
+        }
+        @keyframes warIn {
+            to { transform: perspective(1000px) rotateX(0deg) scale(1); opacity: 1; }
         }
 
-        .entrance-logo {
-            width: 150px; height: auto;
-            filter: drop-shadow(0 0 20px var(--war-red));
-            margin-bottom: 20px;
-            animation: logoTremor 0.1s infinite alternate;
-        }
-
-        /* 3D WAR TYPOGRAPHY */
-        .war-text {
-            text-align: center; color: white; text-transform: uppercase;
-            padding: 0 15px; max-width: 850px;
-            text-shadow: 
-                0 1px 0 #444, 0 2px 0 #333, 0 3px 0 #222, 
-                0 4px 0 #111, 0 5px 10px rgba(255,0,0,0.5);
-            animation: textFlicker 0.2s infinite alternate;
-        }
-        .war-text h1 { font-size: 1.4rem; margin: 0; letter-spacing: 1px; line-height: 1.2; }
-        .war-text span { font-size: 2.2rem; color: var(--war-red); display: block; margin-top: 5px; }
-
-        @keyframes logoTremor { from { transform: translate(1px, 1px); } to { transform: translate(-1px, -1px); } }
-        @keyframes textFlicker { from { opacity: 1; } to { opacity: 0.8; } }
-
-        /* NO-EXIT PERSISTENT IFRAME */
+        /* THE SECURE LOCKDOWN IFRAME */
         #secure-frame {
-            position: absolute; width: 100%; height: 100%; border: none;
-            z-index: 100; opacity: 0; visibility: hidden;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: none; visibility: hidden; opacity: 0; transition: opacity 0.8s;
+            z-index: 200;
+        }
+
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+
+        .tactical-label { background: rgba(0,0,0,0.7); border: 1px solid #00ff66; color: #00ff66; font-weight: bold; }
+        .pulse-ring { animation: pulse 2s infinite ease-out; }
+        @keyframes pulse { from { r: 5; opacity: 1; } to { r: 25; opacity: 0; } }
+        
+        .launch-btn {
+            margin-top: 20px; padding: 15px 40px; background: #ff0000; color: #fff;
+            border: none; cursor: pointer; font-weight: bold; border-radius: 5px;
+            box-shadow: 0 0 15px #ff0000; z-index: 101;
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="lightning-bolt"></div>
-    <div id="map"></div>
+    <div class="storm-layer"></div>
 
     <div id="hud">
-        <img src="SIGLAKAS.png" alt="SIGLAKAS Logo" class="entrance-logo">
-        <div class="war-text">
-            <h1>SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD</h1>
-            <span>SIGLAKAS</span>
-            <p style="font-size: 0.7rem; color: var(--tactical-blue); letter-spacing: 5px; margin-top: 15px; font-family: monospace;">STRIKE FORCE UPLINKING...</p>
+        <img src="1 LOGO 3D (1).png" style="width:150px; margin-bottom:20px;">
+        <div class="war-title">
+            SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD AT MAMAMAYAN<br>(SIGLAKAS)
         </div>
+        <button class="launch-btn" onclick="overdriveLaunch()">INITIALIZE WAR MAP</button>
     </div>
 
-    <iframe id="secure-frame" 
-            src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec" 
-            allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
-            onload="launchProtocol()">
+    <div id="map"></div>
+
+    <iframe 
+        id="secure-frame" 
+        src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec"
+        sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
+        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media">
     </iframe>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
-        // Setup Map for visual texture
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 10);
+        const jurisdictions = [
+            { n: "SULU", p: [6.0, 121.0] },
+            { n: "ISABELA", p: [6.7, 121.9] },
+            { n: "ZAMBO CITY", p: [6.92, 122.07] },
+            { n: "SIBUGAY", p: [7.7, 122.5] },
+            { n: "ZAMBO SUR", p: [7.8, 123.3] },
+            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+        ];
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 12);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
-        function launchProtocol() {
+        jurisdictions.forEach(j => {
+            L.circleMarker(j.p, { radius: 5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'right', offset: [12, 0], className: 'tactical-label' });
+            
+            L.circleMarker(j.p, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+        });
+
+        function overdriveLaunch() {
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
-            const bolt = document.getElementById('lightning-bolt');
 
-            // Tactical Strike Zoom
-            map.flyTo([6.92, 122.07], 14, { duration: 0.6, easeLinearity: 0.1 });
+            // Fast pan/zoom effect
+            map.flyTo([7.4, 122.3], 8, { duration: 0.6, easeLinearity: 0.1 });
 
             setTimeout(() => {
                 frame.style.visibility = "visible";
                 frame.style.opacity = "1";
                 hud.style.opacity = "0";
-                
-                // Absolute removal to lock user into the iframe DNS
                 setTimeout(() => { 
-                    hud.remove(); 
-                    bolt.remove();
-                    document.getElementById('map').remove(); 
-                }, 500);
-            }, 800);
+                    document.getElementById('map').remove();
+                    hud.remove();
+                }, 800);
+            }, 700);
         }
 
-        // Security: Lock DevTools
+        // Security Lockdown: Prevents Keyboard Inspect/View Source
         document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
+                return false;
+            }
         };
+
+        // Anti-Idle Auto-Reload
+        let idleTime = 0;
+        const reset = () => idleTime = 0;
+        ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
+        setInterval(() => {
+            idleTime++;
+            if (idleTime >= 30) window.location.reload();
+        }, 60000);
     </script>
 </body>
 </html>
