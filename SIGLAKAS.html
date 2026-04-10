@@ -3,138 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGLAKAS | RESTRICTED ACCESS</title>
+    <title>SIGLAKAS | RESTRICTED COMMAND</title>
     <link rel="icon" type="image/png" href="SIGLAKAS.png">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        :root { --war-red: #ff0000; --tactical-bg: rgba(10, 0, 0, 0.95); }
+        :root { --war-red: #ff0000; --tactical-bg: rgba(15, 0, 0, 0.95); }
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', monospace; }
 
-        /* SECURITY OVERLAY */
-        #security-gate {
+        /* AUTHENTICATION OVERLAY */
+        #auth-gate {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 999; display: flex;
+            background: #000; z-index: 1000; display: flex;
             flex-direction: column; justify-content: center; align-items: center;
         }
-
-        .auth-box {
-            padding: 30px; border: 1px solid var(--war-red); background: var(--tactical-bg);
-            text-align: center; box-shadow: 0 0 20px rgba(255,0,0,0.3);
+        .terminal-box {
+            padding: 40px; border: 1px solid var(--war-red); background: var(--tactical-bg);
+            text-align: center; box-shadow: 0 0 30px rgba(255,0,0,0.2);
+        }
+        #pass-input {
+            background: #000; border: 1px solid #444; color: var(--war-red);
+            padding: 12px; width: 250px; text-align: center; font-size: 1.2rem;
+            outline: none; margin-top: 20px; text-transform: uppercase;
         }
 
-        input[type="password"] {
-            background: #111; border: 1px solid #444; color: var(--war-red);
-            padding: 10px; margin-top: 15px; text-align: center; width: 200px; outline: none;
-        }
-
-        /* CRT EFFECTS */
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%; z-index: 60; pointer-events: none;
-        }
+        /* CRT SCANLINE & VIGNETTE */
+        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 30%, black 150%); z-index: 50; pointer-events: none; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); background-size: 100% 3px, 3px 100%; z-index: 60; pointer-events: none; }
 
         /* HUD & MAP */
-        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; filter: brightness(0.4) contrast(1.5) sepia(1) hue-rotate(320deg); }
-        #hud {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 100; background: radial-gradient(circle, rgba(30,0,0,0.8) 0%, #000 100%);
-            transition: 0.8s;
-        }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; filter: sepia(1) hue-rotate(320deg) brightness(0.4) contrast(1.5); visibility: hidden; }
+        #hud { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; background: radial-gradient(circle, rgba(40,0,0,0.8) 0%, rgba(0,0,0,1) 100%); transition: 0.5s; }
 
-        .tactical-label { background: #000 !important; border: 1px solid #f00 !important; color: #f00 !important; font-size: 10px !important; }
+        .launch-btn { margin-top: 40px; padding: 15px 50px; background: #600; color: #fff; border: 2px solid var(--war-red); cursor: pointer; font-weight: bold; text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); letter-spacing: 3px; }
+        .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 30px var(--war-red); }
 
-        .launch-btn {
-            margin-top: 25px; padding: 15px 40px; background: #800; color: #fff;
-            border: 2px solid #f00; cursor: pointer; font-weight: bold;
-            clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
-        }
-
-        #secure-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; visibility: hidden; z-index: 200; }
+        #secure-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; visibility: hidden; opacity: 0; z-index: 200; background: #000; }
+        .tactical-label { background: var(--tactical-bg) !important; border: 1px solid var(--war-red) !important; color: var(--war-red) !important; font-size: 11px !important; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="security-gate">
-        <div class="auth-box">
-            <img src="SIGLAKAS.png" width="80" style="filter: grayscale(1) invert(1);">
-            <p style="color:#ff0000; font-size: 12px; letter-spacing: 2px;">SECURE TERMINAL PRO9</p>
-            <input type="password" id="passkey" placeholder="ENTER ACCESS CODE" onkeypress="checkAuth(event)">
-            <p id="err" style="color: yellow; font-size: 10px; margin-top: 10px; display: none;">INVALID CLEARANCE</p>
+    <div id="auth-gate">
+        <div class="terminal-box">
+            <img src="SIGLAKAS.png" width="100" style="filter: grayscale(1) invert(1); opacity: 0.5;">
+            <h2 style="color: #ff0000; letter-spacing: 2px;">RESTRICTED ACCESS</h2>
+            <p style="font-size: 0.8rem; color: #888;">ENTER AUTHORIZATION KEY</p>
+            <input type="password" id="pass-input" placeholder="********" autocomplete="off">
+            <p id="auth-msg" style="color: yellow; font-size: 0.7rem; margin-top: 10px; visibility: hidden;">ACCESS DENIED: LOGGING ATTEMPT</p>
         </div>
     </div>
 
+    <div class="vignette"></div>
     <div class="scanlines"></div>
 
     <div id="hud">
-        <img src="SIGLAKAS.png" width="180" style="filter: drop-shadow(0 0 15px #f00);">
-        <h2 style="color: #f00; letter-spacing: 5px;">TACTICAL UPLINK</h2>
-        <button class="launch-btn" onclick="overdriveLaunch()">AUTHORIZE CONNECTION</button>
+        <img src="SIGLAKAS.png" width="200" style="filter: drop-shadow(0 0 15px var(--war-red));">
+        <h1 style="color: #ff0000; letter-spacing: 8px; margin-top: 20px;">COMMAND UPLINK</h1>
+        <button class="launch-btn" onclick="overdriveLaunch()">AUTHORIZE SYNC</button>
     </div>
 
     <div id="map"></div>
-    <iframe id="secure-frame" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+    <iframe id="secure-frame" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
 
     <script>
-        // 1. SIMPLE ENCRYPTION (Base64) to hide the Google Script URL from bots
+        // Encoded Folder URL (Security via Obfuscation)
         const _v = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5Q09Kc2JRTS1IZVFkcWRzaFFGbmVMMHRsOVB5SDN5VEpWRUI4TENHUU5Xak5lZDdwcHN5bGRxTnlpdUVzOUtwbi9leGVj";
-        
-        // 2. AUTHENTICATION LOGIC (Replace 'PRO9-2024' with your desired code)
-        function checkAuth(e) {
+
+        // 1. Password Verification (SET YOUR PASSWORD HERE)
+        const AUTH_KEY = "PRO9_SECURE_2026"; 
+
+        document.getElementById('pass-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                const code = document.getElementById('passkey').value;
-                if (code === 'PRO9-2024') { 
-                    document.getElementById('security-gate').style.display = 'none';
-                    initMap();
+                if (this.value === AUTH_KEY) {
+                    unlockSystem();
                 } else {
-                    document.getElementById('err').style.display = 'block';
-                    document.getElementById('passkey').value = '';
+                    document.getElementById('auth-msg').style.visibility = "visible";
+                    this.value = "";
                 }
             }
+        });
+
+        function unlockSystem() {
+            document.getElementById('auth-gate').style.display = "none";
+            document.getElementById('map').style.visibility = "visible";
+            document.getElementById('hud').style.display = "flex";
+            initTacticalMap();
         }
 
-        // 3. MAP INITIALIZATION (Only loads AFTER auth)
-        function initMap() {
+        // 2. Initialize Tactical Recon Map
+        function initTacticalMap() {
             const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.5, 122.5], 8);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-            
-            const locs = [[6.0, 121.0, "SULU"], [6.9, 122.0, "ZAMBO"]];
-            locs.forEach(l => {
-                L.circleMarker([l[0], l[1]], { radius: 5, color: '#f00' }).addTo(map)
-                 .bindTooltip(l[2], { permanent: true, className: 'tactical-label' });
+
+            const points = [
+                { n: "SULU", p: [6.0, 121.0] },
+                { n: "ISABELA", p: [6.7, 121.9] },
+                { n: "ZAMBO CITY", p: [6.92, 122.07] },
+                { n: "SIBUGAY", p: [7.7, 122.5] },
+                { n: "ZAMBO SUR", p: [7.8, 123.3] },
+                { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+            ];
+
+            points.forEach(j => {
+                L.circleMarker(j.p, { radius: 4, color: '#f00', weight: 2 }).addTo(map)
+                 .bindTooltip(j.n, { permanent: true, direction: 'top', className: 'tactical-label' });
             });
         }
 
-        // 4. TRANSITION TO SECURE IFRAME
+        // 3. Unauthorized Access Lockdown (Console Detection)
+        setInterval(() => {
+            const devtools = /./;
+            devtools.toString = function() {
+                window.location.reload();
+            };
+            console.log('%c', devtools);
+        }, 1000);
+
         function overdriveLaunch() {
             const frame = document.getElementById('secure-frame');
-            frame.src = atob(_v); // Decodes the URL only at the moment of launch
+            frame.src = atob(_v); // Decode URL only on successful click
             frame.style.visibility = "visible";
+            frame.style.opacity = "1";
             document.getElementById('hud').style.opacity = "0";
-            setTimeout(() => { document.getElementById('hud').remove(); }, 800);
+            setTimeout(() => { document.getElementById('hud').remove(); }, 1000);
         }
 
-        // 5. ANTI-TAMPER SECURITY LOCKDOWN
-        document.onkeydown = function(e) {
-            // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
-                alert("UNAUTHORIZED ACCESS DETECTED");
-                return false;
-            }
+        // Disable standard Inspection keys
+        document.onkeydown = (e) => {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) 
+            return false;
         };
-
-        // Detect if DevTools is opened
-        setInterval(() => {
-            const threshold = 160;
-            if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
-                window.location.reload();
-            }
-        }, 1000);
     </script>
 </body>
 </html>
