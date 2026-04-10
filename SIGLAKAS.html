@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SIGLAKAS | COMMAND UNIT</title>
+    <title>SIGLAKAS | COMMAND</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -13,80 +13,64 @@
         :root {
             --war-red: #ff0000;
             --tactical-blue: #00d4ff;
-            --bg-black: #00050a;
-            --lightning-color: rgba(255, 255, 255, 0.9);
+            --bg-black: #010b1a;
+            --flash: rgba(255, 255, 255, 0.9);
         }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
             overflow: hidden; background-color: var(--bg-black); 
-            position: fixed; font-family: 'Arial Black', Gadget, sans-serif;
+            position: fixed; font-family: 'Segoe UI', Arial, sans-serif;
         }
 
-        /* THUNDER LIGHTNING EFFECT */
+        /* FAST THUNDER LIGHTNING */
         @keyframes thunder {
-            0%, 10%, 90%, 100% { background: transparent; }
-            92% { background: var(--lightning-color); }
-            94% { background: transparent; }
-            96% { background: var(--lightning-color); }
+            0%, 10%, 80%, 100% { background: transparent; opacity: 0; }
+            5% { background: var(--flash); opacity: 1; }
+            7% { background: transparent; }
+            8% { background: var(--flash); opacity: 1; }
         }
-
-        #bolt {
+        #lightning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 999; pointer-events: none;
-            animation: thunder 3s infinite;
+            z-index: 999; pointer-events: none; animation: thunder 2s infinite;
         }
 
         #map {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; filter: brightness(0.3) contrast(2.5) grayscale(1) invert(1);
+            z-index: 1; filter: brightness(0.4) contrast(1.8) grayscale(1) invert(1);
         }
 
         /* TACTICAL HUD */
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; pointer-events: none;
-            background: radial-gradient(circle, transparent 10%, rgba(0, 0, 0, 0.95) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 1) 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease-in;
+            transition: opacity 0.4s ease-out;
         }
 
         .entrance-logo {
-            width: 160px; height: auto;
-            filter: drop-shadow(0 0 25px var(--war-red));
-            margin-bottom: 25px;
-            animation: logoShock 0.1s infinite alternate;
+            width: 140px; height: auto;
+            filter: drop-shadow(0 0 20px var(--war-red));
+            margin-bottom: 20px;
+            animation: pulse 0.5s infinite alternate;
         }
 
-        @keyframes logoShock {
-            from { transform: translate(1px, 1px); }
-            to { transform: translate(-1px, -1px); }
+        /* 3D WAR WORDINGS */
+        .war-title {
+            text-align: center; color: white; text-transform: uppercase;
+            padding: 0 20px; max-width: 900px;
+        }
+        .war-title h1 {
+            font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            margin: 0; text-shadow: 3px 3px 0px var(--war-red), -1px -1px 0px var(--tactical-blue);
+            animation: shake 0.2s infinite;
         }
 
-        /* 3D WAR TEXT EFFECT */
-        .siglakas-header {
-            text-align: center;
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 1.6rem;
-            padding: 0 25px;
-            letter-spacing: -1px;
-            text-shadow: 
-                0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 
-                0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 
-                0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 
-                0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 
-                0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15),
-                2px 2px 10px var(--war-red);
-            animation: flicker 0.5s infinite;
-        }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+        @keyframes shake { 0% { transform: translate(0); } 50% { transform: translate(1px, -1px); } 100% { transform: translate(-1px, 1px); } }
 
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        /* PERSISTENT IFRAME (NO EXIT) */
+        /* NO-EXIT IFRAME */
         #secure-frame {
             position: absolute; width: 100%; height: 100%; border: none;
             z-index: 100; opacity: 0; visibility: hidden;
@@ -95,56 +79,65 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="bolt"></div>
+    <div id="lightning"></div>
     <div id="map"></div>
 
     <div id="hud">
-        <img src="1 LOGO 3D (1).png" alt="SIGLAKAS" class="entrance-logo">
-        <div class="siglakas-header">
-            SINANAY SA ISIP AT GAWA<br>
-            <span style="color: var(--war-red); font-size: 2.2rem;">LABAN SA KRIMINALIDAD</span><br>
-            AT MAMAMAYAN (SIGLAKAS)
+        <img src="1 LOGO 3D (1).png" alt="Logo" class="entrance-logo">
+        <div class="war-title">
+            <h1>SINANAY SA ISIP AT GAWA LABAN SA KRIMINALIDAD AT MAMAMAYAN (SIGLAKAS)</h1>
         </div>
-        <div style="margin-top: 40px; color: var(--tactical-blue); font-family: monospace; font-weight: bold; letter-spacing: 4px;">
-            STRIKE PROTOCOL ACTIVE...
-        </div>
+        <div style="margin-top: 20px; color: var(--tactical-blue); font-family: monospace; letter-spacing: 3px;">UPLINKING STRIKE...</div>
     </div>
 
     <iframe id="secure-frame" 
             src="https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec" 
             allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
-            onload="triggerUplink()">
+            onload="strikeLaunch()">
     </iframe>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.2, 122.5], 9);
+        // Jurisdiction Data
+        const jurisdictions = [
+            { n: "ZAMBO CITY", p: [6.92, 122.07] },
+            { n: "SULU", p: [6.0, 121.0] },
+            { n: "SIBUGAY", p: [7.7, 122.5] },
+            { n: "ZAMBO SUR", p: [7.8, 123.3] },
+            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+        ];
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.4, 122.3], 9);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
-        function triggerUplink() {
+        jurisdictions.forEach(j => {
+            L.circleMarker(j.p, { radius: 5, color: '#ff0000', weight: 2, fillOpacity: 1 }).addTo(map);
+        });
+
+        function strikeLaunch() {
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
-            const bolt = document.getElementById('bolt');
+            const bolt = document.getElementById('lightning');
 
-            // Fast Tactical Zoom
-            map.flyTo([6.92, 122.07], 13, { duration: 0.7, easeLinearity: 0.1 });
+            // Direct tactical zoom
+            map.flyTo([6.92, 122.07], 13, { duration: 0.5, easeLinearity: 0.1 });
 
             setTimeout(() => {
                 frame.style.visibility = "visible";
                 frame.style.opacity = "1";
                 hud.style.opacity = "0";
                 
-                // Cleanup to prevent exit/navigation away from DNS
+                // Absolute cleanup to prevent "Exit" from DNS
                 setTimeout(() => { 
+                    hud.remove(); 
                     bolt.remove();
-                    hud.remove();
                     document.getElementById('map').remove(); 
-                }, 600);
-            }, 1000);
+                }, 500);
+            }, 800);
         }
 
-        // Disable DevTools & View Source
+        // Security Lock
         document.onkeydown = (e) => {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
         };
