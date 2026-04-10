@@ -21,7 +21,7 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* CRT SCANLINE & VIGNETTE */
+        /* CRT EFFECTS */
         .vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 30%, black 150%);
@@ -36,7 +36,6 @@
             z-index: 60; pointer-events: none;
         }
 
-        /* STORM EFFECT */
         @keyframes lightning {
             0%, 95%, 100% { opacity: 0; }
             96% { opacity: 1; background: #fff; }
@@ -66,11 +65,10 @@
         }
 
         @keyframes logoPulse {
-            from { transform: scale(1); filter: drop-shadow(0 0 15px var(--war-red)); }
+            from { transform: scale(1); }
             to { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--war-red)); }
         }
 
-        /* MAP */
         #map { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 10; 
@@ -81,7 +79,7 @@
             background: var(--tactical-bg) !important; 
             border: 1px solid var(--war-red) !important; 
             color: var(--war-red) !important; 
-            font-size: 11px !important; 
+            font-size: 12px !important; 
             box-shadow: 0 0 8px var(--war-red);
         }
         
@@ -94,9 +92,9 @@
 
         .launch-btn {
             margin-top: 40px; padding: 15px 50px; background: #600; color: #fff;
-            border: 2px solid var(--war-red); cursor: pointer; font-weight: bold;
+            border: 2px solid var(--war-red); cursor: pointer; font-weight: bold; font-size: 1.2rem;
             box-shadow: 0 0 15px var(--war-red); transition: 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
             letter-spacing: 3px;
         }
         .launch-btn:hover { background: var(--war-red); box-shadow: 0 0 40px var(--war-red); }
@@ -104,10 +102,10 @@
         .pulse-ring { animation: pulse 2s infinite ease-out; stroke: var(--war-red); }
         @keyframes pulse { from { r: 4; opacity: 1; } to { r: 25; opacity: 0; } }
 
-        /* LOADING OVERLAY */
-        #loading-screen {
+        /* SECURE OVERLAY */
+        #secure-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 1000; display: none;
+            background: #000; z-index: 500; display: none;
             justify-content: center; align-items: center;
             color: var(--war-red); font-size: 1.5rem; letter-spacing: 5px;
         }
@@ -118,24 +116,23 @@
     <div class="vignette"></div>
     <div class="scanlines"></div>
     <div class="storm-layer"></div>
-    <div id="loading-screen">ESTABLISHING SECURE LINK...</div>
+    <div id="secure-overlay">ESTABLISHING SECURE CONNECTION...</div>
 
     <div id="status-bar">
         SYSTEM: ARMED<br>
-        SIGNAL: 256-BIT ENCRYPTED<br>
+        SIGNAL: 128-BIT ENCRYPTED<br>
         LOC: <span id="live-coords">0.0000, 0.0000</span>
     </div>
 
     <div id="hud">
         <img src="SIGLAKAS.png" class="siglakas-logo" alt="SIGLAKAS">
-        <button class="launch-btn" onclick="overdriveLaunch()">DECRYPT & ACCESS</button>
+        <button class="launch-btn" onclick="overdriveLaunch()">ACCESS FOLDER</button>
     </div>
 
     <div id="map"></div>
 
     <script>
-        // Target URL
-        const SECURE_URL = "https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec";
+        const SECURE_LINK = "https://script.google.com/macros/s/AKfycbyCOJsbQMHeQdCqdshQFneL0tl9PyhH3yTJVEB8LCGQNWjNed7ppsyldqNyiuEs9Kpn/exec";
 
         const jurisdictions = [
             { n: "SULU", p: [6.0, 121.0] },
@@ -161,42 +158,36 @@
 
         function overdriveLaunch() {
             const hud = document.getElementById('hud');
-            const loader = document.getElementById('loading-screen');
+            const overlay = document.getElementById('secure-overlay');
 
-            // 1. Visual Trigger
+            // Visual Glitch Sequence
             hud.style.filter = "invert(1) contrast(10) blur(10px)";
-            hud.style.opacity = "0";
             document.querySelector('.storm-layer').style.animation = "lightning 0.1s infinite";
-
-            // 2. Tactical Map Fly-in
             map.flyTo([6.92, 122.07], 14, { duration: 1.5, easeLinearity: 0.1 });
 
             setTimeout(() => {
-                loader.style.display = "flex";
+                overlay.style.display = "flex";
                 
-                // 3. The "Stay in DNS" Fix:
-                // We open the secure script in a new tab because IFRAME is blocked by Google.
-                // We keep the main page active so the user remains in your 'DNS' environment.
-                const secureWin = window.open(SECURE_URL, '_blank');
-                
-                if(!secureWin || secureWin.closed || typeof secureWin.closed=='undefined') {
-                    alert("SECURITY BLOCK: Please allow pop-ups to access the tactical folder.");
+                // OPEN PORTAL (Bypasses Iframe Block while staying in browser session)
+                const portal = window.open(SECURE_LINK, '_blank');
+
+                if(!portal) {
+                    alert("LINK BLOCKED: Please enable pop-ups for this tactical site.");
+                    overlay.style.display = "none";
                     location.reload();
                 }
 
-                // Reset UI after launch
+                // Reset HUD so user stays on your GitHub DNS
                 setTimeout(() => {
-                    loader.style.display = "none";
+                    overlay.style.display = "none";
                     hud.style.filter = "none";
-                    hud.style.opacity = "1";
                     document.querySelector('.storm-layer').style.animation = "lightning 5s infinite";
                     map.setView([7.5, 122.5], 8);
                 }, 2000);
-
-            }, 1200);
+            }, 1000);
         }
 
-        // Anti-Inspection
+        // Lockdown
         document.onkeydown = (e) => {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && [85, 83].includes(e.keyCode))) 
             return false;
