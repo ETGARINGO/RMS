@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PRO9 COMMAND | COMPETENCY TRAINING</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --tactical-blue: #00d4ff;
+            --defense-green: #00ff66;
+            --training-gold: #ffcc00;
+            --bg-black: #00050a;
+        }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: var(--bg-black); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            filter: brightness(0.3) contrast(1.5) saturate(0.2) hue-rotate(180deg);
+        }
+
+        #hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 20%, rgba(0, 10, 20, 0.6) 100%);
+            transition: opacity 1s ease;
+        }
+
+        .grid-overlay {
+            position: absolute; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .corner {
+            position: absolute; width: 40px; height: 40px;
+            border: 2px solid var(--tactical-blue); opacity: 0.5;
+        }
+        .tl { top: 20px; left: 20px; border-right: 0; border-bottom: 0; }
+        .tr { top: 20px; right: 20px; border-left: 0; border-bottom: 0; }
+        .bl { bottom: 20px; left: 20px; border-right: 0; border-top: 0; }
+        .br { bottom: 20px; right: 20px; border-left: 0; border-top: 0; }
+
+        .header-main {
+            position: absolute; top: 50px; width: 100%; text-align: center;
+            color: white; text-transform: uppercase;
+        }
+
+        .header-main h1 { margin: 0; font-size: 22px; letter-spacing: 10px; font-weight: 900; }
+        .header-main span { color: var(--training-gold); font-size: 11px; letter-spacing: 5px; font-weight: bold; }
+
+        .terminal {
+            position: absolute; bottom: 40px; left: 40px;
+            color: var(--defense-green); font-family: 'Courier New', monospace; font-size: 12px;
+            background: rgba(0,15,30,0.9); padding: 15px;
+            border-left: 4px solid var(--training-gold);
+            min-width: 280px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        #secure-frame {
+            position: absolute; width: 100%; height: 100%; border: none;
+            z-index: 100; opacity: 0; display: none;
+            transition: opacity 0.8s ease-in;
+        }
+
+        .radar-sweep {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100px; height: 100px; border: 1px solid var(--training-gold);
+            border-radius: 50%; opacity: 0; animation: radarPulse 2.5s infinite;
+        }
+        @keyframes radarPulse {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 1200px; height: 1200px; opacity: 0; }
+        }
+
+        .tactical-label {
+            background: none !important; border: none !important;
+            color: var(--training-gold) !important; font-weight: bold !important;
+            font-size: 11px !important; text-shadow: 2px 2px 4px black;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="map"></div>
+
+    <div id="hud">
+        <div class="grid-overlay"></div>
+        <div class="radar-sweep"></div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+
+        <div class="header-main">
+            <h1>PRO9 COMMAND</h1>
+            <span>COMPETENCY TRAINING MODULE</span>
+        </div>
+
+        <div class="terminal" id="term">
+            [SYS] ACCESSING_TRAINING_DB...<br>
+            [LOC] REGION IX AOR<br>
+            [STATUS] <span id="sync" style="color: var(--training-gold);">INITIALIZING...</span><br>
+            [MSG] READY FOR PERSONNEL DATA ENTRY
+        </div>
+    </div>
+
+    <iframe id="secure-frame" 
+            src="https://script.google.com/macros/s/AKfycbz1gRjly8-11qEPL0gbE-pWBxthnXQJwRYkPhRkM5nrV-XdtJRWlrMErGQSVUd7cYCe/exec" 
+            allow="fullscreen; geolocation; camera; microphone;"
+            onload="startCommandFlow()">
+    </iframe>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Regional Hubs for Training Visualization
+        const sectors = [
+            { n: "HQ PRO9", p: [6.921, 122.079] },
+            { n: "ZAMBOANGA DEL SUR", p: [7.8, 123.3] },
+            { n: "ZAMBOANGA SIBUGAY", p: [7.7, 122.5] },
+            { n: "ZAMBOANGA DEL NORTE", p: [8.2, 123.0] }
+        ];
+
+        // Start zoomed in on HQ
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.921, 122.079], 15);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        function startCommandFlow() {
+            const sync = document.getElementById('sync');
+            const term = document.getElementById('term');
+            const frame = document.getElementById('secure-frame');
+            const hud = document.getElementById('hud');
+            
+            // 1. Tactical Zoom Out to Regional View
+            map.flyTo([7.6, 122.6], 8.5, { duration: 1.5, easeLinearity: 0.2 });
+
+            setTimeout(() => {
+                // 2. Deploy Training Sector Nodes
+                sectors.forEach(s => {
+                    L.circleMarker(s.p, {
+                        radius: 5, color: '#fff', fillColor: '#ffcc00', fillOpacity: 1, weight: 2
+                    }).addTo(map).bindTooltip(s.n, {permanent: true, direction: 'top', className: 'tactical-label'});
+                    
+                    L.circle(s.p, { radius: 15000, color: '#ffcc00', weight: 1, fillOpacity: 0.1 }).addTo(map);
+                });
+
+                sync.innerText = "CONNECTED";
+                term.innerHTML += "<br>> SECTORS ACTIVE<br>> LOADING FORM...";
+            }, 800);
+
+            // 3. Reveal Training Form
+            setTimeout(() => {
+                frame.style.display = "block";
+                setTimeout(() => { 
+                    frame.style.opacity = "1";
+                    hud.style.opacity = "0";
+                }, 100);
+
+                // Clear background map to save resources
+                setTimeout(() => {
+                    document.getElementById('map').style.display = "none";
+                }, 1200);
+            }, 2500);
+        }
+
+        // Basic Security
+        document.onkeydown = (e) => { 
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false; 
+        };
+    </script>
+</body>
+</html>
