@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>PRO9 COMMAND | COMPETENCY TRAINING</title>
+    <title>PRO9 COMMAND | TACTICAL ROVER</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -12,7 +12,7 @@
             --tactical-blue: #00d4ff;
             --defense-green: #00ff66;
             --training-gold: #ffcc00;
-            --bg-black: #00050a;
+            --bg-black: #000a12;
             --siren-red: #ff0033;
             --siren-blue: #0055ff;
         }
@@ -23,212 +23,166 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* TACTICAL HEX BACKGROUND */
+        #bg-container {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-black) 100%),
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="52" viewBox="0 0 60 52"><path d="M30 0L60 17V45L30 52L0 45V17L30 0Z" fill="none" stroke="%2300d4ff" stroke-width="0.5" opacity="0.15"/></svg>');
+            z-index: 0;
+        }
+
         #map {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
-            filter: brightness(0.3) contrast(1.5) saturate(0.2) hue-rotate(180deg);
+            filter: brightness(0.4) contrast(1.4) saturate(0.3) hue-rotate(185deg);
+            transition: filter 0.5s ease;
         }
+
+        /* NAVIGATION CROSSHAIR */
+        #crosshair {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 150px; height: 150px; border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 50%; z-index: 15; pointer-events: none;
+        }
+        #crosshair::before, #crosshair::after {
+            content: ''; position: absolute; background: var(--tactical-blue); opacity: 0.5;
+        }
+        #crosshair::before { width: 100%; height: 1px; top: 50%; left: 0; }
+        #crosshair::after { width: 1px; height: 100%; left: 50%; top: 0; }
 
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none;
-            background: radial-gradient(circle at center, transparent 20%, rgba(0, 10, 20, 0.6) 100%);
-            transition: opacity 1s ease;
+            z-index: 20; pointer-events: none;
+            background: linear-gradient(rgba(0,10,20,0.4) 0%, transparent 50%, rgba(0,10,20,0.4) 100%);
         }
 
-        /* --- TACTICAL FOOTER & SIREN ALARM --- */
+        /* SCANNING LINE */
+        .scan-line {
+            position: absolute; width: 100%; height: 2px;
+            background: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 15px var(--tactical-blue);
+            top: 0; animation: scanMove 4s linear infinite;
+        }
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* TACTICAL FOOTER */
         .tactical-footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            z-index: 110; /* Above the iframe */
-            background: rgba(0, 5, 10, 0.85);
+            position: fixed; bottom: 0; width: 100%; z-index: 110;
+            background: rgba(0, 5, 10, 0.9);
             border-top: 1px solid var(--tactical-blue);
-            padding: 10px 0;
-            text-align: center;
-            color: white;
-            pointer-events: auto;
-            backdrop-filter: blur(5px);
+            padding: 12px 0; text-align: center; color: white;
+            backdrop-filter: blur(8px);
         }
-
         .motto {
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-            /* Siren Animation Trigger */
-            animation: siren-text 2s infinite;
+            font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+            font-weight: bold; animation: siren-glow 2s infinite;
         }
-
-        .copyright {
-            font-size: 9px;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 1px;
+        @keyframes siren-glow {
+            0%, 100% { color: var(--tactical-blue); text-shadow: 0 0 8px var(--siren-blue); }
+            50% { color: #fff; text-shadow: 0 0 12px var(--siren-red); }
         }
-
-        @keyframes siren-text {
-            0%, 100% { text-shadow: 0 0 10px var(--siren-blue); color: #fff; }
-            50% { text-shadow: 0 0 10px var(--siren-red); color: #fff; }
-        }
-
-        /* Ambient Flashing Siren Bar */
-        .siren-bar {
-            position: absolute;
-            top: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            animation: siren-flash 0.8s infinite;
-        }
-
-        @keyframes siren-flash {
-            0% { background: var(--siren-blue); box-shadow: 0 0 15px var(--siren-blue); }
-            50% { background: var(--siren-red); box-shadow: 0 0 15px var(--siren-red); }
-            100% { background: var(--siren-blue); box-shadow: 0 0 15px var(--siren-blue); }
-        }
-
-        /* --- EXISTING STYLES --- */
-        .grid-overlay {
-            position: absolute; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        .corner {
-            position: absolute; width: 40px; height: 40px;
-            border: 2px solid var(--tactical-blue); opacity: 0.5;
-        }
-        .tl { top: 20px; left: 20px; border-right: 0; border-bottom: 0; }
-        .tr { top: 20px; right: 20px; border-left: 0; border-bottom: 0; }
-        .bl { bottom: 80px; left: 20px; border-right: 0; border-top: 0; } /* Adjusted for footer */
-        .br { bottom: 80px; right: 20px; border-left: 0; border-top: 0; } /* Adjusted for footer */
-
-        .header-main {
-            position: absolute; top: 50px; width: 100%; text-align: center;
-            color: white; text-transform: uppercase;
-        }
-
-        .header-main h1 { margin: 0; font-size: 22px; letter-spacing: 10px; font-weight: 900; }
-        .header-main span { color: var(--training-gold); font-size: 11px; letter-spacing: 5px; font-weight: bold; }
 
         .terminal {
-            position: absolute; bottom: 100px; left: 40px;
-            color: var(--defense-green); font-family: 'Courier New', monospace; font-size: 12px;
-            background: rgba(0,15,30,0.9); padding: 15px;
-            border-left: 4px solid var(--training-gold);
-            min-width: 280px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            position: absolute; bottom: 100px; left: 30px;
+            color: var(--defense-green); font-family: 'Courier New', monospace; font-size: 11px;
+            background: rgba(0,15,30,0.85); padding: 15px;
+            border-left: 3px solid var(--training-gold);
+            min-width: 250px; z-index: 30;
         }
 
         #secure-frame {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 60px); 
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 55px); 
             border: none; z-index: 100; opacity: 0; display: none;
-            transition: opacity 0.8s ease-in;
-        }
-
-        .radar-sweep {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 100px; height: 100px; border: 1px solid var(--training-gold);
-            border-radius: 50%; opacity: 0; animation: radarPulse 2.5s infinite;
-        }
-        @keyframes radarPulse {
-            0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 1200px; height: 1200px; opacity: 0; }
+            transition: opacity 1s ease;
         }
 
         .tactical-label {
             background: none !important; border: none !important;
-            color: var(--training-gold) !important; font-weight: bold !important;
-            font-size: 11px !important; text-shadow: 2px 2px 4px black;
+            color: var(--tactical-blue) !important; font-weight: 900 !important;
+            font-size: 11px !important; text-shadow: 0 0 5px #000;
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <div id="bg-container"></div>
     <div id="map"></div>
+    <div id="crosshair"></div>
 
     <div id="hud">
-        <div class="grid-overlay"></div>
-        <div class="radar-sweep"></div>
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="corner bl"></div><div class="corner br"></div>
-
-        <div class="header-main">
-            <h1>PRO9 COMMAND</h1>
-            <span>COMPETENCY TRAINING MODULE</span>
-        </div>
-
+        <div class="scan-line"></div>
         <div class="terminal" id="term">
-            [SYS] ACCESSING_TRAINING_DB...<br>
-            [LOC] REGION IX AOR<br>
-            [STATUS] <span id="sync" style="color: var(--training-gold);">INITIALIZING...</span><br>
-            [MSG] READY FOR PERSONNEL DATA ENTRY
+            [NAV] INITIALIZING ROVER...<br>
+            [AOR] REGION IX SECTORS<br>
+            [CMD] <span id="sync" style="color: var(--training-gold);">AWAITING UPLINK...</span>
         </div>
     </div>
 
     <iframe id="secure-frame" 
             src="https://script.google.com/macros/s/AKfycbxPJKdbDHfg8s2P-V6vdlsQNRMCI9TNZhS_KIZYbJMS3YYwoDl_wxD3EoEt01uO4w/exec" 
-            allow="fullscreen; geolocation; camera; microphone;"
-            onload="startCommandFlow()">
+            onload="startNavSweep()">
     </iframe>
 
     <footer class="tactical-footer">
-        <div class="siren-bar"></div>
-        <span class="motto">“Bagong PNP para sa Bagong Pilipinas: Serbisyong Mabilis, Tapat, at Nararamdaman”</span>
-        <span class="copyright">© 2025 DMAC Portal | OPRMD PRO9</span>
+        <span class="motto">“Bagong PNP para sa Bagong Pilipinas: Serbisyong Mabilis, Tapat, at Nararamdaman”</span><br>
+        <span style="font-size: 8px; opacity: 0.5;">© 2025 DMAC Portal | OPRMD PRO9</span>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         const sectors = [
-            { n: "HQ PRO9", p: [6.921, 122.079] },
-            { n: "ZAMBOANGA DEL SUR", p: [7.8, 123.3] },
-            { n: "ZAMBOANGA SIBUGAY", p: [7.7, 122.5] },
-            { n: "ZAMBOANGA DEL NORTE", p: [8.2, 123.0] }
+            { n: "HQ PRO9", p: [6.92, 122.07] },
+            { n: "ISABELA", p: [6.70, 121.97] },
+            { n: "SULU UNIT", p: [6.00, 121.00] },
+            { n: "ZAMBO SUR", p: [7.82, 123.43] },
+            { n: "ZAMBO NORTE", p: [8.18, 123.00] },
+            { n: "SIBUGAY", p: [7.73, 122.58] }
         ];
 
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.921, 122.079], 15);
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(sectors[0].p, 13);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
-        function startCommandFlow() {
-            const sync = document.getElementById('sync');
+        async function startNavSweep() {
             const term = document.getElementById('term');
-            const frame = document.getElementById('secure-frame');
-            const hud = document.getElementById('hud');
-            
-            map.flyTo([7.6, 122.6], 8.5, { duration: 1.5, easeLinearity: 0.2 });
+            const sync = document.getElementById('sync');
+
+            // 1. START ROVING NAVIGATION
+            for (let i = 0; i < 3; i++) {
+                let target = sectors[Math.floor(Math.random() * sectors.length)];
+                term.innerHTML += `<br>[ROVE] SCANNING: ${target.n}`;
+                map.panTo(target.p, { animate: true, duration: 0.8 });
+                await new Promise(r => setTimeout(r, 1000));
+            }
+
+            // 2. FINAL AOR POSITIONING
+            term.innerHTML += `<br>[NAV] LOCKING REGIONAL AOR...`;
+            map.flyTo([7.5, 122.3], 8.5, { duration: 2 });
 
             setTimeout(() => {
                 sectors.forEach(s => {
                     L.circleMarker(s.p, {
-                        radius: 5, color: '#fff', fillColor: '#ffcc00', fillOpacity: 1, weight: 2
-                    }).addTo(map).bindTooltip(s.n, {permanent: true, direction: 'top', className: 'tactical-label'});
-                    L.circle(s.p, { radius: 15000, color: '#ffcc00', weight: 1, fillOpacity: 0.1 }).addTo(map);
+                        radius: 4, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2
+                    }).addTo(map).bindTooltip(s.n, {permanent: true, direction: 'right', className: 'tactical-label'});
                 });
+                
+                sync.innerText = "UPLINK ESTABLISHED";
+                sync.style.color = "var(--defense-green)";
+            }, 1500);
 
-                sync.innerText = "CONNECTED";
-                term.innerHTML += "<br>> SECTORS ACTIVE<br>> LOADING FORM...";
-            }, 800);
-
+            // 3. TRANSITION TO FORM
             setTimeout(() => {
+                const frame = document.getElementById('secure-frame');
                 frame.style.display = "block";
                 setTimeout(() => { 
                     frame.style.opacity = "1";
-                    hud.style.opacity = "0";
+                    document.getElementById('hud').style.opacity = "0";
+                    document.getElementById('crosshair').style.opacity = "0";
                 }, 100);
-
-                setTimeout(() => {
-                    document.getElementById('map').style.display = "none";
-                }, 1200);
-            }, 2500);
+            }, 4500);
         }
 
-        document.onkeydown = (e) => { 
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false; 
-        };
+        document.onkeydown = (e) => { if(e.keyCode == 123 || e.ctrlKey) return false; };
     </script>
 </body>
 </html>
