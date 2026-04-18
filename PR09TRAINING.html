@@ -17,6 +17,7 @@
             --siren-red: #ff0033;
             --siren-blue: #0055ff;
             --glass: rgba(0, 20, 40, 0.85);
+            --border: rgba(0, 212, 255, 0.2);
         }
 
         body, html { 
@@ -38,6 +39,33 @@
             z-index: 1;
             filter: brightness(0.3) contrast(1.2) saturate(0.2) hue-rotate(180deg);
             transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1), filter 1s ease;
+        }
+
+        /* LOGO BRANDING */
+        .pnp-logo-main {
+            width: 100px;
+            height: auto;
+            filter: drop-shadow(0 0 10px var(--tactical-blue));
+            opacity: 0.9;
+            margin-bottom: 20px;
+            animation: logo-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes logo-pulse {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--tactical-blue)); opacity: 0.7; transform: scale(1); }
+            50% { filter: drop-shadow(0 0 20px var(--tactical-blue)); opacity: 1; transform: scale(1.05); }
+        }
+
+        .header-branding {
+            position: fixed;
+            top: 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 25;
+            pointer-events: none;
+            transition: opacity 1s ease;
         }
 
         /* ACTIVE CROSSHAIR */
@@ -92,7 +120,7 @@
             display: block; opacity: 1; transform: scale(1); filter: blur(0);
         }
 
-        /* FOOTER BRanding */
+        /* FOOTER BRANDING */
         .tactical-footer {
             position: fixed; bottom: 0; width: 100%; z-index: 130;
             background: rgba(0, 5, 10, 0.95);
@@ -129,6 +157,11 @@
     </div>
 
     <div id="hud">
+        <div class="header-branding" id="logoBox">
+            <img src="pro9 logo.png" class="pnp-logo-main" alt="PNP PRO9">
+            <div style="color: var(--tactical-blue); letter-spacing: 5px; font-size: 0.7rem; font-weight: bold;">POLICE REGIONAL OFFICE 9</div>
+        </div>
+
         <div class="scan-line"></div>
         <div class="terminal" id="term">
             [SYS] KERNEL INITIALIZED...<br>
@@ -202,11 +235,13 @@
             setTimeout(() => {
                 const frame = document.getElementById('secure-frame');
                 const hud = document.getElementById('hud');
+                const logo = document.getElementById('logoBox');
                 
                 frame.classList.add('active');
                 hud.style.opacity = "0";
+                logo.style.opacity = "0";
                 map.style.filter = "brightness(0.1) blur(5px)";
-            }, 4000);
+            }, 4500);
         }
 
         // Trigger on frame load for smoother timing
