@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PRO9 | COMMAND QUICKLOAD</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --tactical-blue: #00d4ff;
+            --defense-green: #00ff66;
+            --bg-black: #000a12;
+            --glass: rgba(0, 20, 40, 0.85);
+            --border: rgba(0, 212, 255, 0.2);
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: var(--bg-black); font-family: 'Consolas', monospace; }
+
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; filter: brightness(0.2) saturate(0.2); }
+
+        /* HUD ELEMENTS */
+        #hud { position: fixed; inset: 0; z-index: 20; pointer-events: none; transition: opacity 0.5s ease; }
+        
+        .header-branding {
+            position: fixed; top: 20px; width: 100%; display: flex; flex-direction: column;
+            align-items: center; z-index: 25;
+        }
+
+        .terminal {
+            position: absolute; bottom: 80px; left: 20px; color: var(--defense-green); 
+            font-size: 10px; background: var(--glass); padding: 10px;
+            border-left: 3px solid var(--tactical-blue); min-width: 200px; z-index: 30;
+        }
+
+        /* THE FORM FRAME - HIGHEST Z-INDEX */
+        #secure-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 60px); 
+            border: none; z-index: 100; opacity: 0; display: none;
+            transition: opacity 0.8s ease;
+        }
+        #secure-frame.active { display: block; opacity: 1; }
+
+        .tactical-footer {
+            position: fixed; bottom: 0; width: 100%; z-index: 130;
+            background: rgba(0, 5, 10, 0.95); border-top: 1px solid var(--tactical-blue);
+            padding: 10px 0; text-align: center; color: white; font-size: 10px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="map"></div>
+    
+    <div id="hud">
+        <div class="header-branding" id="logoBox">
+            <div style="color: var(--tactical-blue); letter-spacing: 3px; font-weight: bold;">POLICE REGIONAL OFFICE 9</div>
+            <div id="status" style="color: white; font-size: 8px;">INITIALIZING SECURE UPLINK...</div>
+        </div>
+        <div class="terminal" id="term">
+            [SYS] FAST BOOT...<br>
+            [NET] TUNNELING...
+        </div>
+    </div>
+
+    <iframe id="secure-frame" src="https://script.google.com/macros/s/AKfycbwQe5xpaGLp_3pZMFYhGuD98lVYpH_tGNvdkg2OHJ6x9t7_4VdW9t9g3yhWxJb_hABM/exec"></iframe>
+
+    <footer class="tactical-footer">
+        <span style="letter-spacing: 1px;">PRO9 SECURE PORTAL | SERBISYONG MAKATOTOHANAN</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // High-speed sequence
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 12);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        async function quickLaunch() {
+            const term = document.getElementById('term');
+            const frame = document.getElementById('secure-frame');
+            const hud = document.getElementById('hud');
+
+            // Step 1: Rapid Map Zoom (0.8s)
+            map.flyTo([7.5, 122.3], 9, { duration: 0.8 });
+            term.innerHTML += "<br>[GEO] LOCATING...";
+
+            // Step 2: Show Form almost immediately (1s delay)
+            setTimeout(() => {
+                term.innerHTML += "<br>[AUTH] SUCCESS.";
+                frame.classList.add('active');
+                hud.style.opacity = "0.2"; // Keep HUD faint in background
+                map.style.filter = "brightness(0.1) blur(8px)";
+            }, 1000);
+        }
+
+        // Start as soon as page is ready
+        window.addEventListener('DOMContentLoaded', quickLaunch);
+
+        // Security bypasses
+        document.onkeydown = (e) => { 
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false; 
+        };
+    </script>
+</body>
+</html>
