@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>OPRMS | Birth Record Streamlining</title>
+    
+    <style>
+        :root {
+            --pnp-blue: #001f4d;
+            --pnp-gold: #ffcc00;
+            --dark-base: #02060c;
+        }
+
+        /* Essential Reset for Auto-Layout */
+        * { box-sizing: border-box; }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            height: 100%; width: 100%;
+            background-color: var(--dark-base);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow: hidden; /* Prevents double scrollbars */
+        }
+
+        /* --- FLEXBOX WRAPPER (The Magic) --- */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh; /* Adapts to mobile browser address bars */
+            width: 100vw;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        body.ready .main-wrapper { opacity: 1; }
+
+        /* --- HEADER (Fixed Height) --- */
+        header {
+            flex-shrink: 0; /* Prevents header from squishing */
+            background: var(--pnp-blue);
+            padding: 15px 10px;
+            text-align: center;
+            border-bottom: 2px solid var(--pnp-gold);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .header-title { 
+            margin: 0; font-size: 1.1rem; font-weight: 800; color: white;
+            line-height: 1.2;
+        }
+
+        /* --- POLICY BANNER (Fixed Height) --- */
+        .policy-banner {
+            flex-shrink: 0;
+            background: rgba(255, 204, 0, 0.15);
+            padding: 8px 15px;
+            font-size: 0.7rem;
+            color: var(--pnp-gold);
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- IFRAME CONTAINER (Auto-Expanding) --- */
+        .iframe-container {
+            flex-grow: 1; /* Takes up ALL remaining space */
+            position: relative;
+            background: #fff;
+            width: 100%;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* --- FOOTER (Fixed Height) --- */
+        footer {
+            flex-shrink: 0;
+            padding: 8px 15px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text { color: #666; font-size: 8px; font-family: monospace; }
+
+        /* --- BOOT SCREEN (Absolute Overlay) --- */
+        #boot-screen {
+            position: fixed;
+            inset: 0; /* Shorthand for top/bottom/left/right: 0 */
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: visibility 0.5s, opacity 0.5s;
+        }
+
+        .loader-bar {
+            width: 60%; max-width: 200px; height: 2px;
+            background: #222; margin-top: 20px;
+        }
+
+        .loader-progress {
+            height: 100%; width: 0%; background: var(--pnp-gold);
+            animation: load 2s forwards ease-in-out;
+        }
+
+        @keyframes load { 100% { width: 100%; } }
+
+        body.ready #boot-screen { opacity: 0; visibility: hidden; }
+
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <img src="pro9.png" width="80" alt="Logo">
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+        <div style="color:var(--pnp-gold); font-size: 10px; margin-top:10px; letter-spacing: 2px;">SECURE BOOT</div>
+    </div>
+
+    <div class="main-wrapper">
+        <header>
+            <div class="header-title">Online Personnel Records Management System</div>
+            <div style="color:var(--pnp-gold); font-size: 0.7rem; letter-spacing: 2px;">OPRMS/OPAIS ONLINE RESEARCH SURVEY</div>
+        </header>
+
+        <div class="policy-banner">
+            " Streamlining Birth Record Corrections in the PNP OPRMS/OPAIS : Recognizing PSA Birth Certificates as Sufficient Proof Without Board Resolution”
+        </div>
+
+        <div class="iframe-container">
+            <iframe src="https://script.google.com/macros/s/AKfycbwSjoM5ER7eM0NRqsOatPbbS3kArucg-azaxusQMMLhZKIHkrT2Xs0-HbaqfV8ryFP-wQ/exec"></iframe>
+        </div>
+
+        <footer>
+            <span class="footer-text">PRO9 RPRMDl</span>
+            <span class="footer-text">v2.0.26 // ENCRYPTED</span>
+        </footer>
+    </div>
+
+    <script>
+        // Transition when loaded
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('ready');
+            }, 2000); // Wait for the "Secure Boot" animation
+        });
+    </script>
+</body>
+</html>
