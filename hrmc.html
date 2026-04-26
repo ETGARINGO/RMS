@@ -14,7 +14,7 @@
             --dark-base: #02060c;
         }
 
-        /* Essential Reset for Auto-Layout */
+        /* Reset */
         * { box-sizing: border-box; }
         
         body, html { 
@@ -22,15 +22,14 @@
             height: 100%; width: 100%;
             background-color: var(--dark-base);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            overflow: hidden; /* Prevents double scrollbars */
+            overflow: hidden; 
         }
 
-        /* --- FLEXBOX WRAPPER (The Magic) --- */
         .main-wrapper {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100dvh; /* Adapts to mobile browser address bars */
+            height: 100dvh;
             width: 100vw;
             opacity: 0;
             transition: opacity 0.8s ease;
@@ -38,39 +37,34 @@
 
         body.ready .main-wrapper { opacity: 1; }
 
-        /* --- HEADER (Fixed Height) --- */
         header {
-            flex-shrink: 0; /* Prevents header from squishing */
+            flex-shrink: 0;
             background: var(--pnp-blue);
-            padding: 15px 10px;
+            padding: 12px 10px;
             text-align: center;
             border-bottom: 2px solid var(--pnp-gold);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 10;
         }
 
         .header-title { 
             margin: 0; font-size: 1.1rem; font-weight: 800; color: white;
-            line-height: 1.2;
         }
 
-        /* --- POLICY BANNER (Fixed Height) --- */
         .policy-banner {
             flex-shrink: 0;
-            background: rgba(255, 204, 0, 0.15);
+            background: rgba(255, 204, 0, 0.1);
             padding: 8px 15px;
             font-size: 0.7rem;
             color: var(--pnp-gold);
             text-align: center;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
         }
 
-        /* --- IFRAME CONTAINER (Auto-Expanding) --- */
         .iframe-container {
-            flex-grow: 1; /* Takes up ALL remaining space */
+            flex-grow: 1;
+            width: 100%;
             position: relative;
             background: #fff;
-            width: 100%;
         }
 
         iframe {
@@ -80,63 +74,140 @@
             border: none;
         }
 
-        /* --- FOOTER (Fixed Height) --- */
+        /* --- FLOATING BUTTON --- */
+        #floating-btn {
+            position: fixed;
+            bottom: 50px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--pnp-blue);
+            color: var(--pnp-gold);
+            border: 2px solid var(--pnp-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 20px;
+            z-index: 999;
+            transition: transform 0.2s;
+        }
+
+        #floating-btn:hover { transform: scale(1.1); }
+
+        /* --- INSTRUCTION OVERLAY (Modal) --- */
+        #instruction-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .instruction-card {
+            background: #fff;
+            color: #333;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            padding: 25px;
+            border-top: 5px solid var(--pnp-gold);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rating-num { font-weight: 800; color: var(--pnp-blue); }
+
+        .close-btn {
+            background: var(--pnp-blue);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         footer {
             flex-shrink: 0;
-            padding: 8px 15px;
+            padding: 6px 15px;
             background: #000;
             display: flex;
             justify-content: space-between;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer-text { color: #666; font-size: 8px; font-family: monospace; }
+        .footer-text { color: #555; font-size: 8px; font-family: monospace; }
 
-        /* --- BOOT SCREEN (Absolute Overlay) --- */
+        /* --- BOOT SCREEN --- */
         #boot-screen {
             position: fixed;
-            inset: 0; /* Shorthand for top/bottom/left/right: 0 */
+            inset: 0;
             background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: visibility 0.5s, opacity 0.5s;
+            transition: opacity 0.5s ease;
         }
 
-        .loader-bar {
-            width: 60%; max-width: 200px; height: 2px;
-            background: #222; margin-top: 20px;
-        }
-
-        .loader-progress {
-            height: 100%; width: 0%; background: var(--pnp-gold);
-            animation: load 2s forwards ease-in-out;
-        }
-
+        .loader-bar { width: 150px; height: 2px; background: #222; margin-top: 20px; }
+        .loader-progress { height: 100%; width: 0%; background: var(--pnp-gold); animation: load 1.5s forwards; }
         @keyframes load { 100% { width: 100%; } }
-
-        body.ready #boot-screen { opacity: 0; visibility: hidden; }
+        body.ready #boot-screen { opacity: 0; pointer-events: none; }
 
     </style>
 </head>
 <body>
 
     <div id="boot-screen">
-        <img src=" pro9 logo.png" width="80" alt="Logo">
+        <img src="pro9 logo.png" width="80" alt="Logo">
         <div class="loader-bar"><div class="loader-progress"></div></div>
-        <div style="color:var(--pnp-gold); font-size: 10px; margin-top:10px; letter-spacing: 2px;">POLICE REGIONAL OFFICE 9</div>
+    </div>
+
+    <button id="floating-btn" onclick="toggleInstructions()" title="General Instructions">ℹ</button>
+
+    <div id="instruction-overlay" onclick="toggleInstructions()">
+        <div class="instruction-card" onclick="event.stopPropagation()">
+            <h3 style="margin-top:0; color: var(--pnp-blue);">GENERAL INSTRUCTIONS</h3>
+            <p style="font-size: 0.85rem; line-height: 1.5; color: #666;">
+                Please evaluate the following statements based on your professional experience regarding birth record correction via PSA documentation. Use the following rating scale:
+            </p>
+            <div class="rating-item"><span class="rating-num">1</span> <span>Strongly Agree</span></div>
+            <div class="rating-item"><span class="rating-num">2</span> <span>Agree</span></div>
+            <div class="rating-item"><span class="rating-num">3</span> <span>Neutral</span></div>
+            <div class="rating-item"><span class="rating-num">4</span> <span>Disagree</span></div>
+            <div class="rating-item"><span class="rating-num">5</span> <span>Strongly Disagree</span></div>
+            <button class="close-btn" onclick="toggleInstructions()">PROCEED TO SURVEY</button>
+        </div>
     </div>
 
     <div class="main-wrapper">
         <header>
             <div class="header-title">Online Personnel Records Management System</div>
-            <div style="color:var(--pnp-gold); font-size: 0.7rem; letter-spacing: 2px;">OPRMS/OPAIS ONLINE RESEARCH SURVEY</div>
+            <div style="color:var(--pnp-gold); font-size: 0.65rem; letter-spacing: 2px;">POLICE REGIONAL OFFICE 9</div>
         </header>
 
         <div class="policy-banner">
-            " Streamlining Birth Record Corrections in the PNP OPRMS/OPAIS : Recognizing PSA Birth Certificates as Sufficient Proof Without Board Resolution”
+            "Streamlining Birth Record Corrections: Recognizing PSA Birth Certificates as Sufficient Proof"
         </div>
 
         <div class="iframe-container">
@@ -144,16 +215,25 @@
         </div>
 
         <footer>
-            <span class="footer-text">Bagong PNP para sa Bagong Pilipinas: Serbisyong Mabilis, Tapat, at Nararamdaman</span>
+            <span class="footer-text">RPRMD9</span>
+            <span class="footer-text">v2.0.26 // ENCRYPTED</span>
         </footer>
     </div>
 
     <script>
-        // Transition when loaded
+        function toggleInstructions() {
+            const overlay = document.getElementById('instruction-overlay');
+            if (overlay.style.display === 'flex') {
+                overlay.style.display = 'none';
+            } else {
+                overlay.style.display = 'flex';
+            }
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.body.classList.add('ready');
-            }, 2000); // Wait for the "Secure Boot" animation
+            }, 1800);
         });
     </script>
 </body>
