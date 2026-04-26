@@ -2,146 +2,178 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BREC-OPRMS Research Survey Admin Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BREC-OPRMS | ADMIN CONSOLE</title>
     
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@900&display=swap" rel="stylesheet">
 
     <style>
-        /* Modern Reset & Base */
-        * {
-            box-sizing: border-box;
+        :root {
+            --tactical-blue: #00d4ff;
+            --warning-orange: #e67e22;
+            --bg-black: #010b1a;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; 
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: var(--bg-black); 
             font-family: 'Montserrat', sans-serif;
-            background-color: #f4f7f6;
         }
 
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
+        /* --- BACKGROUND TACTICAL MAP --- */
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; 
+            filter: brightness(0.4) contrast(1.5) saturate(0.2) hue-rotate(180deg);
         }
 
-        /* Enhanced Header */
-        .header {
-            padding: 0 30px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            z-index: 10;
+        /* --- THRILLER HUD OVERLAY --- */
+        #hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            background: radial-gradient(circle, transparent 20%, rgba(1, 11, 26, 0.8) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .entrance-logo {
+            width: 120px;
+            filter: drop-shadow(0 0 20px var(--warning-orange));
+            margin-bottom: 20px;
+            animation: glitch 2s infinite;
         }
 
-        .logo {
-            max-height: 45px;
-            width: auto;
+        .header-main { text-align: center; color: white; }
+        .header-main h1 { 
+            margin: 0; font-size: 1.5rem; letter-spacing: 10px; 
+            text-shadow: 0 0 15px var(--warning-orange); 
         }
 
-        .admin-label {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            color: #1a252f;
-            letter-spacing: 1px;
-            border-left: 3px solid #e67e22; /* Changed to orange accent to differentiate console */
-            padding-left: 15px;
+        /* --- SCANLINE EFFECT --- */
+        .scanline {
+            position: absolute; width: 100%; height: 2px;
+            background: var(--warning-orange); opacity: 0.3;
+            box-shadow: 0 0 10px var(--warning-orange);
+            z-index: 11; top: 0;
+            animation: scanning 2s linear infinite;
         }
 
-        /* Iframe Container */
-        .sheet-container {
-            flex-grow: 1;
-            background-color: #e5e5e5;
-            position: relative;
+        /* --- DATA IFRAME --- */
+        #secure-frame {
+            position: absolute; width: 100%; height: 100%; border: none;
+            z-index: 100; opacity: 0; transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            visibility: hidden;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
+        #secure-frame.active {
+            opacity: 1; transform: scale(1); visibility: visible;
         }
 
-        /* Status Indicator */
-        .status-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f0fdf4;
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #dcfce7;
-        }
-
-        .status-dot {
-            height: 8px;
-            width: 8px;
-            background-color: #27ae60;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        .status-text {
-            font-size: 11px;
+        /* Tactical Labels for Map */
+        .tactical-label {
+            background: rgba(0, 20, 40, 0.9) !important;
+            border: 1px solid var(--warning-orange) !important;
+            color: #fff !important;
+            font-family: 'Share Tech Mono', monospace !important;
+            font-size: 10px !important;
+            padding: 2px 6px !important;
             text-transform: uppercase;
-            color: #27ae60;
-            font-weight: 700;
-            letter-spacing: 0.5px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(39, 174, 96, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+        /* --- ANIMATIONS --- */
+        @keyframes scanning { 0% { top: 0%; } 100% { top: 100%; } }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-5px, 2px); filter: hue-rotate(90deg); }
+            4% { transform: translate(5px, -2px); filter: hue-rotate(180deg); }
+            6% { transform: translate(0); }
         }
-
-        @media (max-width: 600px) {
-            .admin-label { font-size: 0.75rem; border-left-width: 2px; }
-            .header { padding: 0 15px; }
-            .status-text { display: none; }
+        @keyframes pulseRing { 
+            0% { transform: scale(0.5); opacity: 1; } 
+            100% { transform: scale(2.5); opacity: 0; } 
+        }
+        .pulse-ring { 
+            border: 2px solid var(--warning-orange); border-radius: 50%; 
+            animation: pulseRing 1.5s infinite; 
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <div class="main-container">
-        <header class="header">
-            <div class="logo-container">
-                <img src="1 LOGO 3D (1).png" alt="Logo" class="logo">
-                <span class="admin-label">BREC-OPRMS // RESEARCH_SURVEY_ADMIN_CONSO</span>
-            </div>
-            <div class="status-box">
-                <span class="status-dot"></span>
-                <span class="status-text">Console Active</span>
-            </div>
-        </header>
+    <div class="scanline"></div>
+    <div id="map"></div>
 
-        <div class="sheet-container">
-            <iframe 
-                src="https://docs.google.com/spreadsheets/d/19iYWFrNh334DFyooj-lQNs5jHK3Llr79ASJ0P5U_jJE/edit?rm=minimal"
-                allowfullscreen
-                loading="lazy">
-            </iframe>
+    <div id="hud">
+        <img src="1 LOGO 3D (1).png" alt="Logo" class="entrance-logo">
+        <div class="header-main">
+            <h1>BREC-OPRMS</h1>
+            <p style="font-family: 'Share Tech Mono'; color: var(--warning-orange); letter-spacing: 4px;">UPLINKING NAVIGATION CONSOLIDATED RECORDS...</p>
         </div>
+        <div style="border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid var(--warning-orange); border-radius: 50%; width: 50px; height: 50px; animation: spin 0.8s linear infinite; margin-top: 30px;"></div>
     </div>
 
+    <iframe id="secure-frame" 
+            src="https://docs.google.com/spreadsheets/d/19iYWFrNh334DFyooj-lQNs5jHK3Llr79ASJ0P5U_jJE/edit?rm=minimal" 
+            onload="launchConsole()">
+    </iframe>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Setup Map Locations
+        const jurisdictions = [
+            { n: "SULU", p: [6.0, 121.0] },
+            { n: "ZAMBO CITY", p: [6.92, 122.07] },
+            { n: "ZAMBO SUR", p: [7.8, 123.3] },
+            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+        ];
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 12);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        jurisdictions.forEach(j => {
+            L.circleMarker(j.p, { radius: 4, color: '#fff', fillColor: '#e67e22', fillOpacity: 1 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'right', className: 'tactical-label' });
+            
+            L.circleMarker(j.p, { radius: 12, color: '#e67e22', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+        });
+
+        // Fast Animation Transition
+        function launchConsole() {
+            const frame = document.getElementById('secure-frame');
+            const hud = document.getElementById('hud');
+
+            // 1. Initial Map Fly-In
+            setTimeout(() => {
+                map.flyTo([7.5, 122.5], 8, { duration: 0.8, easeLinearity: 0.25 });
+            }, 500);
+
+            // 2. Glitch and Reveal Records
+            setTimeout(() => {
+                frame.classList.add('active');
+                hud.style.opacity = "0";
+                
+                // Cleanup background to save memory
+                setTimeout(() => { 
+                    document.getElementById('map').style.display = 'none';
+                    hud.style.display = 'none';
+                }, 1000);
+            }, 1800);
+        }
+
+        // Security Lockout
+        document.onkeydown = (e) => {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
+        };
+    </script>
+
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </body>
 </html>
