@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <link rel="icon" type="image/png" href="pro9 logo.png">
+    <link rel="shortcut icon" type="image/png" href="pro9 logo.png">
     <link rel="apple-touch-icon" href="pro9 logo.png">
+    
     <title>OPRMS | Birth Record Streamlining</title>
     
     <style>
@@ -12,6 +15,7 @@
             --pnp-blue: #001f4d;
             --pnp-gold: #ffcc00;
             --dark-base: #02060c;
+            --accent-white: #f8f9fa;
         }
 
         /* Reset */
@@ -44,22 +48,28 @@
             text-align: center;
             border-bottom: 2px solid var(--pnp-gold);
             z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .header-title { 
             margin: 0; font-size: 1.1rem; font-weight: 800; color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .policy-banner {
             flex-shrink: 0;
             background: rgba(255, 204, 0, 0.1);
-            padding: 8px 15px;
-            font-size: 0.7rem;
+            padding: 10px 15px;
+            font-size: 0.75rem;
             color: var(--pnp-gold);
             text-align: center;
             font-weight: 600;
+            line-height: 1.4;
+            border-bottom: 1px solid rgba(255,204,0,0.2);
         }
 
+        /* --- IFRAME HANDLING --- */
         .iframe-container {
             flex-grow: 1;
             width: 100%;
@@ -67,43 +77,55 @@
             background: #fff;
         }
 
+        /* Simple loading spinner for the iframe */
+        .iframe-loader {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--pnp-blue);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
         iframe {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
+            z-index: 2;
         }
 
         /* --- FLOATING BUTTON --- */
         #floating-btn {
             position: fixed;
-            bottom: 50px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
+            bottom: 40px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
             background-color: var(--pnp-blue);
             color: var(--pnp-gold);
             border: 2px solid var(--pnp-gold);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 24px;
             z-index: 999;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #floating-btn:hover { transform: scale(1.1); }
+        #floating-btn:hover { transform: scale(1.1) rotate(10deg); }
 
-        /* --- INSTRUCTION OVERLAY (Modal) --- */
+        /* --- INSTRUCTION OVERLAY --- */
         #instruction-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.85);
-            display: none; /* Hidden by default */
+            backdrop-filter: blur(4px);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -115,46 +137,63 @@
             color: #333;
             width: 100%;
             max-width: 400px;
-            border-radius: 12px;
-            padding: 25px;
-            border-top: 5px solid var(--pnp-gold);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            animation: slideUp 0.3s ease-out;
+            border-radius: 16px;
+            padding: 30px;
+            border-top: 6px solid var(--pnp-gold);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease-out;
         }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { 
+            from { transform: translateY(30px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
 
         .rating-item {
             display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .rating-num { font-weight: 800; color: var(--pnp-blue); }
+        .rating-num { 
+            font-weight: 900; 
+            color: var(--pnp-blue); 
+            background: #eee;
+            width: 24px; height: 24px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-size: 0.8rem;
+        }
 
         .close-btn {
             background: var(--pnp-blue);
             color: #fff;
             border: none;
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            border-radius: 6px;
+            padding: 14px;
+            margin-top: 25px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: background 0.2s;
         }
+
+        .close-btn:hover { background: #002d6e; }
 
         footer {
             flex-shrink: 0;
-            padding: 6px 15px;
+            padding: 8px 20px;
             background: #000;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer-text { color: #555; font-size: 8px; font-family: monospace; }
+        .footer-text { color: #666; font-size: 9px; font-family: monospace; letter-spacing: 1px; }
 
         /* --- BOOT SCREEN --- */
         #boot-screen {
@@ -166,11 +205,17 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
 
-        .loader-bar { width: 150px; height: 2px; background: #222; margin-top: 20px; }
-        .loader-progress { height: 100%; width: 0%; background: var(--pnp-gold); animation: load 1.5s forwards; }
+        .boot-logo {
+            filter: drop-shadow(0 0 15px rgba(255,204,0,0.3));
+            margin-bottom: 20px;
+        }
+
+        .loader-bar { width: 180px; height: 3px; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
+        .loader-progress { height: 100%; width: 0%; background: var(--pnp-gold); animation: load 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
         @keyframes load { 100% { width: 100%; } }
         body.ready #boot-screen { opacity: 0; pointer-events: none; }
 
@@ -179,17 +224,18 @@
 <body>
 
     <div id="boot-screen">
-        <img src="pro9 logo.png" width="80" alt="Logo">
+        <img src="pro9 logo.png" width="100" class="boot-logo" alt="Logo">
         <div class="loader-bar"><div class="loader-progress"></div></div>
+        <div style="color: #444; font-size: 10px; margin-top: 10px; font-family: monospace;">INITIALIZING SECURE SESSION...</div>
     </div>
 
-    <button id="floating-btn" onclick="toggleInstructions()" title="General Instructions">ℹ</button>
+    <button id="floating-btn" onclick="toggleInstructions()" title="General Instructions">ⓘ</button>
 
     <div id="instruction-overlay" onclick="toggleInstructions()">
         <div class="instruction-card" onclick="event.stopPropagation()">
-            <h3 style="margin-top:0; color: var(--pnp-blue);">GENERAL INSTRUCTIONS</h3>
-            <p style="font-size: 0.85rem; line-height: 1.5; color: #666;">
-                Please evaluate the following statements based on your professional experience regarding birth record correction via PSA documentation. Use the following rating scale:
+            <h3 style="margin:0 0 10px 0; color: var(--pnp-blue); font-weight: 800;">GENERAL INSTRUCTIONS</h3>
+            <p style="font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 20px;">
+                Please evaluate the statements based on your professional experience regarding birth record correction via PSA documentation.
             </p>
             <div class="rating-item"><span class="rating-num">1</span> <span>Strongly Agree</span></div>
             <div class="rating-item"><span class="rating-num">2</span> <span>Agree</span></div>
@@ -203,7 +249,7 @@
     <div class="main-wrapper">
         <header>
             <div class="header-title">Online Personnel Records Management System</div>
-            <div style="color:var(--pnp-gold); font-size: 0.65rem; letter-spacing: 2px;">POLICE REGIONAL OFFICE 9</div>
+            <div style="color:var(--pnp-gold); font-size: 0.65rem; letter-spacing: 3px; font-weight: 700; margin-top: 2px;">POLICE REGIONAL OFFICE 9</div>
         </header>
 
         <div class="policy-banner">
@@ -211,29 +257,27 @@
         </div>
 
         <div class="iframe-container">
+            <div class="iframe-loader">Loading Survey Form...</div>
             <iframe src="https://script.google.com/macros/s/AKfycby_G_RGFLk6jy2O1l0OicyBwWnQbByMx5eJ_gSmKC9uKiYO9SMJe-s3nP3ZRt_435DeJg/exec"></iframe>
         </div>
 
         <footer>
-            <span class="footer-text">RPRMD9</span>
-            <span class="footer-text">v2.0.26 // ENCRYPTED</span>
+            <span class="footer-text">RPRMD9 // OFFICIAL USE ONLY</span>
+            <span class="footer-text">v2.0.26 // ENCRYPTED CONNECTION</span>
         </footer>
     </div>
 
     <script>
         function toggleInstructions() {
             const overlay = document.getElementById('instruction-overlay');
-            if (overlay.style.display === 'flex') {
-                overlay.style.display = 'none';
-            } else {
-                overlay.style.display = 'flex';
-            }
+            overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
         }
 
         window.addEventListener('load', () => {
+            // Slight delay for smooth transition
             setTimeout(() => {
                 document.body.classList.add('ready');
-            }, 1800);
+            }, 2200);
         });
     </script>
 </body>
