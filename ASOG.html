@@ -3,163 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ASoG | PERSONNEL DATA SURVEY</title>
+    <title>ASoG Portal | PERSONNEL DATA SURVEY</title>
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <style>
+        /* Define local variables for theme */
         :root {
             --ateneo-blue: #003A70;
-            --ateneo-light: #0072CE;
+            --ateneo-deep: #002D5A;
             --accent-gold: #D4AF37;
-            --bg-deep: #002142;
+            --text-on-blue: #FFFFFF;
+            --bg-ui: #f4f7f9;
         }
 
+        /* Essential Reset - Speed optimization */
         body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
-            overflow: hidden; background-color: var(--bg-deep); 
-            font-family: 'Montserrat', sans-serif;
+            margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* System font stack for speed */
+            background-color: var(--bg-ui);
+            color: #333;
         }
 
-        /* --- GEOSPATIAL BACKGROUND --- */
-        #map {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; 
-            filter: saturate(0.5) brightness(0.4) contrast(1.2) hue-rotate(190deg);
+        /* --- DASHBOARD LAYOUT (CSS Grid) --- */
+        .portal-grid {
+            display: grid;
+            grid-template-rows: 60px 1fr 25px; /* Header, Body, Footer */
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* --- INSTITUTIONAL HUD OVERLAY --- */
-        #hud {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 20; pointer-events: none;
-            background: radial-gradient(circle, transparent 10%, var(--bg-deep) 90%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease-out, transform 1s ease-out;
+        /* --- INSTANT HEADER --- */
+        .portal-header {
+            background-color: var(--ateneo-blue);
+            color: var(--text-on-blue);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
         }
 
-        .header-container { text-align: center; color: white; z-index: 21; }
-        .header-container h1 { 
-            margin: 0; font-size: 1.6rem; letter-spacing: 6px; font-weight: 700;
-            text-transform: uppercase; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .header-container p {
-            font-family: 'Share Tech Mono'; color: var(--accent-gold); 
-            letter-spacing: 3px; margin-top: 15px; font-size: 0.9rem;
+        /* Modern, geometric SVG School Icon */
+        .school-icon {
+            height: 35px; width: 35px; fill: var(--accent-gold); margin-right: 15px;
         }
 
-        /* --- DATA PORTAL (IFRAME) --- */
-        #survey-frame {
-            position: absolute; width: 100%; height: 100%; border: none;
-            z-index: 100; opacity: 0; visibility: hidden;
-            transition: opacity 1.2s ease-in;
-        }
-
-        #survey-frame.active {
-            opacity: 1; visibility: visible;
-        }
-
-        /* Tactical Marker Styles */
-        .asog-marker {
-            background: rgba(0, 58, 112, 0.9) !important;
-            border: 1px solid var(--accent-gold) !important;
-            color: #fff !important;
-            font-family: 'Share Tech Mono', monospace !important;
-            font-size: 11px !important;
-            padding: 4px 8px !important;
-            border-radius: 2px;
+        .header-titles { display: flex; flex-direction: column; }
+        .school-name {
+            font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;
             text-transform: uppercase;
         }
-
-        /* Loading Animation */
-        .status-ring {
-            border: 2px solid rgba(212, 175, 55, 0.2);
-            border-top: 2px solid var(--accent-gold);
-            border-radius: 50%; width: 60px; height: 60px;
-            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            margin-top: 40px;
+        .console-tag {
+            font-size: 0.75rem; color: var(--accent-gold); font-weight: 400;
+            letter-spacing: 2px; text-transform: uppercase; margin-top: -2px;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Scanline effect */
-        .scan {
-            position: absolute; width: 100%; height: 5px;
-            background: rgba(212, 175, 55, 0.1);
-            z-index: 15; top: -10%;
-            animation: scanMove 4s linear infinite;
+        /* --- MAIN VIEWPORT (IFRAME) --- */
+        .portal-body {
+            position: relative;
+            background-color: #fff;
         }
-        @keyframes scanMove { 0% { top: -10%; } 100% { top: 110%; } }
+
+        /* Immediate embedding of your live Google Apps Script link */
+        #survey-viewport {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+            /* Ensure the form loads with interactivity enabled right away */
+        }
+
+        /* --- MINIMALIST FOOTER --- */
+        .portal-footer {
+            background-color: var(--ateneo-deep);
+            color: rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .secure-dot {
+            height: 6px; width: 6px; background-color: var(--accent-gold);
+            border-radius: 50%; margin-right: 6px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .school-name { font-size: 0.9rem; letter-spacing: 0px; }
+            .console-tag { font-size: 0.6rem; letter-spacing: 1px; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="scan"></div>
-    <div id="map"></div>
+    <div class="portal-grid">
+        
+        <header class="portal-header">
+            <svg class="school-icon" viewBox="0 0 100 100">
+                <path d="M50,5 L15,20 L15,60 C15,80 50,95 50,95 C50,95 85,80 85,60 L85,20 L50,5 Z M70,55 L50,75 L30,55 L30,30 L70,30 L70,55 Z M50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50 C40,45 45,40 50,40 Z"/>
+            </svg>
+            <div class="header-titles">
+                <div class="school-name">Ateneo School of Government</div>
+                <div class="console-tag">Personnel Data Survey Console</div>
+            </div>
+        </header>
 
-    <div id="hud">
-        <div class="header-container">
-            <div style="font-size: 2.5rem; margin-bottom: 15px;">🛡️</div>
-            <h1>Ateneo School of Government</h1>
-            <p>ESTABLISHING SECURE CONNECTION...</p>
-            <div class="status-ring"></div>
-        </div>
+        <main class="portal-body">
+            <iframe id="survey-viewport" 
+                    src="https://script.google.com/macros/s/AKfycbxGYzgfP14cv25jEoPs2YyCQNj1AMyohtwIG8E13GSwzmfscFcCawtgNMKUoiLQkksx/exec"
+                    title="ASoG Personnel Survey Form">
+            </iframe>
+        </main>
+
+        <footer class="portal-footer">
+            <div class="secure-dot"></div>
+            <span>Authorized Access Only | Secure Connection Verified</span>
+        </footer>
+
     </div>
 
-    <iframe id="survey-frame" 
-            src="https://script.google.com/macros/s/AKfycbxGYzgfP14cv25jEoPs2YyCQNj1AMyohtwIG8E13GSwzmfscFcCawtgNMKUoiLQkksx/exec" 
-            onload="authorizeAccess()">
-    </iframe>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
-        // Mapping ADMU Loyola Heights Context
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.639, 121.078], 13);
-        
-        // Using a dark-themed institutional tile layer
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-
-        const hubs = [
-            { n: "ADMU MAIN CAMPUS", p: [14.6395, 121.0781] },
-            { n: "ASoG OFFICE", p: [14.6375, 121.0740] }
-        ];
-
-        hubs.forEach(h => {
-            L.circleMarker(h.p, { radius: 5, color: '#D4AF37', weight: 2, fillColor: '#003A70', fillOpacity: 1 }).addTo(map)
-             .bindTooltip(h.n, { permanent: true, direction: 'right', className: 'asog-marker' });
+        // Disable simple inspection shortcuts for 'clean' experience
+        window.addEventListener('keydown', function (e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) {
+                e.preventDefault();
+                return false;
+            }
         });
-
-        function authorizeAccess() {
-            const frame = document.getElementById('survey-frame');
-            const hud = document.getElementById('hud');
-
-            // 1. Narrative Zoom
-            setTimeout(() => {
-                map.flyTo([14.639, 121.078], 16, { 
-                    duration: 2,
-                    easeLinearity: 0.2
-                });
-            }, 500);
-
-            // 2. Interface Reveal
-            setTimeout(() => {
-                frame.classList.add('active');
-                hud.style.opacity = "0";
-                hud.style.transform = "scale(1.05)";
-                
-                // Remove HUD from DOM after fade to ensure iframe is clickable
-                setTimeout(() => { 
-                    hud.style.display = 'none';
-                    document.getElementById('map').style.filter = "blur(10px) brightness(0.2)";
-                }, 1000);
-            }, 2800);
-        }
-
-        // Disable standard inspect keys for "clean" feel
-        document.onkeydown = (e) => {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
-        };
     </script>
 </body>
 </html>
