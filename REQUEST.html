@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Favicons -->
+    <!-- App Icons -->
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
     
@@ -15,210 +15,203 @@
             --ateneo-blue: #003A70;
             --ateneo-deep: #002447;
             --accent-gold: #D4AF37;
-            --soft-white: #F8FAFC;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --header-height: 70px;
-            --footer-height: 30px;
+            --bg-slate: #f1f5f9;
+            --header-h: 80px;
+            --footer-h: 30px;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0f172a; /* Darker slate for premium feel */
-            color: #334155;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background-color: var(--ateneo-deep);
+            color: #333;
             overflow: hidden;
         }
 
-        /* --- LOADING OVERLAY --- */
+        /* --- PRELOADER --- */
         #loader {
-            position: fixed;
-            inset: 0;
-            background: var(--ateneo-deep);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            transition: opacity 0.5s ease;
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, var(--ateneo-blue), var(--ateneo-deep));
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(212, 175, 55, 0.2);
+            width: 50px; height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.1);
             border-top: 3px solid var(--accent-gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 15px;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- MAIN LAYOUT --- */
-        .portal-container {
-            display: flex;
-            flex-direction: column;
+        /* --- LAYOUT --- */
+        .portal-wrapper {
+            display: grid;
+            grid-template-rows: var(--header-h) 1fr var(--footer-h);
             height: 100vh;
             width: 100vw;
         }
 
+        /* --- HEADER --- */
         .portal-header {
-            height: var(--header-height);
             background: linear-gradient(135deg, var(--ateneo-deep) 0%, var(--ateneo-blue) 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-bottom: 2px solid var(--accent-gold);
+            display: flex; align-items: center; padding: 0 25px;
+            border-bottom: 3px solid var(--accent-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             z-index: 100;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .logo-group { display: flex; align-items: center; gap: 18px; }
+
+        .logo-frame {
+            position: relative; width: 58px; height: 58px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
-        .school-icon {
-            height: 42px; width: 42px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        .brand-img {
+            max-width: 85%; max-height: 85%;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
         }
 
-        .header-text {
-            display: flex;
-            flex-direction: column;
+        .logo-frame:hover .brand-img { transform: scale(1.1); }
+
+        .title-block { display: flex; flex-direction: column; }
+
+        .main-title {
+            font-size: 1.4rem; font-weight: 800; color: #fff;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .school-name {
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .sub-tag {
+            font-size: 0.75rem; color: var(--accent-gold);
+            font-weight: 600; letter-spacing: 2.5px;
+            text-transform: uppercase; margin-top: 4px;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .console-tag {
-            font-size: 0.7rem;
-            color: var(--accent-gold);
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            margin-top: 2px;
-            opacity: 0.9;
+        .sub-tag::after {
+            content: ""; flex: 1; height: 1px;
+            background: linear-gradient(90deg, var(--accent-gold), transparent);
         }
 
-        /* --- CONTENT AREA --- */
+        /* --- MAIN VIEWPORT --- */
         .portal-body {
-            flex: 1;
+            background-color: var(--bg-slate);
             position: relative;
-            background: #e2e8f0;
         }
 
-        #survey-viewport {
-            width: 100%;
-            height: 100%;
+        #survey-iframe {
+            width: 100%; height: 100%;
             border: none;
             display: block;
         }
 
         /* --- FOOTER --- */
         .portal-footer {
-            height: var(--footer-height);
-            background: var(--ateneo-deep);
+            background: #001a33;
             color: rgba(255,255,255,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            letter-spacing: 1px;
-            font-weight: 500;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; letter-spacing: 1px; font-weight: 500;
         }
 
-        .status-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.05);
-            padding: 2px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
+        .status-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.03);
+            padding: 2px 15px; border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .dot {
-            height: 6px; width: 6px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #10b981;
+        .pulse-dot {
+            height: 7px; width: 7px;
+            background-color: #10b981; border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse 2s infinite;
         }
 
-        /* --- MOBILE OPTIMIZATION --- */
+        @keyframes pulse {
+            0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; }
+        }
+
+        /* --- RESPONSIVE --- */
         @media (max-width: 600px) {
-            .school-name { font-size: 1rem; }
-            .console-tag { font-size: 0.6rem; }
-            .portal-header { padding: 0 15px; }
+            :root { --header-h: 75px; }
+            .main-title { font-size: 1.05rem; }
+            .sub-tag { font-size: 0.6rem; letter-spacing: 1.5px; }
+            .logo-frame { width: 48px; height: 48px; border-radius: 10px; }
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <!-- Interactive Preloader -->
     <div id="loader">
         <div class="spinner"></div>
-        <div style="color: white; font-size: 12px; font-weight: 300; letter-spacing: 1px;">INITIALIZING SECURE FORM...</div>
+        <p style="color: white; font-size: 11px; letter-spacing: 2px; margin-top: 20px; font-weight: 300;">ESTABLISHING SECURE CONNECTION</p>
     </div>
 
-    <div class="portal-container">
+    <div class="portal-wrapper">
         
+        <!-- Upgraded Header -->
         <header class="portal-header">
-            <div class="logo-container">
-                <svg class="school-icon" viewBox="0 0 100 100">
-                    <path fill="#D4AF37" d="M50,5 L15,20 L15,60 C15,80 50,95 50,95 C50,95 85,80 85,60 L85,20 L50,5 Z M70,55 L50,75 L30,55 L30,30 L70,30 L70,55 Z M50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50 C40,45 45,40 50,40 Z"/>
-                </svg>
-                <div class="header-text">
-                    <span class="school-name">Online Request Form</span>
-                    <span class="console-tag">RPRMD • PERSONNEL DATA MANAGEMENT</span>
+            <div class="logo-group">
+                <div class="logo-frame">
+                    <img src="1 LOGO 3D (1).png" alt="RPRMD Logo" class="brand-img">
+                </div>
+                <div class="title-block">
+                    <span class="main-title">Online Request Form</span>
+                    <span class="sub-tag">RPRMD | PERSONNEL DATA MANAGEMENT</span>
                 </div>
             </div>
         </header>
 
+        <!-- Main Form Frame -->
         <main class="portal-body">
-            <iframe id="survey-viewport" 
+            <iframe id="survey-iframe" 
                     src="https://script.google.com/macros/s/AKfycbwiiFftXHRc5i914WqpStsRn7O1bGpNgZGhtq_dttSljvyqS-Gc76i4BuOJfmZ-hzsI0A/exec"
-                    onload="hideLoader()"
-                    title="ASoG Personnel Survey Form">
+                    onload="dismissLoader()"
+                    title="Personnel Survey Form">
             </iframe>
         </main>
 
+        <!-- Secure Footer -->
         <footer class="portal-footer">
-            <div class="status-pill">
-                <div class="dot"></div>
-                <span>ENCRYPTED CONNECTION • AUTHORIZED ACCESS ONLY</span>
+            <div class="status-badge">
+                <div class="pulse-dot"></div>
+                <span>ENCRYPTED PORTAL • AUTHORIZED ACCESS ONLY</span>
             </div>
         </footer>
 
     </div>
 
     <script>
-        // Hide loader when iframe is ready
-        function hideLoader() {
+        // Dismiss loading screen
+        function dismissLoader() {
             const loader = document.getElementById('loader');
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 500);
+            }, 600);
         }
 
-        // Safety timeout: If form fails to load in 10s, show it anyway
-        setTimeout(hideLoader, 10000);
+        // Emergency timeout (12s) if script fails to load
+        setTimeout(dismissLoader, 12000);
 
-        // Advanced security block
+        // Security: Disable dev tool shortcuts
         window.addEventListener('keydown', function (e) {
-            if(e.keyCode == 123 || 
-              (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) ||
-              (e.ctrlKey && e.keyCode == 85)) {
+            if (e.keyCode == 123 || 
+               (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || 
+               (e.ctrlKey && e.keyCode == 85)) {
                 e.preventDefault();
                 return false;
             }
