@@ -16,18 +16,22 @@
             --ateneo-deep: #002447;
             --accent-gold: #D4AF37;
             --bg-slate: #f1f5f9;
-            --header-h: 80px;
-            --footer-h: 30px;
+            /* Using dynamic viewport units for perfect fit */
+            --header-h: 8vh; 
+            --footer-h: 3vh;
+            --min-header: 65px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
+            margin: 0; padding: 0; 
+            height: 100vh; width: 100vw;
+            height: 100dvh; /* Supporting modern mobile heights */
             font-family: 'Inter', -apple-system, system-ui, sans-serif;
             background-color: var(--ateneo-deep);
             color: #333;
-            overflow: hidden;
+            overflow: hidden; /* Prevents double scrollbars */
         }
 
         /* --- PRELOADER --- */
@@ -48,70 +52,73 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- LAYOUT --- */
+        /* --- AUTO-FIT GRID LAYOUT --- */
         .portal-wrapper {
-            display: grid;
-            grid-template-rows: var(--header-h) 1fr var(--footer-h);
+            display: flex;
+            flex-direction: column;
             height: 100vh;
-            width: 100vw;
+            height: 100dvh;
+            width: 100%;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER (Desktop Look Optimized) --- */
         .portal-header {
+            flex: 0 0 auto;
+            min-height: var(--min-header);
+            height: var(--header-h);
             background: linear-gradient(135deg, var(--ateneo-deep) 0%, var(--ateneo-blue) 100%);
-            display: flex; align-items: center; padding: 0 25px;
+            display: flex; align-items: center; padding: 0 2vw;
             border-bottom: 3px solid var(--accent-gold);
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             z-index: 100;
         }
 
-        .logo-group { display: flex; align-items: center; gap: 18px; }
+        .logo-group { display: flex; align-items: center; gap: 1.2vw; }
 
         .logo-frame {
-            position: relative; width: 58px; height: 58px;
+            position: relative; 
+            width: clamp(45px, 5vh, 65px); 
+            height: clamp(45px, 5vh, 65px);
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
+            border-radius: 20%;
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(8px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
         .brand-img {
-            max-width: 85%; max-height: 85%;
+            max-width: 80%; max-height: 80%;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-            transition: transform 0.3s ease;
         }
-
-        .logo-frame:hover .brand-img { transform: scale(1.1); }
 
         .title-block { display: flex; flex-direction: column; }
 
         .main-title {
-            font-size: 1.4rem; font-weight: 800; color: #fff;
+            font-size: clamp(1rem, 2.2vh, 1.6rem); 
+            font-weight: 800; color: #fff;
             text-transform: uppercase; letter-spacing: 0.5px;
-            line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .sub-tag {
-            font-size: 0.75rem; color: var(--accent-gold);
-            font-weight: 600; letter-spacing: 2.5px;
+            font-size: clamp(0.6rem, 1.1vh, 0.8rem); 
+            color: var(--accent-gold);
+            font-weight: 600; letter-spacing: 2px;
             text-transform: uppercase; margin-top: 4px;
             display: flex; align-items: center; gap: 10px;
         }
 
-        .sub-tag::after {
-            content: ""; flex: 1; height: 1px;
-            background: linear-gradient(90deg, var(--accent-gold), transparent);
-        }
-
-        /* --- MAIN VIEWPORT --- */
+        /* --- FULL AUTO-FIT BODY --- */
         .portal-body {
+            flex: 1 1 auto;
             background-color: var(--bg-slate);
             position: relative;
+            overflow: hidden;
         }
 
         #survey-iframe {
+            position: absolute;
+            top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
             display: block;
@@ -119,37 +126,31 @@
 
         /* --- FOOTER --- */
         .portal-footer {
+            flex: 0 0 auto;
+            height: var(--footer-h);
+            min-height: 25px;
             background: #001a33;
             color: rgba(255,255,255,0.5);
             display: flex; align-items: center; justify-content: center;
-            font-size: 10px; letter-spacing: 1px; font-weight: 500;
+            font-size: clamp(8px, 1vh, 11px);
         }
 
         .status-badge {
             display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.03);
-            padding: 2px 15px; border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.08);
+            padding: 0 15px;
         }
 
         .pulse-dot {
-            height: 7px; width: 7px;
+            height: 6px; width: 6px;
             background-color: #10b981; border-radius: 50%;
-            box-shadow: 0 0 10px #10b981;
+            box-shadow: 0 0 8px #10b981;
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 600px) {
-            :root { --header-h: 75px; }
-            .main-title { font-size: 1.05rem; }
-            .sub-tag { font-size: 0.6rem; letter-spacing: 1.5px; }
-            .logo-frame { width: 48px; height: 48px; border-radius: 10px; }
-        }
+        /* Disable user text selection to keep it feeling like a desktop app */
+        body { user-select: none; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -157,12 +158,12 @@
     <!-- Interactive Preloader -->
     <div id="loader">
         <div class="spinner"></div>
-        <p style="color: white; font-size: 11px; letter-spacing: 2px; margin-top: 20px; font-weight: 300;">ESTABLISHING CONNECTION</p>
+        <p style="color: white; font-size: 11px; letter-spacing: 2px; margin-top: 20px; font-weight: 300;">ESTABLISHING SECURE CONNECTION</p>
     </div>
 
     <div class="portal-wrapper">
         
-        <!-- Upgraded Header -->
+        <!-- Header optimized for scaling -->
         <header class="portal-header">
             <div class="logo-group">
                 <div class="logo-frame">
@@ -175,16 +176,17 @@
             </div>
         </header>
 
-        <!-- Main Form Frame -->
+        <!-- Body fits exactly between header and footer -->
         <main class="portal-body">
             <iframe id="survey-iframe" 
                     src="https://script.google.com/macros/s/AKfycby44_inieFokJsdR5rd0yE64VSIq8MGiHunj02PcagoMX5odH2ROqrTwzxxBBrdHr3Pqw/exec"
                     onload="dismissLoader()"
-                    title="Personnel Survey Form">
+                    title="Personnel Survey Form"
+                    allow="geolocation; microphone; camera">
             </iframe>
         </main>
 
-        <!-- Secure Footer -->
+        <!-- Footer -->
         <footer class="portal-footer">
             <div class="status-badge">
                 <div class="pulse-dot"></div>
@@ -195,19 +197,21 @@
     </div>
 
     <script>
-        // Dismiss loading screen
+        // Dismiss loading screen when iframe is fully ready
         function dismissLoader() {
             const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 600);
+            if(loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 600);
+            }
         }
 
-        // Emergency timeout (12s) if script fails to load
-        setTimeout(dismissLoader, 12000);
+        // Emergency timeout (10s) 
+        setTimeout(dismissLoader, 10000);
 
-        // Security: Disable dev tool shortcuts
+        // Security: Prevent typical "Right-Click" and "Inspect" behaviors
         window.addEventListener('keydown', function (e) {
             if (e.keyCode == 123 || 
                (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || 
@@ -216,6 +220,13 @@
                 return false;
             }
         });
+
+        // Auto-fix height issues on mobile browsers with address bars
+        function adjustHeight() {
+            document.body.style.height = window.innerHeight + "px";
+        }
+        window.addEventListener('resize', adjustHeight);
+        adjustHeight();
     </script>
 </body>
 </html>
