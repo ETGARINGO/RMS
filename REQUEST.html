@@ -4,133 +4,221 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <!-- Favicons -->
     <link rel="icon" type="image/png" href="1 LOGO 3D (1).png">
-    <link rel="shortcut icon" type="image/png" href="1 LOGO 3D (1).png>
     <link rel="apple-touch-icon" href="1 LOGO 3D (1).png">
     
-    <title>Request Form | PERSONNEL DATA SURVEY</title>
+    <title>Online Request Form | RPRMD Portal</title>
     
-    <link rel="preconnect" href="https://fonts.gstatic.com">
     <style>
-        /* Define local variables for theme */
         :root {
             --ateneo-blue: #003A70;
-            --ateneo-deep: #002D5A;
+            --ateneo-deep: #002447;
             --accent-gold: #D4AF37;
-            --text-on-blue: #FFFFFF;
-            --bg-ui: #f4f7f9;
+            --soft-white: #F8FAFC;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --header-height: 70px;
+            --footer-height: 30px;
         }
 
-        /* Essential Reset - Speed optimization */
+        * { box-sizing: border-box; }
+
         body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* System font stack for speed */
-            background-color: var(--bg-ui);
-            color: #333;
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a; /* Darker slate for premium feel */
+            color: #334155;
+            overflow: hidden;
         }
 
-        /* --- DASHBOARD LAYOUT (CSS Grid) --- */
-        .portal-grid {
-            display: grid;
-            grid-template-rows: 60px 1fr 25px; /* Header, Body, Footer */
+        /* --- LOADING OVERLAY --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--ateneo-deep);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- MAIN LAYOUT --- */
+        .portal-container {
+            display: flex;
+            flex-direction: column;
             height: 100vh;
             width: 100vw;
         }
 
-        /* --- INSTANT HEADER --- */
         .portal-header {
-            background-color: var(--ateneo-blue);
-            color: var(--text-on-blue);
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--ateneo-deep) 0%, var(--ateneo-blue) 100%);
+            color: white;
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 10;
+            padding: 0 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-bottom: 2px solid var(--accent-gold);
+            z-index: 100;
         }
 
-        /* Modern, geometric SVG School Icon */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         .school-icon {
-            height: 35px; width: 35px; fill: var(--accent-gold); margin-right: 15px;
+            height: 42px; width: 42px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
-        .header-titles { display: flex; flex-direction: column; }
+        .header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
         .school-name {
-            font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .console-tag {
-            font-size: 0.75rem; color: var(--accent-gold); font-weight: 400;
-            letter-spacing: 2px; text-transform: uppercase; margin-top: -2px;
+            font-size: 0.7rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-top: 2px;
+            opacity: 0.9;
         }
 
-        /* --- MAIN VIEWPORT (IFRAME) --- */
+        /* --- CONTENT AREA --- */
         .portal-body {
+            flex: 1;
             position: relative;
-            background-color: #fff;
+            background: #e2e8f0;
         }
 
-        /* Immediate embedding of your live Google Apps Script link */
         #survey-viewport {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             border: none;
-            /* Ensure the form loads with interactivity enabled right away */
+            display: block;
         }
 
-        /* --- MINIMALIST FOOTER --- */
+        /* --- FOOTER --- */
         .portal-footer {
-            background-color: var(--ateneo-deep);
-            color: rgba(255,255,255,0.6);
+            height: var(--footer-height);
+            background: var(--ateneo-deep);
+            color: rgba(255,255,255,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 10px;
             letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .secure-dot {
-            height: 6px; width: 6px; background-color: var(--accent-gold);
-            border-radius: 50%; margin-right: 6px;
+            font-weight: 500;
         }
 
-        /* Responsive adjustments */
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .dot {
+            height: 6px; width: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 600px) {
-            .school-name { font-size: 0.9rem; letter-spacing: 0px; }
-            .console-tag { font-size: 0.6rem; letter-spacing: 1px; }
+            .school-name { font-size: 1rem; }
+            .console-tag { font-size: 0.6rem; }
+            .portal-header { padding: 0 15px; }
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="portal-grid">
+    <div id="loader">
+        <div class="spinner"></div>
+        <div style="color: white; font-size: 12px; font-weight: 300; letter-spacing: 1px;">INITIALIZING SECURE FORM...</div>
+    </div>
+
+    <div class="portal-container">
         
         <header class="portal-header">
-            <svg class="school-icon" viewBox="0 0 100 100">
-                <path d="M50,5 L15,20 L15,60 C15,80 50,95 50,95 C50,95 85,80 85,60 L85,20 L50,5 Z M70,55 L50,75 L30,55 L30,30 L70,30 L70,55 Z M50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50 C40,45 45,40 50,40 Z"/>
-            </svg>
-            <div class="header-titles">
-                <div class="school-name">Online Request Form</div>
-                <div class="console-tag">RPRMD | PERSONNEL DATA MANAGEMENT</div>
+            <div class="logo-container">
+                <svg class="school-icon" viewBox="0 0 100 100">
+                    <path fill="#D4AF37" d="M50,5 L15,20 L15,60 C15,80 50,95 50,95 C50,95 85,80 85,60 L85,20 L50,5 Z M70,55 L50,75 L30,55 L30,30 L70,30 L70,55 Z M50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50 C40,45 45,40 50,40 Z"/>
+                </svg>
+                <div class="header-text">
+                    <span class="school-name">Online Request Form</span>
+                    <span class="console-tag">RPRMD • PERSONNEL DATA MANAGEMENT</span>
+                </div>
             </div>
         </header>
 
         <main class="portal-body">
             <iframe id="survey-viewport" 
                     src="https://script.google.com/macros/s/AKfycbwiiFftXHRc5i914WqpStsRn7O1bGpNgZGhtq_dttSljvyqS-Gc76i4BuOJfmZ-hzsI0A/exec"
+                    onload="hideLoader()"
                     title="ASoG Personnel Survey Form">
             </iframe>
         </main>
 
         <footer class="portal-footer">
-            <div class="secure-dot"></div>
-            <span>Authorized Access Only | Secure Connection Verified</span>
+            <div class="status-pill">
+                <div class="dot"></div>
+                <span>ENCRYPTED CONNECTION • AUTHORIZED ACCESS ONLY</span>
+            </div>
         </footer>
 
     </div>
 
     <script>
-        // Disable simple inspection shortcuts for 'clean' experience
+        // Hide loader when iframe is ready
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
+
+        // Safety timeout: If form fails to load in 10s, show it anyway
+        setTimeout(hideLoader, 10000);
+
+        // Advanced security block
         window.addEventListener('keydown', function (e) {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) {
+            if(e.keyCode == 123 || 
+              (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) ||
+              (e.ctrlKey && e.keyCode == 85)) {
                 e.preventDefault();
                 return false;
             }
