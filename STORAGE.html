@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="Video.gif">
+    <link rel="apple-touch-icon" href="Video.gif">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PRO9 | RECORDS STORAGE SYSTEM</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --tactical-blue: #00d4ff;
+            --defense-green: #00ff66;
+            --alert-amber: #ffaa00;
+            --cyber-purple: #9d4edd;
+            --bg-black: #020813;
+            --card-bg: rgba(3, 21, 46, 0.85);
+            --border-glow: rgba(0, 212, 255, 0.25);
+        }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: var(--bg-black); 
+            position: fixed; font-family: 'Segoe UI', -apple-system, sans-serif;
+            user-select: none;
+        }
+
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; filter: brightness(0.3) contrast(1.4) saturate(0.4) hue-rotate(190deg);
+        }
+
+        /* CENTRAL TERMINAL HUD */
+        #hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; 
+            background: radial-gradient(circle, transparent 15%, rgba(2, 8, 19, 0.96) 95%);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-sizing: border-box;
+            padding: 24px;
+        }
+
+        .header-main {
+            text-align: center; color: white; text-transform: uppercase;
+            margin-bottom: 35px;
+        }
+        
+        .entrance-logo {
+            width: 115px;
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.55));
+            margin-bottom: 15px;
+        }
+
+        .header-main h1 { 
+            margin: 0; font-size: 1.6rem; letter-spacing: 7px; font-weight: 900; 
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); 
+        }
+
+        .header-main p {
+            font-size: 0.65rem; letter-spacing: 4px; color: var(--tactical-blue); margin-top: 6px; font-weight: 700;
+        }
+
+        /* STORAGE CONTROL PANEL Grid Layout */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 820px;
+            width: 100%;
+            z-index: 15;
+            pointer-events: auto;
+        }
+
+        .tactical-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            padding: 30px 24px;
+            text-align: center;
+            color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 212, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tactical-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--tactical-blue), transparent);
+            transition: 0.6s ease;
+        }
+
+        .tactical-card:hover::before { left: 100%; }
+
+        .tactical-card:hover {
+            border-color: var(--tactical-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.25), inset 0 0 25px rgba(0, 212, 255, 0.08);
+        }
+
+        /* Color variance for the active inputs vs secure archive nodes */
+        .tactical-card.archive:hover {
+            border-color: var(--cyber-purple);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.25), inset 0 0 25px rgba(157, 78, 221, 0.08);
+        }
+        .tactical-card.archive .card-icon { color: var(--cyber-purple); text-shadow: 0 0 10px rgba(157, 78, 221, 0.5); }
+        .tactical-card.archive .launch-btn { border-color: var(--cyber-purple); color: var(--cyber-purple); background: rgba(157, 78, 221, 0.08); }
+        .tactical-card.archive .launch-btn:hover { background: var(--cyber-purple); color: var(--bg-black); box-shadow: 0 0 15px var(--cyber-purple); }
+
+        .card-icon {
+            font-size: 28px; margin-bottom: 12px; color: var(--tactical-blue);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        .tactical-card h2 {
+            margin: 0 0 8px 0; font-size: 1.15rem; letter-spacing: 2px;
+            font-weight: 800; text-transform: uppercase;
+        }
+
+        .tactical-card p {
+            margin: 0 0 24px 0; font-size: 0.8rem; color: #a3b1c6;
+            line-height: 1.5; min-height: 48px;
+        }
+
+        .launch-btn {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid var(--tactical-blue);
+            color: var(--tactical-blue);
+            padding: 14px 28px;
+            border-radius: 5px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+
+        .launch-btn:hover {
+            background: var(--tactical-blue);
+            color: var(--bg-black);
+            box-shadow: 0 0 15px var(--tactical-blue);
+        }
+
+        /* ENCRYPTED RUNTIME FOOTER */
+        .hud-status {
+            margin-top: 45px;
+            font-size: 0.68rem;
+            letter-spacing: 3px;
+            color: var(--defense-green);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 7px; height: 7px; background: var(--defense-green);
+            border-radius: 50%; box-shadow: 0 0 10px var(--defense-green);
+        }
+
+        /* MAP VECTORS */
+        .tactical-label {
+            background: rgba(1, 10, 26, 0.92) !important;
+            border: 1px solid var(--tactical-blue) !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 11px !important;
+            padding: 4px 10px !important;
+            border-radius: 4px !important;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.35);
+            text-transform: uppercase;
+        }
+
+        @keyframes nodePulse { 0% { transform: scale(0.4); opacity: 1; } 100% { transform: scale(2.8); opacity: 0; } }
+        .pulse-ring { border: 2px solid var(--defense-green); border-radius: 50%; animation: nodePulse 2s infinite; }
+
+        #secure-frame {
+            position: absolute; width: 100%; height: 100%; border: none;
+            z-index: 100; opacity: 0; visibility: hidden;
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* CONSOLE BUFFER OVERLAY */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-black); z-index: 99; display: none;
+            align-items: center; justify-content: center; flex-direction: column;
+            color: white; letter-spacing: 5px; font-size: 0.8rem; font-weight: 700;
+            transition: opacity 0.4s ease;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.03); border-top: 3px solid var(--tactical-blue);
+            border-radius: 50%; width: 48px; height: 48px; animation: spin 0.75s linear infinite;
+            margin-bottom: 20px; box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+        }
+
+        /* Responsive UI Scaling */
+        @media (max-width: 768px) {
+            .control-panel { grid-template-columns: 1fr; max-width: 380px; gap: 16px; }
+            .header-main h1 { font-size: 1.25rem; letter-spacing: 4px; }
+            .tactical-card { padding: 22px; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="map"></div>
+
+    <div id="hud">
+        <img src="pro9 logo.png" alt="PRO9 Logo" class="entrance-logo">
+        <div class="header-main">
+            <h1>POLICE REGIONAL OFFICE 9</h1>
+            <p>RECORDS STORAGE SYSTEM</p>
+        </div>
+
+        <div class="control-panel">
+            <div class="tactical-card">
+                <div>
+                    <div class="card-icon">📂</div>
+                    <h2>Data Entry Portal</h2>
+                    <p>Initialize submission pipelines, digital manifests, and record registration workflows.</p>
+                </div>
+                <button class="launch-btn" onclick="openStorageModule('entryPortal')">OPEN STORAGE MANIFEST</button>
+            </div>
+
+            <div class="tactical-card archive">
+                <div>
+                    <div class="card-icon">🗄️</div>
+                    <h2>Secure Repository</h2>
+                    <p>Access central administrative indexes, deep data logs, and audited history archives.</p>
+                </div>
+                <button class="launch-btn" onclick="openStorageModule('secureRepository')">ACCESS COLD STORAGE</button>
+            </div>
+        </div>
+
+        <div class="hud-status">
+            <div class="status-dot"></div> Mainframe Databank: Online & Encrypted
+        </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="load-text">DECRYPTING CLOUD REPOSITORY MATRIX...</div>
+    </div>
+
+    <iframe id="secure-frame" 
+            src="about:blank"
+            allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;">
+    </iframe>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // TARGET SCRIPT ENDPOINTS - Completely mapped to your core infrastructure keys
+        const STORAGE_ENDPOINTS = {
+            entryPortal: "https://script.google.com/macros/s/AKfycbxCQpInCrHffNT9LxhuprrnDXN99N0ogLHWcOk4C6b85gdx3EVtQ9kuBnrXA5R4j7KRbg/exec?page=form",
+            secureRepository: "https://script.google.com/macros/s/AKfycbxCQpInCrHffNT9LxhuprrnDXN99N0ogLHWcOk4C6b85gdx3EVtQ9kuBnrXA5R4j7KRbg/exec"
+        };
+
+        // Zamboanga Operational Coordinates
+        const regionalJurisdictions = [
+            { name: "SULU", coords: [6.0, 121.0] },
+            { name: "ISABELA", coords: [6.7, 121.9] },
+            { name: "ZAMBOANGA CITY", coords: [6.92, 122.07] },
+            { name: "SIBUGAY", coords: [7.7, 122.5] },
+            { name: "ZAMBOANGA SUR", coords: [7.8, 123.3] },
+            { name: "ZAMBOANGA NORTE", coords: [8.2, 123.0] }
+        ];
+
+        // Satellite Grid Framework
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 9);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        // Render tactical layout on map layer
+        regionalJurisdictions.forEach(loc => {
+            L.circleMarker(loc.coords, { radius: 5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
+             .bindTooltip(loc.name, { permanent: true, direction: 'right', offset: [12, 0], className: 'tactical-label' });
+            
+            L.circleMarker(loc.coords, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+        });
+
+        // Initialize Vault Core Routing System
+        function openStorageModule(targetModuleKey) {
+            const endpointUrl = STORAGE_ENDPOINTS[targetModuleKey];
+            const hudElement = document.getElementById('hud');
+            const frameElement = document.getElementById('secure-frame');
+            const overlayElement = document.getElementById('loading-overlay');
+            const loadTextElement = document.getElementById('load-text');
+
+            // Prevent multi-click conflicts
+            hudElement.style.pointerEvents = "none";
+            
+            // Panoramic map slide transition to regional monitoring zone
+            map.flyTo([7.4, 122.3], 8, { duration: 0.9, easeLinearity: 0.25 });
+
+            setTimeout(() => {
+                hudElement.style.opacity = "0";
+                overlayElement.style.display = "flex";
+                loadTextElement.innerText = `SYNCING WITH STORAGE INFRASTRUCTURE [${targetModuleKey.toUpperCase()}]...`;
+
+                // Set secure endpoint connection
+                frameElement.src = endpointUrl;
+                
+                frameElement.onload = () => {
+                    overlayElement.style.opacity = "0";
+                    setTimeout(() => overlayElement.remove(), 400);
+
+                    frameElement.style.visibility = "visible";
+                    frameElement.style.opacity = "1";
+                    
+                    // Securely clear background DOM mapping resources to optimize runtime RAM consumption
+                    setTimeout(() => { 
+                        document.getElementById('map').remove();
+                        hudElement.remove();
+                    }, 500);
+                };
+            }, 655);
+        }
+
+        // Hardened Perimeter Defense Metrics (Disables inspection key commands)
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
+                return false;
+            }
+        };
+
+        // Automatic Inactivity Session Termination Reset
+        let sessionIdleTime = 0;
+        const resetSessionClock = () => sessionIdleTime = 0;
+        ['mousemove', 'keypress', 'touchstart'].forEach(signal => window.addEventListener(signal, resetSessionClock));
+
+        setInterval(() => {
+            sessionIdleTime++;
+            if (sessionIdleTime >= 30) window.location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>
