@@ -13,85 +13,120 @@
         :root {
             --tactical-blue: #00d4ff;
             --defense-green: #00ff66;
-            --bg-black: #020813;
+            --bg-black: #01060f;
+            --neon-glow: rgba(0, 212, 255, 0.4);
         }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
             overflow: hidden; background-color: var(--bg-black); 
-            position: fixed; font-family: 'Segoe UI', -apple-system, sans-serif;
+            position: fixed; font-family: 'SF Pro Display', -apple-system, 'Segoe UI', sans-serif;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         #map {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; filter: brightness(0.25) contrast(1.4) saturate(0.4) hue-rotate(190deg);
-            transition: opacity 1s ease;
+            z-index: 1; filter: brightness(0.22) contrast(1.5) saturate(0.35) hue-rotate(185deg);
+            transition: transform 1.5s cubic-bezier(0.1, 1, 0.1, 1), opacity 0.8s ease;
         }
 
         #secure-frame {
             position: absolute; width: 100%; height: 100%; border: none;
             z-index: 100; opacity: 0; visibility: hidden;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1.02);
+            transition: opacity 0.6s cubic-bezier(0.2, 1, 0.2, 1), transform 0.6s cubic-bezier(0.2, 1, 0.2, 1);
         }
 
         /* CONSOLE BUFFER OVERLAY */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(2, 8, 19, 0.80) 20%, rgba(2, 8, 19, 0.98) 100%);
+            background: radial-gradient(circle, rgba(2, 8, 19, 0.75) 10%, rgba(1, 4, 10, 0.98) 100%);
             z-index: 99; display: flex;
             align-items: center; justify-content: center; flex-direction: column;
-            color: white; letter-spacing: 5px; font-size: 0.8rem; font-weight: 700;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        /* CINEMATIC HUD MATRIX */
+        .hud-scanlines {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 99.5; pointer-events: none; opacity: 0.4;
         }
 
         .entrance-logo {
-            width: 110px; height: auto;
-            filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.55));
+            width: 115px; height: auto;
+            filter: drop-shadow(0 0 30px var(--neon-glow));
             margin-bottom: 25px;
+            animation: pulseGlow 2s ease-in-out infinite alternate;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseGlow { 0% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3)); } 100% { transform: scale(1.03); filter: drop-shadow(0 0 35px rgba(0, 212, 255, 0.6)); } }
+
+        .spinner-container {
+            position: relative;
+            width: 60px; height: 60px;
+            margin-bottom: 25px;
+        }
+
         .spinner {
-            border: 3px solid rgba(255,255,255,0.03); border-top: 3px solid var(--tactical-blue);
-            border-radius: 50%; width: 48px; height: 48px; animation: spin 0.75s linear infinite;
-            margin-bottom: 20px; box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+            box-sizing: border-box;
+            border: 2px solid rgba(0, 212, 255, 0.05); border-top: 2px solid var(--tactical-blue);
+            border-radius: 50%; width: 100%; height: 100%; animation: spin 0.6s linear infinite;
+        }
+        
+        .spinner-inner {
+            box-sizing: border-box;
+            position: absolute; top: 6px; left: 6px; width: 48px; height: 48px;
+            border: 2px solid transparent; border-bottom: 2px solid var(--defense-green);
+            border-radius: 50%; animation: spin 1.2s linear infinite reverse;
+            opacity: 0.7;
         }
 
         #load-text {
-            text-transform: uppercase; text-align: center; line-height: 1.8;
-            font-size: 0.75rem; color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            text-transform: uppercase; text-align: center; line-height: 2;
+            font-size: 0.72rem; color: #ffffff; letter-spacing: 6px; font-weight: 800;
         }
         
         .sub-text {
-            font-size: 0.6rem; color: var(--tactical-blue); letter-spacing: 3px; margin-top: 5px;
+            font-size: 0.58rem; color: var(--tactical-blue); letter-spacing: 4px; margin-top: 6px; font-weight: 600;
+            opacity: 0.8;
         }
 
         /* MAP VECTORS */
         .tactical-label {
-            background: rgba(1, 10, 26, 0.92) !important;
-            border: 1px solid var(--tactical-blue) !important;
-            color: #fff !important;
+            background: rgba(2, 12, 28, 0.95) !important;
+            border: 1px solid rgba(0, 212, 255, 0.5) !important;
+            color: #ffffff !important;
             font-weight: 900 !important;
             font-family: 'Courier New', monospace !important;
             font-size: 10px !important;
-            padding: 4px 10px !important;
-            border-radius: 4px !important;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.35);
+            padding: 5px 12px !important;
+            border-radius: 3px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 212, 255, 0.2);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        @keyframes nodePulse { 0% { transform: scale(0.4); opacity: 1; } 100% { transform: scale(2.8); opacity: 0; } }
-        .pulse-ring { border: 2px solid var(--defense-green); border-radius: 50%; animation: nodePulse 2s infinite; }
+        @keyframes nodePulse { 0% { transform: scale(0.3); opacity: 1; } 100% { transform: scale(2.6); opacity: 0; } }
+        .pulse-ring { border: 1.5px solid var(--defense-green); border-radius: 50%; animation: nodePulse 1.8s infinite cubic-bezier(0.215, 0.610, 0.355, 1); }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
+    <div class="hud-scanlines"></div>
     <div id="map"></div>
 
     <div id="loading-overlay">
         <img src="pro9 logo.png" alt="PRO9 Logo" class="entrance-logo">
-        <div class="spinner"></div>
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <div class="spinner-inner"></div>
+        </div>
         <div id="load-text">INITIALIZING SECURE REGISTRATION MATRIX...</div>
         <div class="sub-text">POLICE REGIONAL OFFICE 9</div>
     </div>
@@ -104,7 +139,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // TARGET SCRIPT ENDPOINT - Directly triggers your core application infrastructure URL
+        // TARGET SCRIPT ENDPOINT - Directly triggers your application infrastructure URL
         const REGISTRATION_ENDPOINT = "https://script.google.com/macros/s/AKfycbwZK55gC-uQSmoutnDgHCsu8rufxxxcLJUT5Mt-smaVl17FM3e3V32t9H8_3neIy0xtnw/exec?p=index";
 
         // Zamboanga Operational Coordinates
@@ -118,46 +153,48 @@
         ];
 
         // Satellite Grid Framework
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 9);
+        const map = L.map('map', { zoomControl: false, attributionControl: false, fadeAnimation: true }).setView([6.92, 122.07], 9);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
         // Render tactical layout markers on map layer
         regionalJurisdictions.forEach(loc => {
-            L.circleMarker(loc.coords, { radius: 5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
+            L.circleMarker(loc.coords, { radius: 4.5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
              .bindTooltip(loc.name, { permanent: true, direction: 'right', offset: [12, 0], className: 'tactical-label' });
             
-            L.circleMarker(loc.coords, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+            L.circleMarker(loc.coords, { radius: 14, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
         });
 
-        // Auto-run tactical loading routing sequence immediately on window initialize
+        // Fast concurrent orchestration workflow
         window.addEventListener('DOMContentLoaded', () => {
             const frameElement = document.getElementById('secure-frame');
             const overlayElement = document.getElementById('loading-overlay');
             const loadTextElement = document.getElementById('load-text');
 
-            // Panoramic automated camera fly-to transition across the regional map space
+            // Fast pan-zoom visual sequence execution
             setTimeout(() => {
-                map.flyTo([7.4, 122.3], 8, { duration: 1.2, easeLinearity: 0.2 });
-                loadTextElement.innerHTML = "CONNECTING TO SECURE PROFILE DATABASE...<br><span style='color:var(--defense-green); font-size:11px;'>HANDSHAKE VERIFIED</span>";
-            }, 400);
+                map.flyTo([7.3, 122.3], 8.2, { duration: 1.0, easeLinearity: 0.1 });
+                loadTextElement.innerHTML = "CONNECTING TO SECURE PROFILE DATABASE...<br><span style='color:var(--defense-green); font-size:10px; letter-spacing: 2px;'>HANDSHAKE VERIFIED</span>";
+            }, 250);
 
-            // Establish secure connection to target Web App endpoint inside frame architecture
+            // Trigger endpoint configuration concurrently without waiting for map animation completes
             frameElement.src = REGISTRATION_ENDPOINT;
             
             frameElement.onload = () => {
                 overlayElement.style.opacity = "0";
                 frameElement.style.visibility = "visible";
                 frameElement.style.opacity = "1";
+                frameElement.style.transform = "scale(1)";
                 
-                // Securely clear background map layout and overlay nodes to maximize device hardware RAM performance
+                // Purge graphics layer assets post-display to conserve client side workspace RAM
                 setTimeout(() => { 
                     overlayElement.remove();
                     document.getElementById('map').remove();
-                }, 600);
+                    document.querySelector('.hud-scanlines').remove();
+                }, 500);
             };
         });
 
-        // Hardened Perimeter Defense Metrics (Disables evaluation/inspection key combinations)
+        // Hardened Perimeter Defense Metrics (Disables inspection key commands)
         document.onkeydown = function(e) {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
                 return false;
