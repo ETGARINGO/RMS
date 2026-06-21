@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>RECORDS | PNP</title>
     <link rel="icon" type="image/png" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="viewport" content="width=1200, initial-scale=0.25, minimum-scale=0.1, maximum-scale=2.0">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -63,6 +64,7 @@
             color: var(--primary-color);
             letter-spacing: -0.5px;
             margin-left: 5px;
+            white-space: nowrap;
         }
 
         /* IFRAME CONTAINER */
@@ -91,12 +93,15 @@
             color: #94a3b8;
         }
 
-        /* MOBILE OPTIMIZATION */
-        @media (max-width: 600px) {
-            .header { padding: 0 15px; }
-            .title { font-size: 16px; }
-            .logo { height: 35px; }
-            .brand { gap: 8px; }
+        /* FIXED WIDTH DESKTOP FIX FOR HEADER ON SMALL SCREENS */
+        @media (max-width: 1200px) {
+            body {
+                width: 1200px; /* Prevents header elements from collapsing/breaking line layout */
+                overflow-x: auto; 
+            }
+            .iframe-container {
+                width: 1200px;
+            }
         }
     </style>
 </head>
@@ -112,7 +117,7 @@
         </div>
         
         <div class="actions">
-            <small style="color: #64748b; font-weight: 500;">Live Workspace</small>
+            <small style="color: #64748b; font-weight: 500; font-size: 14px;">Live Workspace</small>
         </div>
     </header>
 
@@ -122,7 +127,7 @@
         </div>
         
         <iframe 
-            src="https://docs.google.com/spreadsheets/d/1vmEcUgjlFiNibePf8qJfXtNPEgIslsT9aIANHQ4k1lo/edit?usp=sharing" 
+            src="https://docs.google.com/spreadsheets/d/1vmEcUgjlFiNibePf8qJfXtNPEgIslsT9aIANHQ4k1lo/edit?usp=sharing&rm=minimal" 
             allowfullscreen>
         </iframe>
     </main>
