@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { --primary: #004a99; --glass: rgba(255, 255, 255, 0.95); }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; 
+            margin: 0; padding: 15px;
+        }
+
+        .container { 
+            background: var(--glass); backdrop-filter: blur(12px); padding: 30px; 
+            border-radius: 20px; width: 100%; max-width: 400px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; 
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .logo { width: 140px; cursor: pointer; transition: transform 0.3s ease; margin-bottom: 20px; }
+        .logo:hover { transform: scale(1.08); }
+
+        #uploadForm { display: none; text-align: left; margin-top: 20px; animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-group { margin-bottom: 20px; }
+        label { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: block; }
+        
+        select, input[type="file"] { 
+            width: 100%; padding: 14px; border: 1px solid #d1d9e6; border-radius: 12px; 
+            background: white; font-size: 1rem; box-sizing: border-box;
+        }
+
+        button { 
+            width: 100%; padding: 15px; background: var(--primary); color: white; 
+            border: none; border-radius: 12px; font-weight: bold; cursor: pointer; 
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover { background: #003366; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" 
+             class="logo" onclick="toggleForm()" alt="NAP Logo">
+        <p id="instruction" style="color: #666; font-size: 0.9rem;">Tap the logo to reveal upload form</p>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>Unit</label>
+                <select id="unit" name="unit" required onchange="filterStations(this.value)"></select>
+            </div>
+            <div class="form-group">
+                <label>Station/Office</label>
+                <select id="station" name="station" required disabled></select>
+            </div>
+            <div class="form-group">
+                <label>File</label>
+                <input type="file" name="myFile" required>
+            </div>
+            <button type="submit" id="btn">Upload & Register</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const f = document.getElementById('uploadForm');
+            const i = document.getElementById('instruction');
+            f.style.display = (f.style.display === 'block') ? 'none' : 'block';
+            i.style.display = (f.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.onload = () => google.script.run.withSuccessHandler(data => {
+            configData = data;
+            const units = [...new Set(data.map(i => i.unit))];
+            document.getElementById('unit').innerHTML = '<option value="">Select Unit</option>' + units.map(u => `<option value="${u}">${u}</option>`).join('');
+        }).getConfigData();
+
+        function filterStations(unit) {
+            const s = document.getElementById('station');
+            const filtered = configData.filter(i => i.unit === unit);
+            s.innerHTML = '<option value="">Select Station</option>' + filtered.map(i => `<option value="${i.station}">${i.station}</option>`).join('');
+            s.disabled = false;
+        }
+
+        document.getElementById('uploadForm').onsubmit = function(e) {
+            e.preventDefault();
+            document.getElementById('btn').innerText = 'Uploading...';
+            google.script.run.withSuccessHandler(() => { 
+                alert('Upload Successful!'); 
+                this.reset(); 
+                document.getElementById('btn').innerText = 'Upload & Register'; 
+                toggleForm(); 
+            }).processForm(this);
+        };
+    </script>
+</body>
+</html>
