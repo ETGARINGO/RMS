@@ -6,11 +6,9 @@
     <link rel="icon" type="image/png" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS RESET FOR FULL PAGE */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body, html {
@@ -18,7 +16,9 @@
             width: 100%;
             font-family: 'Inter', sans-serif;
             background: #ffffff;
-            overflow: hidden; /* Prevents all scrollbars */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         /* HEADER */
@@ -26,35 +26,21 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 60px; /* Slimmer header for more content space */
+            height: 60px;
             background: #ffffff;
             padding: 0 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: relative;
             z-index: 10;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .logo { height: 35px; width: auto; }
+        .title { font-size: 18px; font-weight: 700; color: #2c3e50; }
 
-        .logo {
-            height: 35px;
-            width: auto;
-        }
-
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        /* FULL PAGE IFRAME */
+        /* MAIN CONTENT */
         .iframe-container {
-            width: 100vw;
-            height: calc(100vh - 60px); /* Fill remaining height exactly */
+            flex: 1; /* Takes all available remaining space */
+            width: 100%;
         }
 
         iframe {
@@ -62,6 +48,18 @@
             height: 100%;
             border: none;
             display: block;
+        }
+
+        /* FOOTER */
+        .footer {
+            height: 30px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #e2e8f0;
         }
     </style>
 </head>
@@ -82,6 +80,10 @@
             allowfullscreen>
         </iframe>
     </main>
+
+    <footer class="footer">
+        © 2026 Philippine National Police - Records Management System
+    </footer>
 
 </body>
 </html>
