@@ -5,74 +5,74 @@
     <title>RECORDS | PNP</title>
     <link rel="icon" type="image/png" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
     
-    <meta name="viewport" content="width=1200, initial-scale=0.25, minimum-scale=0.1, maximum-scale=2.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-color: #2c3e50; /* Professional Dark Blue */
+            --primary-color: #2c3e50;
             --header-height: 70px;
             --bg-color: #f8fafc;
         }
 
-        body {
+        body, html {
             margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
             font-family: 'Inter', sans-serif;
             background: var(--bg-color);
-            overflow: hidden; /* Prevents double scrollbars */
+            overflow: hidden; /* Keeps the app as a single-page view */
         }
 
-        /* HEADER DESIGN */
+        /* HEADER */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             height: var(--header-height);
             background: #ffffff;
-            padding: 0 30px;
+            padding: 0 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 10;
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 8px; /* Space between the two logos */
+            gap: 8px;
         }
 
         .logo {
-            height: 45px;
+            height: 40px;
             width: auto;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
         }
 
         .title {
-            font-size: 22px;
+            font-size: clamp(16px, 4vw, 22px); /* Responsive font size */
             font-weight: 700;
             color: var(--primary-color);
-            letter-spacing: -0.5px;
-            margin-left: 5px;
             white-space: nowrap;
+        }
+
+        .actions {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
         }
 
         /* IFRAME CONTAINER */
         .iframe-container {
-            position: relative;
             width: 100%;
             height: calc(100vh - var(--header-height));
-            background: #fff;
+            position: relative;
         }
 
         iframe {
@@ -82,26 +82,10 @@
             display: block;
         }
 
-        /* LOADING SPINNER */
-        .loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1; /* Sits behind iframe until needed */
-            text-align: center;
-            color: #94a3b8;
-        }
-
-        /* FIXED WIDTH DESKTOP FIX FOR HEADER ON SMALL SCREENS */
-        @media (max-width: 1200px) {
-            body {
-                width: 1200px; /* Prevents header elements from collapsing/breaking line layout */
-                overflow-x: auto; 
-            }
-            .iframe-container {
-                width: 1200px;
-            }
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            .header { padding: 0 10px; }
+            .actions { display: none; } /* Hide label on very small screens to save space */
         }
     </style>
 </head>
@@ -117,15 +101,11 @@
         </div>
         
         <div class="actions">
-            <small style="color: #64748b; font-weight: 500; font-size: 14px;">Live Workspace</small>
+            Live Workspace
         </div>
     </header>
 
     <main class="iframe-container">
-        <div class="loader">
-            <p>Loading Dashboard...</p>
-        </div>
-        
         <iframe 
             src="https://script.google.com/macros/s/AKfycbxnyh08bIkT3PhcS51SkSwgHdGdaGjBr6q0r6JPlMFwe1CmklG3rGxI7VgHFi7eVbKN/exec" 
             allowfullscreen>
