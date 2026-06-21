@@ -5,25 +5,20 @@
     <title>RECORDS | PNP</title>
     <link rel="icon" type="image/png" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
     
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --header-height: 70px;
-            --bg-color: #f8fafc;
-        }
-
+        /* CSS RESET FOR FULL PAGE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body, html {
-            margin: 0;
-            padding: 0;
             height: 100%;
             width: 100%;
             font-family: 'Inter', sans-serif;
-            background: var(--bg-color);
-            overflow: hidden; /* Keeps the app as a single-page view */
+            background: #ffffff;
+            overflow: hidden; /* Prevents all scrollbars */
         }
 
         /* HEADER */
@@ -31,48 +26,35 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: var(--header-height);
+            height: 60px; /* Slimmer header for more content space */
             background: #ffffff;
             padding: 0 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            flex-shrink: 0;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .logo {
-            height: 40px;
+            height: 35px;
             width: auto;
         }
 
         .title {
-            font-size: clamp(16px, 4vw, 22px); /* Responsive font size */
+            font-size: 18px;
             font-weight: 700;
-            color: var(--primary-color);
-            white-space: nowrap;
+            color: #2c3e50;
         }
 
-        .actions {
-            font-size: 14px;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        /* IFRAME CONTAINER */
+        /* FULL PAGE IFRAME */
         .iframe-container {
-            width: 100%;
-            height: calc(100vh - var(--header-height));
-            position: relative;
+            width: 100vw;
+            height: calc(100vh - 60px); /* Fill remaining height exactly */
         }
 
         iframe {
@@ -81,28 +63,17 @@
             border: none;
             display: block;
         }
-
-        /* Mobile specific adjustments */
-        @media (max-width: 480px) {
-            .header { padding: 0 10px; }
-            .actions { display: none; } /* Hide label on very small screens to save space */
-        }
     </style>
 </head>
 <body>
 
     <header class="header">
         <div class="brand">
-            <div class="logo-container">
-                <img src="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png" alt="PNP Logo" class="logo">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" alt="National Archives Logo" class="logo">
-            </div>
+            <img src="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png" alt="PNP Logo" class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" alt="National Archives Logo" class="logo">
             <div class="title">RECORDS | PNP</div>
         </div>
-        
-        <div class="actions">
-            Live Workspace
-        </div>
+        <div style="font-size: 12px; color: #94a3b8;">LIVE SYSTEM</div>
     </header>
 
     <main class="iframe-container">
