@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="icon" type="image/png" href="NAP-PRO9.png">
+    <link rel="apple-touch-icon" href="NAP-PRO9.png">
+    
+    <title>SUBMISSION FORM | PNP</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styling */
+        .header {
+            display: flex;
+            align-items: center;
+            height: 70px;
+            background: #ffffff;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .brand { display: flex; align-items: center; gap: 15px; }
+        
+        .logo { height: 40px; width: auto; object-fit: contain; }
+        
+        .title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #1e293b; 
+            border-left: 2px solid #e2e8f0;
+            padding-left: 15px;
+            margin-left: 5px;
+            white-space: nowrap;
+        }
+
+        /* Main Content Area */
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .loader {
+            position: absolute; 
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b; 
+            font-size: 14px; 
+            font-weight: 500;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Footer Styling */
+        .footer {
+            height: 40px;
+            background: #ffffff;
+            color: #94a3b8;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <img src="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png" alt="PNP Logo" class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" alt="National Archives Logo" class="logo">
+            <div class="title">SUBMISSION FORM | PNP</div>
+        </div>
+    </header>
+
+    <main class="iframe-container">
+        <div class="loader">Loading application...</div>
+        <iframe 
+            src="https://script.google.com/macros/s/AKfycbwoVWIQTAb2A2Elq2fszvZS9suFQVebwJ_bgFPEP5s9apXTAhPUMmCdmkZIyqA-ZF3_rQ/exec" 
+            sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
+            allowfullscreen>
+        </iframe>
+    </main>
+
+    <footer class="footer">
+        © 2026 Philippine National Police - Records Management System
+    </footer>
+
+</body>
+</html>
