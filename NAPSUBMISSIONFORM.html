@@ -36,7 +36,10 @@
 
         .brand { display: flex; align-items: center; gap: 15px; }
         
-        .logo { height: 40px; width: auto; object-fit: contain; }
+        /* Updated: Ensure links behave like containers for images */
+        .brand a { display: flex; align-items: center; text-decoration: none; }
+        
+        .logo { height: 40px; width: auto; object-fit: contain; cursor: pointer; }
         
         .title { 
             font-size: 18px; 
@@ -92,8 +95,12 @@
 
     <header class="header">
         <div class="brand">
-            <img src="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png" alt="PNP Logo" class="logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" alt="National Archives Logo" class="logo">
+            <a href="https://pnp.gov.ph" target="_blank">
+                <img src="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png" alt="PNP Logo" class="logo">
+            </a>
+            <a href="https://nationalarchives.gov.ph" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/National_Archives_of_the_Philippines_Logo.png" alt="National Archives Logo" class="logo">
+            </a>
             <div class="title">SUBMISSION FORM | PNP</div>
         </div>
     </header>
