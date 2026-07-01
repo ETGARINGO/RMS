@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIGLAKAS · PRO9 Regional Archive</title>
+<title>PRO9 Portal · SIGLAKAS</title>
 <link rel="icon" type="image/png" href="SIGLAKAS.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,353 @@
   }
 
   ::selection{ background:var(--blood); color:var(--paper); }
+  a{ color:inherit; }
 
+  /* ---------- backdrop layers ---------- */
+  #map{ position:absolute; inset:0; z-index:1; filter:grayscale(0.55) sepia(0.35) hue-rotate(-10deg) brightness(0.32) contrast(1.15); }
+
+  .tint{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(10,8,6,0.35) 0%, rgba(8,5,3,0.86) 78%, #050302 100%);
+  }
+  .radar{
+    position:fixed; inset:0; z-index:3; pointer-events:none;
+    mix-blend-mode:screen; opacity:0.5;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(230,64,44,0.22) 18deg, transparent 46deg);
+    animation:sweep 6s linear infinite;
+  }
+  @keyframes sweep{ to{ transform:rotate(360deg); } }
+  .grain{
+    position:fixed; inset:0; z-index:4; pointer-events:none; opacity:0.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scanlines{
+    position:fixed; inset:0; z-index:5; pointer-events:none;
+    background:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.14) 50%);
+    background-size:100% 4px; opacity:0.5;
+  }
+  .vignette{ position:fixed; inset:0; z-index:6; pointer-events:none; box-shadow:inset 0 0 22vw 4vw #000; }
+
+  /* ---------- breadcrumb / chrome ---------- */
+  #chrome{
+    position:fixed; top:0; left:0; right:0; z-index:30;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 30px; pointer-events:none;
+  }
+  #breadcrumb{
+    display:flex; align-items:center; gap:10px;
+    font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase;
+    pointer-events:auto;
+  }
+  #breadcrumb .crumb{
+    background:none; border:none; color:rgba(236,228,208,0.45);
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.16em;
+    text-transform:uppercase; cursor:pointer; padding:4px 2px;
+    transition:color .25s;
+  }
+  #breadcrumb .crumb.current{ color:var(--ember); cursor:default; }
+  #breadcrumb .crumb:not(.current):hover{ color:var(--paper); }
+  #breadcrumb .sep{ color:rgba(168,153,104,0.4); }
+
+  #clock{
+    font-size:0.68rem; letter-spacing:0.14em; color:rgba(236,228,208,0.4);
+    pointer-events:auto;
+  }
+
+  /* ---------- shared view mechanics ---------- */
+  .view{
+    position:fixed; inset:0; z-index:20;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:100px 24px 40px;
+    opacity:0; transform:translateY(14px) scale(0.99);
+    pointer-events:none;
+    transition:opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .view.active{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+  .crest{
+    width:76px; height:76px; object-fit:contain;
+    filter:drop-shadow(0 0 18px rgba(230,64,44,0.55)) grayscale(0.15);
+    margin-bottom:16px; opacity:0.95;
+  }
+  .eyebrow{
+    font-size:0.72rem; letter-spacing:0.42em; color:var(--khaki);
+    text-transform:uppercase; margin-bottom:14px; text-align:center;
+  }
+  .eyebrow::before{ content:"◆ "; color:var(--ember); }
+
+  h1.title{
+    font-family:'Big Shoulders Stencil', sans-serif; font-weight:800;
+    font-size:clamp(2.8rem, 11vw, 7rem); line-height:0.86; margin:0;
+    letter-spacing:0.03em; color:var(--paper); text-align:center;
+    text-shadow:0 0 40px rgba(230,64,44,0.35);
+  }
+  .subtitle{
+    font-size:0.8rem; letter-spacing:0.28em; text-transform:uppercase;
+    color:var(--khaki); margin-top:10px; text-align:center;
+  }
+  .divider{ width:60px; height:1px; background:var(--line); margin:26px 0; }
+
+  .btn{
+    font-family:'IBM Plex Mono', monospace; font-size:0.8rem; letter-spacing:0.26em;
+    text-transform:uppercase; color:var(--paper); background:rgba(138,28,28,0.18);
+    border:1px solid var(--blood); padding:15px 34px; cursor:pointer;
+    transition:background .3s var(--ease), box-shadow .3s var(--ease), letter-spacing .3s var(--ease);
+  }
+  .btn:hover, .btn:focus-visible{
+    background:var(--blood); box-shadow:0 0 28px rgba(230,64,44,0.55);
+    letter-spacing:0.3em; outline:none;
+  }
+  .btn.ghost{ background:transparent; border-color:var(--line); color:rgba(236,228,208,0.6); }
+  .btn.ghost:hover, .btn.ghost:focus-visible{ background:rgba(168,153,104,0.12); border-color:var(--khaki); box-shadow:none; color:var(--paper); }
+
+  /* ---------- HOME: unit grid ---------- */
+  .unit-grid{
+    display:grid; grid-template-columns:repeat(3, minmax(160px, 220px));
+    gap:16px; margin-top:8px; width:100%; max-width:760px;
+  }
+  .unit-card{
+    position:relative; border:1px solid var(--line); background:rgba(20,13,10,0.5);
+    padding:22px 16px; text-align:center; cursor:pointer;
+    transition:border-color .3s var(--ease), background .3s var(--ease), transform .3s var(--ease);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .unit-card .tag{ font-size:0.6rem; letter-spacing:0.14em; color:rgba(236,228,208,0.35); text-transform:uppercase; margin-bottom:10px; }
+  .unit-card .name{ font-family:'Big Shoulders Stencil', sans-serif; font-size:1.5rem; letter-spacing:0.02em; color:var(--paper); }
+  .unit-card .stat{ font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; margin-top:10px; }
+
+  .unit-card.active{ border-color:var(--khaki); }
+  .unit-card.active .stat{ color:#7fae7f; }
+  .unit-card.active:hover, .unit-card.active:focus-visible{
+    border-color:var(--ember); background:rgba(138,28,28,0.14); transform:translateY(-3px);
+    outline:none;
+  }
+  .unit-card.locked{ cursor:not-allowed; opacity:0.55; }
+  .unit-card.locked .stat{ color:var(--khaki); }
+  .unit-card.locked::after{
+    content:"🔒"; position:absolute; top:12px; right:14px; font-size:0.75rem; opacity:0.6;
+  }
+
+  @media (max-width:600px){
+    .unit-grid{ grid-template-columns:1fr; max-width:280px; }
+  }
+
+  /* ---------- UNIT VIEW ---------- */
+  .unit-body{
+    max-width:520px; text-align:center; font-size:0.82rem;
+    line-height:1.7; color:rgba(236,228,208,0.75); margin:0 0 30px;
+  }
+  .unit-actions{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+
+  /* ---------- ARCHIVE VIEW ---------- */
+  #view-archive{ justify-content:flex-start; padding-top:120px; }
+  .archive-panel{
+    width:min(560px, 100%); background:linear-gradient(180deg, var(--void-2), #0c0705 92%);
+    border:1px solid var(--line); box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .archive-head{ padding:26px 28px 18px; border-bottom:1px solid var(--line); text-align:left; }
+  .archive-head h2{
+    font-family:'Big Shoulders Stencil', sans-serif; font-weight:700; font-size:1.5rem;
+    letter-spacing:0.04em; margin:0; color:var(--paper);
+  }
+  .dir-item{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:18px 28px; text-decoration:none; color:var(--paper);
+    border-bottom:1px solid var(--line);
+    opacity:0; transform:translateX(18px);
+    transition:background .25s var(--ease), padding-left .25s var(--ease);
+  }
+  #view-archive.active .dir-item{ animation:reveal .5s var(--ease) forwards; }
+  #view-archive.active .dir-item:nth-child(1){ animation-delay:.12s; }
+  #view-archive.active .dir-item:nth-child(2){ animation-delay:.24s; }
+  #view-archive.active .dir-item:nth-child(3){ animation-delay:.36s; }
+  @keyframes reveal{ to{ opacity:1; transform:translateX(0); } }
+  .dir-item:hover, .dir-item:focus-visible{ background:rgba(138,28,28,0.16); padding-left:34px; outline:none; }
+  .dir-meta{ display:flex; flex-direction:column; gap:6px; }
+  .dir-date{ font-size:0.66rem; letter-spacing:0.14em; color:var(--khaki); }
+  .dir-name{ font-size:0.86rem; font-weight:500; letter-spacing:0.02em; }
+  .dir-status{ font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(236,228,208,0.4); margin-top:2px; }
+  .dir-arrow{ font-size:1.05rem; color:var(--ember); flex-shrink:0; transition:transform .25s var(--ease); }
+  .dir-item:hover .dir-arrow, .dir-item:focus-visible .dir-arrow{ transform:translateX(4px); }
+  .archive-foot{ padding:16px 28px 22px; font-size:0.6rem; letter-spacing:0.12em; color:rgba(236,228,208,0.35); text-align:left; }
+  .archive-back{ margin-top:22px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .radar{ animation:none; opacity:0.25; }
+    .dir-item{ animation:none; opacity:1; transform:none; }
+    .view, .btn, .dir-item, .unit-card{ transition:none; }
+  }
+
+  @media (max-width:560px){
+    .crest{ width:60px; height:60px; }
+    .btn{ padding:13px 24px; }
+    #view-archive{ padding-top:96px; }
+  }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+  <div id="map"></div>
+  <div class="tint"></div>
+  <div class="radar"></div>
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <div id="chrome">
+    <div id="breadcrumb"></div>
+    <div id="clock"></div>
+  </div>
+
+  <!-- LEVEL 1 — PORTAL HOME -->
+  <section id="view-home" class="view active">
+    <div class="eyebrow">Police Regional Office 9</div>
+    <h1 class="title">PRO9</h1>
+    <div class="subtitle">Regional Command Portal</div>
+    <div class="divider"></div>
+    <div class="unit-grid">
+      <div class="unit-card active" tabindex="0" role="button" onclick="goTo('unit')" onkeydown="if(event.key==='Enter')goTo('unit')">
+        <div class="tag">01</div>
+        <div class="name">SIGLAKAS</div>
+        <div class="stat">● Online</div>
+      </div>
+      <div class="unit-card locked" tabindex="0" aria-disabled="true">
+        <div class="tag">02</div>
+        <div class="name">UNIT&nbsp;B</div>
+        <div class="stat">Restricted</div>
+      </div>
+      <div class="unit-card locked" tabindex="0" aria-disabled="true">
+        <div class="tag">03</div>
+        <div class="name">UNIT&nbsp;C</div>
+        <div class="stat">Restricted</div>
+      </div>
+    </div>
+    <p class="stamp-note" style="margin-top:26px;font-size:0.64rem;letter-spacing:0.12em;color:rgba(236,228,208,0.35);text-align:center;max-width:340px;">
+      Select an active node to continue. Additional units come online as access is granted.
+    </p>
+  </section>
+
+  <!-- LEVEL 2 — SIGLAKAS UNIT -->
+  <section id="view-unit" class="view">
+    <img class="crest" src="SIGLAKAS.png" alt="SIGLAKAS crest">
+    <div class="eyebrow">PRO9 · Unit 01</div>
+    <h1 class="title" style="font-size:clamp(2.6rem, 9vw, 5.6rem);">SIGLAKAS</h1>
+    <div class="subtitle">Regional Personnel Archive</div>
+    <div class="divider"></div>
+    <p class="unit-body">
+      Personnel appointment records for SIGLAKAS, held off-site on Google Drive.
+      Open the archive to browse permanent, temporary, and original appointment files.
+    </p>
+    <div class="unit-actions">
+      <button class="btn" onclick="goTo('archive')">Open Archive</button>
+      <button class="btn ghost" onclick="goTo('home')">Back to Portal</button>
+    </div>
+  </section>
+
+  <!-- LEVEL 3 — ARCHIVE DIRECTORY -->
+  <section id="view-archive" class="view">
+    <div class="archive-panel">
+      <div class="archive-head">
+        <div class="eyebrow">3 Records</div>
+        <h2>SIGLAKAS Archive</h2>
+      </div>
+
+      <nav>
+        <a class="dir-item" href="https://drive.google.com/drive/folders/1yM0T-YEKREz4ODmdwYYDh8WmGWeAtn57?usp=drive_link" target="_blank" rel="noopener">
+          <span class="dir-meta">
+            <span class="dir-date">20 DEC 2021</span>
+            <span class="dir-name">Permanent Reappointment</span>
+            <span class="dir-status">Status · Active</span>
+          </span>
+          <span class="dir-arrow">→</span>
+        </a>
+        <a class="dir-item" href="https://drive.google.com/drive/folders/1aMVu1dNhaRJZnGt5XALxIqVd1iDTmeub?usp=drive_link" target="_blank" rel="noopener">
+          <span class="dir-meta">
+            <span class="dir-date">01 JUL 2021</span>
+            <span class="dir-name">Temporary Reappointment</span>
+            <span class="dir-status">Status · Superseded</span>
+          </span>
+          <span class="dir-arrow">→</span>
+        </a>
+        <a class="dir-item" href="https://drive.google.com/drive/folders/1-8iZ_JmbMpEZX7M5dQ4ISnyiDCYtXMTW?usp=drive_link" target="_blank" rel="noopener">
+          <span class="dir-meta">
+            <span class="dir-date">01 JUL 2020</span>
+            <span class="dir-name">Temporary Appointment, Original</span>
+            <span class="dir-status">Status · Archived</span>
+          </span>
+          <span class="dir-arrow">→</span>
+        </a>
+      </nav>
+
+      <div class="archive-foot">SIGLAKAS · PRO9 &mdash; for authorized personnel use only.</div>
+    </div>
+    <div class="archive-back">
+      <button class="btn ghost" onclick="goTo('unit')">← Back to SIGLAKAS</button>
+    </div>
+  </section>
+
+  <script>
+    const map = L.map('map', { zoomControl:false, attributionControl:false, keyboard:false }).setView([7.2, 122.9], 7);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+    const LEVELS = {
+      home:    { view:'view-home',    coords:[7.2, 122.9],   zoom:7,  crumb:[['PRO9', null]] },
+      unit:    { view:'view-unit',    coords:[7.5, 122.5],   zoom:9,  crumb:[['PRO9','home'], ['SIGLAKAS', null]] },
+      archive: { view:'view-archive', coords:[6.92, 122.07], zoom:12, crumb:[['PRO9','home'], ['SIGLAKAS','unit'], ['ARCHIVE', null]] },
+    };
+
+    let current = 'home';
+
+    function renderBreadcrumb(key){
+      const el = document.getElementById('breadcrumb');
+      el.innerHTML = '';
+      LEVELS[key].crumb.forEach(([label, target], i, arr) => {
+        if(i > 0){
+          const sep = document.createElement('span');
+          sep.className = 'sep'; sep.textContent = '›';
+          el.appendChild(sep);
+        }
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.className = 'crumb' + (target === null ? ' current' : '');
+        if(target !== null){ btn.onclick = () => goTo(target); }
+        else { btn.disabled = true; }
+        el.appendChild(btn);
+      });
+    }
+
+    function goTo(key){
+      if(!LEVELS[key] || key === current && document.getElementById(LEVELS[key].view).classList.contains('active')) {
+        // still allow re-entry to replay archive animation
+      }
+      document.getElementById(LEVELS[current].view).classList.remove('active');
+      current = key;
+      const lvl = LEVELS[key];
+      document.getElementById(lvl.view).classList.add('active');
+      renderBreadcrumb(key);
+      map.flyTo(lvl.coords, lvl.zoom, { duration: 1.4 });
+    }
+
+    renderBreadcrumb('home');
+
+    function tickClock(){
+      const now = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      document.getElementById('clock').textContent =
+        `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} — ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape'){
+        if(current === 'archive') goTo('unit');
+        else if(current === 'unit') goTo('home');
+      }
+    });
+  </script>
+</body>
+</html>
   /* ---------- backdrop layers ---------- */
   #map{ position:absolute; inset:0; z-index:1; filter:grayscale(0.55) sepia(0.35) hue-rotate(-10deg) brightness(0.32) contrast(1.15); }
 
