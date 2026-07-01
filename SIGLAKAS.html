@@ -37,29 +37,40 @@
   a{ color:inherit; }
 
   /* ---------- backdrop layers ---------- */
-  #map{ position:absolute; inset:0; z-index:1; filter:grayscale(0.55) sepia(0.35) hue-rotate(-10deg) brightness(0.32) contrast(1.15); }
+  #map{ 
+    position:absolute; inset:0; z-index:1; 
+    filter: grayscale(0.2) sepia(0.4) hue-rotate(-15deg) brightness(0.55) contrast(1.2);
+    transition: filter 0.5s ease;
+  }
 
   .tint{
     position:fixed; inset:0; z-index:2; pointer-events:none;
-    background:radial-gradient(ellipse at center, rgba(10,8,6,0.35) 0%, rgba(8,5,3,0.86) 78%, #050302 100%);
+    background:radial-gradient(circle at center, rgba(10,8,6,0.15) 0%, rgba(8,5,3,0.65) 75%, #050302 100%);
+  }
+  
+  /* Container to anchor the radar effect directly over the map center view */
+  .radar-container {
+    position: fixed; inset: 0; z-index: 3; pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
   }
   .radar{
-    position:fixed; inset:0; z-index:3; pointer-events:none;
-    mix-blend-mode:screen; opacity:0.5;
-    background:conic-gradient(from 0deg, transparent 0deg, rgba(230,64,44,0.22) 18deg, transparent 46deg);
-    animation:sweep 6s linear infinite;
+    width: 250vmax; height: 250vmax; flex-shrink: 0;
+    mix-blend-mode: screen; opacity: 0.45;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(230,64,44,0.25) 15deg, transparent 40deg);
+    animation: sweep 7s linear infinite;
   }
   @keyframes sweep{ to{ transform:rotate(360deg); } }
+  
   .grain{
-    position:fixed; inset:0; z-index:4; pointer-events:none; opacity:0.05;
+    position:fixed; inset:0; z-index:4; pointer-events:none; opacity:0.04;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   .scanlines{
     position:fixed; inset:0; z-index:5; pointer-events:none;
-    background:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.14) 50%);
-    background-size:100% 4px; opacity:0.5;
+    background:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 50%);
+    background-size:100% 4px; opacity:0.4;
   }
-  .vignette{ position:fixed; inset:0; z-index:6; pointer-events:none; box-shadow:inset 0 0 22vw 4vw #000; }
+  .vignette{ position:fixed; inset:0; z-index:6; pointer-events:none; box-shadow:inset 0 0 25vw 5vw #000; }
 
   /* ---------- breadcrumb / chrome ---------- */
   #chrome{
@@ -147,7 +158,7 @@
   }
   .unit-card .tag{ font-size:0.6rem; letter-spacing:0.14em; color:rgba(236,228,208,0.35); text-transform:uppercase; margin-bottom:10px; }
   .unit-card .name{ font-family:'Big Shoulders Stencil', sans-serif; font-size:1.5rem; letter-spacing:0.02em; color:var(--paper); }
-  .unit-card .stat{ font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; margin-top:10px; }
+  .unit-card .stat{ font-size:0.6rem; letter-spacing:0.1|em; text-transform:uppercase; margin-top:10px; }
 
   .unit-card.active{ border-color:var(--khaki); }
   .unit-card.active .stat{ color:#7fae7f; }
@@ -222,7 +233,11 @@
 
   <div id="map"></div>
   <div class="tint"></div>
-  <div class="radar"></div>
+  
+  <div class="radar-container">
+    <div class="radar"></div>
+  </div>
+  
   <div class="grain"></div>
   <div class="scanlines"></div>
   <div class="vignette"></div>
@@ -351,7 +366,7 @@
 
     function goTo(key){
       if(!LEVELS[key] || key === current && document.getElementById(LEVELS[key].view).classList.contains('active')) {
-        // still allow re-entry to replay archive animation
+        // re-entry optimization
       }
       document.getElementById(LEVELS[current].view).classList.remove('active');
       current = key;
@@ -379,370 +394,5 @@
       }
     });
   </script>
-</body>
-</html>
-  /* ---------- backdrop layers ---------- */
-  #map{ position:absolute; inset:0; z-index:1; filter:grayscale(0.55) sepia(0.35) hue-rotate(-10deg) brightness(0.32) contrast(1.15); }
-
-  .tint{
-    position:fixed; inset:0; z-index:2; pointer-events:none;
-    background:radial-gradient(ellipse at center, rgba(10,8,6,0.35) 0%, rgba(8,5,3,0.86) 78%, #050302 100%);
-  }
-
-  .radar{
-    position:fixed; inset:0; z-index:3; pointer-events:none;
-    mix-blend-mode:screen; opacity:0.5;
-    background:conic-gradient(from 0deg, transparent 0deg, rgba(230,64,44,0.22) 18deg, transparent 46deg);
-    animation:sweep 6s linear infinite;
-  }
-  @keyframes sweep{ to{ transform:rotate(360deg); } }
-
-  .grain{
-    position:fixed; inset:0; z-index:4; pointer-events:none; opacity:0.05;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .scanlines{
-    position:fixed; inset:0; z-index:5; pointer-events:none;
-    background:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.14) 50%);
-    background-size:100% 4px;
-    opacity:0.5;
-  }
-
-  .vignette{
-    position:fixed; inset:0; z-index:6; pointer-events:none;
-    box-shadow:inset 0 0 22vw 4vw #000;
-  }
-
-  /* ---------- HUD (landing) ---------- */
-  #hud{
-    position:fixed; inset:0; z-index:20;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:24px;
-    transition:opacity .7s var(--ease), filter .7s var(--ease);
-  }
-  #hud.hidden{ opacity:0; filter:blur(6px); pointer-events:none; }
-
-  .crest{
-    width:88px; height:88px; object-fit:contain;
-    filter:drop-shadow(0 0 18px rgba(230,64,44,0.55)) grayscale(0.15);
-    margin-bottom:18px;
-    opacity:0.95;
-  }
-
-  .eyebrow{
-    font-size:0.72rem; letter-spacing:0.42em; color:var(--khaki);
-    text-transform:uppercase; margin-bottom:14px;
-  }
-  .eyebrow::before{ content:"◆ "; color:var(--ember); }
-
-  h1.title{
-    font-family:'Big Shoulders Stencil', sans-serif;
-    font-weight:800;
-    font-size:clamp(3.4rem, 13vw, 8.5rem);
-    line-height:0.86;
-    margin:0;
-    letter-spacing:0.03em;
-    color:var(--paper);
-    text-shadow:0 0 40px rgba(230,64,44,0.35);
-  }
-
-  .subtitle{
-    font-size:0.82rem; letter-spacing:0.3em; text-transform:uppercase;
-    color:var(--khaki); margin-top:10px;
-  }
-
-  .divider{
-    width:60px; height:1px; background:var(--line);
-    margin:26px 0;
-  }
-
-  .access-btn{
-    position:relative;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:0.82rem; letter-spacing:0.28em; text-transform:uppercase;
-    color:var(--paper); background:rgba(138,28,28,0.18);
-    border:1px solid var(--blood);
-    padding:16px 38px;
-    cursor:pointer;
-    transition:background .3s var(--ease), box-shadow .3s var(--ease), letter-spacing .3s var(--ease);
-  }
-  .access-btn:hover, .access-btn:focus-visible{
-    background:var(--blood);
-    box-shadow:0 0 28px rgba(230,64,44,0.55);
-    letter-spacing:0.34em;
-    outline:none;
-  }
-  .access-btn:active{ transform:translateY(1px); }
-
-  .stamp-note{
-    margin-top:22px; font-size:0.68rem; letter-spacing:0.14em;
-    color:rgba(236,228,208,0.45); max-width:340px;
-  }
-
-  /* ---------- Directory panel ---------- */
-  #directory{
-    position:fixed; top:0; right:0; height:100%;
-    width:min(460px, 92vw);
-    background:linear-gradient(180deg, var(--void-2), #0c0705 92%);
-    border-left:1px solid var(--line);
-    box-shadow:-30px 0 60px rgba(0,0,0,0.6);
-    z-index:25;
-    transform:translateX(105%);
-    transition:transform .55s var(--ease);
-    display:flex; flex-direction:column;
-  }
-  #directory.open{ transform:translateX(0); }
-
-  .dir-head{
-    padding:30px 28px 20px;
-    border-bottom:1px solid var(--line);
-    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
-  }
-  .dir-head h2{
-    font-family:'Big Shoulders Stencil', sans-serif;
-    font-weight:700; font-size:1.7rem; letter-spacing:0.04em; margin:0;
-    color:var(--paper);
-  }
-  .dir-head .eyebrow{ margin-bottom:6px; }
-
-  .dir-close{
-    background:none; border:1px solid var(--line); color:var(--khaki);
-    width:34px; height:34px; cursor:pointer; font-size:1rem; line-height:1;
-    transition:border-color .25s, color .25s;
-    flex-shrink:0;
-  }
-  .dir-close:hover, .dir-close:focus-visible{ border-color:var(--ember); color:var(--ember); outline:none; }
-
-  .dir-list{ padding:14px 0; overflow-y:auto; flex:1; }
-
-  .dir-item{
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
-    padding:18px 28px;
-    text-decoration:none; color:var(--paper);
-    border-bottom:1px solid var(--line);
-    opacity:0; transform:translateX(18px);
-    animation:reveal .5s var(--ease) forwards;
-    transition:background .25s var(--ease), padding-left .25s var(--ease);
-  }
-  #directory.open .dir-item:nth-child(1){ animation-delay:.15s; }
-  #directory.open .dir-item:nth-child(2){ animation-delay:.28s; }
-  #directory.open .dir-item:nth-child(3){ animation-delay:.41s; }
-  @keyframes reveal{ to{ opacity:1; transform:translateX(0); } }
-
-  .dir-item:hover, .dir-item:focus-visible{
-    background:rgba(138,28,28,0.16);
-    padding-left:34px;
-    outline:none;
-  }
-
-  .dir-meta{ display:flex; flex-direction:column; gap:6px; }
-  .dir-date{ font-size:0.68rem; letter-spacing:0.14em; color:var(--khaki); }
-  .dir-name{ font-size:0.88rem; font-weight:500; letter-spacing:0.02em; }
-  .dir-status{
-    font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase;
-    color:rgba(236,228,208,0.4); margin-top:2px;
-  }
-  .dir-arrow{ font-size:1.1rem; color:var(--ember); flex-shrink:0; transition:transform .25s var(--ease); }
-  .dir-item:hover .dir-arrow, .dir-item:focus-visible .dir-arrow{ transform:translateX(4px); }
-
-  .dir-foot{
-    padding:18px 28px 24px; border-top:1px solid var(--line);
-    font-size:0.62rem; letter-spacing:0.12em; color:rgba(236,228,208,0.35);
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .radar{ animation:none; opacity:0.25; }
-    .dir-item{ animation:none; opacity:1; transform:none; }
-    #hud, #directory, .access-btn, .dir-item, .dir-close{ transition:none; }
-  }
-
-  @media (max-width:560px){
-    .crest{ width:64px; height:64px; }
-    .access-btn{ padding:14px 28px; }
-  }
-</style>
-</head>
-<body oncontextmenu="return false;">
-
-  <div id="map"></div>
-  <div class="tint"></div>
-  <div class="radar"></div>
-  <div class="grain"></div>
-  <div class="scanlines"></div>
-  <div class="vignette"></div>
-
-  <div id="hud">
-    <img class="crest" src="SIGLAKAS.png" alt="SIGLAKAS crest">
-    <div class="eyebrow">Police Regional Office 9</div>
-    <h1 class="title">SIGLAKAS</h1>
-    <div class="subtitle">Regional Personnel Archive</div>
-    <div class="divider"></div>
-    <button class="access-btn" onclick="openDirectory()">Access Archive</button>
-    <p class="stamp-note">Records are stored off-site on Google Drive. Selecting an entry opens it in a new tab.</p>
-  </div>
-
-  <div id="directory" role="dialog" aria-label="Tactical archive directory">
-    <div class="dir-head">
-      <div>
-        <div class="eyebrow">3 Records</div>
-        <h2>Archive</h2>
-      </div>
-      <button class="dir-close" onclick="closeDirectory()" aria-label="Close archive">✕</button>
-    </div>
-
-    <nav class="dir-list">
-      <a class="dir-item" href="https://drive.google.com/drive/folders/1yM0T-YEKREz4ODmdwYYDh8WmGWeAtn57?usp=drive_link" target="_blank" rel="noopener">
-        <span class="dir-meta">
-          <span class="dir-date">20 DEC 2021</span>
-          <span class="dir-name">Permanent Reappointment</span>
-          <span class="dir-status">Status · Active</span>
-        </span>
-        <span class="dir-arrow">→</span>
-      </a>
-
-      <a class="dir-item" href="https://drive.google.com/drive/folders/1aMVu1dNhaRJZnGt5XALxIqVd1iDTmeub?usp=drive_link" target="_blank" rel="noopener">
-        <span class="dir-meta">
-          <span class="dir-date">01 JUL 2021</span>
-          <span class="dir-name">Temporary Reappointment</span>
-          <span class="dir-status">Status · Superseded</span>
-        </span>
-        <span class="dir-arrow">→</span>
-      </a>
-
-      <a class="dir-item" href="https://drive.google.com/drive/folders/1-8iZ_JmbMpEZX7M5dQ4ISnyiDCYtXMTW?usp=drive_link" target="_blank" rel="noopener">
-        <span class="dir-meta">
-          <span class="dir-date">01 JUL 2020</span>
-          <span class="dir-name">Temporary Appointment, Original</span>
-          <span class="dir-status">Status · Archived</span>
-        </span>
-        <span class="dir-arrow">→</span>
-      </a>
-    </nav>
-
-    <div class="dir-foot">SIGLAKAS · PRO9 &mdash; for authorized personnel use only.</div>
-  </div>
-
-  <script>
-    const map = L.map('map', { zoomControl:false, attributionControl:false, keyboard:false }).setView([7.5, 122.5], 8);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-
-    function openDirectory(){
-      document.getElementById('hud').classList.add('hidden');
-      document.getElementById('directory').classList.add('open');
-      map.flyTo([6.92, 122.07], 12, { duration: 1.6 });
-    }
-
-    function closeDirectory(){
-      document.getElementById('directory').classList.remove('open');
-      document.getElementById('hud').classList.remove('hidden');
-      map.flyTo([7.5, 122.5], 8, { duration: 1.4 });
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') closeDirectory();
-    });
-  </script>
-</body>
-</html>            0%, 95%, 100% { opacity: 0; }
-            96% { opacity: 1; background: #fff; }
-            98% { opacity: 0.3; background: #4b4bdf; }
-        }
-        .storm-layer {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            pointer-events: none; z-index: 99;
-            animation: lightning 5s infinite;
-        }
-
-        #hud {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 100; 
-            background: radial-gradient(circle, rgba(40,0,0,0.8) 0%, rgba(0,0,0,1) 100%);
-            transition: 0.8s ease;
-        }
-
-        /* DIRECTORY MENU */
-        #directory {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 600px; background: var(--tactical-bg);
-            border: 2px solid var(--war-red); box-shadow: 0 0 30px var(--war-red);
-            z-index: 200; display: none; padding: 30px;
-        }
-
-        .dir-item {
-            display: block; padding: 15px; margin: 10px 0;
-            border: 1px solid #400; color: #fff; text-decoration: none;
-            background: rgba(50, 0, 0, 0.3); transition: 0.3s;
-            text-transform: uppercase; font-weight: bold; font-size: 0.9rem;
-        }
-        .dir-item:hover { background: var(--war-red); color: #000; box-shadow: 0 0 15px var(--war-red); }
-
-        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; filter: sepia(1) hue-rotate(320deg) brightness(0.4); }
-        
-        .launch-btn {
-            margin-top: 40px; padding: 15px 50px; background: #600; color: #fff;
-            border: 2px solid var(--war-red); cursor: pointer; font-weight: bold;
-            box-shadow: 0 0 15px var(--war-red); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-        }
-    </style>
-</head>
-<body oncontextmenu="return false;">
-
-    <div class="vignette"></div>
-    <div class="scanlines"></div>
-    <div class="storm-layer"></div>
-
-    <div id="hud">
-        <img src="SIGLAKAS.png" style="width:200px; filter: drop-shadow(0 0 15px #f00);" alt="SIGLAKAS">
-        <button class="launch-btn" onclick="openDirectory()">DECRYPT DIRECTORY</button>
-    </div>
-
-    <div id="directory">
-        <h2 style="color:var(--war-red); text-align:center; border-bottom: 1px solid #f00; padding-bottom: 10px;">TACTICAL ARCHIVES</h2>
-        
-        <a href="https://drive.google.com/drive/folders/1yM0T-YEKREz4ODmdwYYDh8WmGWeAtn57?usp=drive_link" target="_blank" class="dir-item">
-            [2021 DEC 20] PERM REAPP (SIGLAKAS)
-        </a>
-        
-        <a href="https://drive.google.com/drive/folders/1aMVu1dNhaRJZnGt5XALxIqVd1iDTmeub?usp=drive_link" target="_blank" class="dir-item">
-            [2021 JUL 01] TEMP REAPP (SIGLAKAS)
-        </a>
-        
-        <a href="https://drive.google.com/drive/folders/1-8iZ_JmbMpEZX7M5dQ4ISnyiDCYtXMTW?usp=drive_link" target="_blank" class="dir-item">
-            [2020 JUL 01] TEMP ORIG (SIGLAKAS)
-        </a>
-
-        <button onclick="closeDirectory()" style="width:100%; background:transparent; color:#666; border:none; margin-top:20px; cursor:pointer;">[ CLOSE SESSION ]</button>
-    </div>
-
-    <div id="map"></div>
-
-    <script>
-        // Map Init
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([7.5, 122.5], 8);
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-
-        function openDirectory() {
-            document.getElementById('hud').style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('hud').style.display = "none";
-                document.getElementById('directory').style.display = "block";
-            }, 800);
-            map.flyTo([6.92, 122.07], 12);
-        }
-
-        function closeDirectory() {
-            document.getElementById('directory').style.display = "none";
-            document.getElementById('hud').style.display = "flex";
-            setTimeout(() => { document.getElementById('hud').style.opacity = "1"; }, 10);
-            map.flyTo([7.5, 122.5], 8);
-        }
-
-        // Security
-        document.onkeydown = (e) => {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
-        };
-    </script>
 </body>
 </html>
