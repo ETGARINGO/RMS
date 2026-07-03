@@ -5,118 +5,152 @@
     <link rel="icon" type="image/png" href="Video.gif">
     <link rel="apple-touch-icon" href="Video.gif">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Personnel Data Entry System</title>
+    <title>PRO9 | PERSONNEL DATA ENTRY SYSTEM</title>
     
-    <link rel="preconnect" href="https://script.google.com" crossorigin>
-    <link rel="dns-prefetch" href="https://script.google.com">
-    <link rel="preload" href="https://script.google.com/macros/s/AKfycbxVUxSyxca2dDgaQRk2vrFf95V8yAk-sH53_o1fc8sPRCcVEpFVOSXZwDQAqYpaiUuC/exec" as="document">
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --accent-blue: #3b82f6;
-            --text-muted: #94a3b8;
+            --tactical-blue: #00d4ff;
+            --defense-green: #00ff66;
+            --bg-black: #010b1a;
         }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
-            overflow: hidden; background-color: var(--bg-dark); 
-            position: fixed; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; background-color: var(--bg-black); 
+            position: fixed; font-family: 'Segoe UI', sans-serif;
         }
 
-        /* Instant Render Canvas Background */
-        #bg-canvas {
-            position: absolute; width: 100%; height: 100%; z-index: 1;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; filter: brightness(0.4) contrast(1.6) saturate(0.4) hue-rotate(185deg);
         }
 
-        /* High Performance Splash Overlay */
-        #splash-screen {
+        /* TACTICAL HUD */
+        #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; pointer-events: none;
-            background: rgba(15, 23, 42, 0.96);
-            transition: opacity 0.3s ease-out;
+            background: radial-gradient(circle, transparent 30%, rgba(1, 11, 26, 0.9) 100%);
+            transition: opacity 0.25s ease-out; /* Accelerated fade-out */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            will-change: opacity;
         }
 
-        .header-main { text-align: center; color: #ffffff; }
-        .header-main h1 { 
-            margin: 0; font-size: 1.3rem; letter-spacing: 2px; font-weight: 700; 
+        .header-main {
+            text-align: center; color: white; text-transform: uppercase;
+            margin-top: 20px;
+        }
+        
+        .entrance-logo {
+            width: 100px;
+            height: auto;
+            filter: drop-shadow(0 0 15px var(--tactical-blue));
+            margin-bottom: 10px;
+        }
+
+        .header-main h1 { margin: 0; font-size: 1.2rem; letter-spacing: 5px; font-weight: 900; text-shadow: 0 0 15px var(--tactical-blue); }
+
+        /* HIGH VISIBILITY LABELS */
+        .tactical-label {
+            background: rgba(0, 20, 40, 0.85) !important;
+            border: 1px solid var(--tactical-blue) !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+            font-family: monospace !important;
+            font-size: 11px !important;
+            padding: 2px 8px !important;
+            border-radius: 3px !important;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
             text-transform: uppercase;
         }
-        .header-main p {
-            font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); 
-            margin: 6px 0 0 0; text-transform: uppercase;
-        }
 
-        /* Hardware Accelerated CSS Spinner */
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.05); 
-            border-top: 3px solid var(--accent-blue); 
-            border-radius: 50%; width: 32px; height: 32px; 
-            animation: spin 0.6s linear infinite; margin-top: 24px;
-            will-change: transform;
-        }
+        @keyframes nodePulse { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+        .pulse-ring { border: 2px solid var(--defense-green); border-radius: 50%; animation: nodePulse 1.2s infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #secure-frame {
             position: absolute; width: 100%; height: 100%; border: none;
             z-index: 100; opacity: 0; visibility: hidden;
-            transition: opacity 0.4s ease-in;
-            will-change: opacity;
+            transition: opacity 0.3s ease-in; /* Accelerated entry */
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="bg-canvas"></div>
+    <div id="map"></div>
 
-    <div id="splash-screen">
+    <div id="hud">
+        <img src="pro9 Video.gif" alt="PRO9 Logo" class="entrance-logo">
         <div class="header-main">
-            <h1>Personnel Data Entry System</h1>
-            <p>Secure Portal • Connecting</p>
+            <h1>POLICE REGIONAL OFFICE 9</h1>
+            <p style="font-size: 0.65rem; letter-spacing: 3px; color: var(--tactical-blue); margin-top: 5px;">PERSONNEL DATA ENTRY SYSTEM | SECURE UPLINK</p>
         </div>
-        <div class="spinner"></div>
+        <div style="border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--tactical-blue); border-radius: 50%; width: 35px; height: 35px; animation: spin 0.8s linear infinite; margin-top: 20px;"></div>
     </div>
 
     <iframe id="secure-frame" 
             src="https://script.google.com/macros/s/AKfycbxVUxSyxca2dDgaQRk2vrFf95V8yAk-sH53_o1fc8sPRCcVEpFVOSXZwDQAqYpaiUuC/exec" 
-            allow="geolocation; camera; microphone; fullscreen; display-capture;"
-            onload="initializeSystem()">
+            allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
+            onload="overdriveLaunch()">
     </iframe>
 
-    <script>
-        // High-speed initialization and DOM clean-up
-        function initializeSystem() {
-            const frame = document.getElementById('secure-frame');
-            const splash = document.getElementById('splash-screen');
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-            frame.style.visibility = "visible";
-            frame.style.opacity = "1";
-            splash.style.opacity = "0";
+    <script>
+        const jurisdictions = [
+            { n: "SULU", p: [6.0, 121.0] },
+            { n: "ISABELA", p: [6.7, 121.9] },
+            { n: "ZAMBO CITY", p: [6.92, 122.07] },
+            { n: "SIBUGAY", p: [7.7, 122.5] },
+            { n: "ZAMBO SUR", p: [7.8, 123.3] },
+            { n: "ZAMBO NORTE", p: [8.2, 123.0] }
+        ];
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([6.92, 122.07], 14);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+        jurisdictions.forEach(j => {
+            L.circleMarker(j.p, { radius: 5, color: '#fff', fillColor: '#00d4ff', fillOpacity: 1, weight: 2 }).addTo(map)
+             .bindTooltip(j.n, { permanent: true, direction: 'right', offset: [12, 0], className: 'tactical-label' });
             
-            setTimeout(() => { 
-                document.getElementById('bg-canvas').remove();
-                splash.remove();
-            }, 350);
+            L.circleMarker(j.p, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
+        });
+
+        // Fast Display Logic 
+        function overdriveLaunch() {
+            const frame = document.getElementById('secure-frame');
+            const hud = document.getElementById('hud');
+
+            // Speeds up the tactical map fly-by zoom effect down to 0.3 seconds
+            map.flyTo([7.4, 122.3], 8, { duration: 0.3, easeLinearity: 0.1 });
+
+            // Triggers immediate display switch once link data mounts
+            setTimeout(() => {
+                frame.style.visibility = "visible";
+                frame.style.opacity = "1";
+                hud.style.opacity = "0";
+                setTimeout(() => { 
+                    document.getElementById('map').remove();
+                    hud.remove();
+                }, 300); // Drastically reduced clean up timeout to save processing threads
+            }, 250); 
         }
 
-        // Security Core
+        // Security controls against element inspection
         document.onkeydown = function(e) {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
                 return false;
             }
         };
 
-        // Minimal Session Watcher
+        // Automatic fresh cache reload if terminal is left idle
         let idleTime = 0;
-        const resetTimer = () => idleTime = 0;
-        ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, resetTimer, {passive: true}));
+        const reset = () => idleTime = 0;
+        ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
 
         setInterval(() => {
             idleTime++;
-            if (idleTime >= 30) window.location.reload();
+            if (idleTime >= 15) window.location.reload(); // Drops idle session limit to 15 mins for tighter terminal security
         }, 60000);
     </script>
 </body>
