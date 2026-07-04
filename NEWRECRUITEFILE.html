@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    
     <link rel="icon" type="image/png" href="Video.gif">
     <link rel="apple-touch-icon" href="Video.gif">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PNP RECRUITMENT | 201 FILE PORTAL</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PNP RECRUITMENT — 201 FILE PORTAL">
+    <meta property="og:description" content="Secure Uplink Terminal — 201 File Documentary Requirements Sector.">
+    <meta property="og:image" content="Video.gif"> 
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PNP RECRUITMENT — 201 FILE PORTAL">
+    <meta name="twitter:description" content="Secure Uplink Terminal — 201 File Documentary Requirements Sector.">
+    <meta name="twitter:image" content="Video.gif">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -148,10 +160,8 @@
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
 
-            // Rapid tactical map focus drop down to 0.3 seconds
             map.flyTo([7.4, 122.3], 8, { duration: 0.3, easeLinearity: 0.1 });
 
-            // Initialize display flip sequence as data mounts
             setTimeout(() => {
                 frame.style.visibility = "visible";
                 frame.style.opacity = "1";
@@ -159,7 +169,7 @@
                 setTimeout(() => { 
                     document.getElementById('map').remove();
                     hud.remove();
-                }, 300); // Scavenges threads and cleans DOM footprint immediately
+                }, 300);
             }, 250); 
         }
 
@@ -177,7 +187,7 @@
 
         setInterval(() => {
             idleTime++;
-            if (idleTime >= 15) window.location.reload(); // Drops connection at exactly 15 minutes idle mark
+            if (idleTime >= 15) window.location.reload();
         }, 60000);
     </script>
 </body>
