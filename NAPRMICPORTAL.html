@@ -76,7 +76,7 @@
             transition: opacity 0.3s ease-in;
         }
 
-        /* FLOATING ACTION BUTTON (FORM) */
+        /* DRAGGABLE ASSISTED-TOUCH FLOATING ACTION BUTTON */
         .record-fab {
             position: fixed;
             bottom: 25px;
@@ -90,22 +90,28 @@
             color: #fff;
             padding: 12px 20px;
             border-radius: 50px;
-            cursor: pointer;
+            cursor: move; /* Indicates draggability */
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.2);
             backdrop-filter: blur(8px);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.1s ease;
             font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             user-select: none;
+            touch-action: none; /* Disables browser scrolling on touch drag */
         }
 
         .record-fab:hover {
-            transform: translateY(-3px) scale(1.03);
             border-color: var(--defense-green);
             box-shadow: 0 0 25px rgba(0, 255, 102, 0.6), inset 0 0 15px rgba(0, 255, 102, 0.3);
             color: var(--defense-green);
+        }
+
+        .record-fab.dragging {
+            opacity: 0.85;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            border-color: var(--tactical-blue);
         }
 
         .record-icon-dot {
@@ -115,6 +121,7 @@
             border-radius: 50%;
             box-shadow: 0 0 8px var(--tactical-blue);
             transition: background-color 0.3s ease;
+            pointer-events: none;
         }
 
         .record-fab:hover .record-icon-dot {
@@ -239,15 +246,15 @@
 
     <!-- MAIN IFRAME -->
     <iframe id="secure-frame" 
-            src="https://script.google.com/macros/s/AKfycbyDu938NNMyTfsihTUbvEvljqgQiXoTW_aOB8zzPPiOEDOUgeWytW80NQaTpHGUwEVe/exec?page=admin" 
+            src="https://script.google.com/macros/s/AKfycbxbZKr4GRgrCFRo0aYcnq-S9EbXXICT1YnQ30N6SFSVweGuq5lg4gg97tMBzmwASzWG_Q/exec?page=admin" 
             allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;"
             onload="overdriveLaunch()">
     </iframe>
 
-    <!-- FLOATING FORM ACTION BUTTON -->
-    <div class="record-fab" onclick="openRecordUI()">
+    <!-- MOVABLE ASSISTED-TOUCH FORM BUTTON -->
+    <div id="drag-fab" class="record-fab">
         <span class="record-icon-dot"></span>
-        <span>FORM</span>
+        <span style="pointer-events: none;">FORM</span>
     </div>
 
     <!-- FORM MODAL OVERLAY -->
@@ -270,7 +277,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        const RECORD_URL = "https://script.google.com/macros/s/AKfycbyDu938NNMyTfsihTUbvEvljqgQiXoTW_aOB8zzPPiOEDOUgeWytW80NQaTpHGUwEVe/exec";
+        const RECORD_URL = "https://script.google.com/macros/s/AKfycbzl9KNeqte0uwlaAXuP2KeGdZOeyqIfyOlHM2tGAZpVS7jk7-Wr77efq5rdTWtEDiKFYg/exec";
 
         const jurisdictions = [
             { n: "SULU", p: [6.0, 121.0] },
@@ -309,7 +316,7 @@
             }, 250); 
         }
 
-        // Floating FORM Logic
+        // Modal Display Controls
         function openRecordUI() {
             const modal = document.getElementById('record-modal-overlay');
             const iframe = document.getElementById('record-iframe');
@@ -333,6 +340,84 @@
             loader.style.opacity = "0";
             setTimeout(() => loader.style.display = "none", 300);
         }
+
+        // ==========================================
+        // ASSISTED TOUCH DRAGGABLE BUTTON LOGIC
+        // ==========================================
+        const fab = document.getElementById('drag-fab');
+        let isDragging = false;
+        let hasMoved = false;
+        let startX, startY;
+        let initialLeft, initialTop;
+
+        function startDrag(e) {
+            isDragging = true;
+            hasMoved = false;
+
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+            startX = clientX;
+            startY = clientY;
+
+            const rect = fab.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+
+            fab.classList.add('dragging');
+        }
+
+        function moveDrag(e) {
+            if (!isDragging) return;
+
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            const deltaX = clientX - startX;
+            const deltaY = clientY - startY;
+
+            // If dragged beyond 5px threshold, treat it as a drag (not a tap)
+            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                hasMoved = true;
+            }
+
+            let newLeft = initialLeft + deltaX;
+            let newTop = initialTop + deltaY;
+
+            // Screen edge boundary protection
+            const maxLeft = window.innerWidth - fab.offsetWidth - 10;
+            const maxTop = window.innerHeight - fab.offsetHeight - 10;
+
+            newLeft = Math.max(10, Math.min(newLeft, maxLeft));
+            newTop = Math.max(10, Math.min(newTop, maxTop));
+
+            fab.style.left = `${newLeft}px`;
+            fab.style.top = `${newTop}px`;
+            fab.style.bottom = 'auto';
+            fab.style.right = 'auto';
+        }
+
+        function stopDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            fab.classList.remove('dragging');
+        }
+
+        // Touch & Mouse Listeners
+        fab.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', moveDrag);
+        window.addEventListener('mouseup', stopDrag);
+
+        fab.addEventListener('touchstart', startDrag, { passive: true });
+        window.addEventListener('touchmove', moveDrag, { passive: true });
+        window.addEventListener('touchend', stopDrag);
+
+        // Click handler: opens modal only if the user didn't drag the button
+        fab.addEventListener('click', (e) => {
+            if (!hasMoved) {
+                openRecordUI();
+            }
+        });
 
         // Key controls: ESC to close modal + developer console blocking
         document.onkeydown = function(e) {
