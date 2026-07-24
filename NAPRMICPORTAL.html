@@ -76,7 +76,7 @@
             transition: opacity 0.3s ease-in;
         }
 
-        /* FLOATING ACTION BUTTON (RECORD UI) */
+        /* FLOATING ACTION BUTTON (FORM) */
         .record-fab {
             position: fixed;
             bottom: 25px;
@@ -122,7 +122,7 @@
             box-shadow: 0 0 8px var(--defense-green);
         }
 
-        /* RECORD UI MODAL CONTAINER */
+        /* FORM MODAL CONTAINER */
         #record-modal-overlay {
             position: fixed;
             top: 0;
@@ -244,13 +244,13 @@
             onload="overdriveLaunch()">
     </iframe>
 
-    <!-- FLOATING RECORD UI ACTION BUTTON -->
+    <!-- FLOATING FORM ACTION BUTTON -->
     <div class="record-fab" onclick="openRecordUI()">
         <span class="record-icon-dot"></span>
         <span>FORM</span>
     </div>
 
-    <!-- RECORD UI MODAL OVERLAY -->
+    <!-- FORM MODAL OVERLAY -->
     <div id="record-modal-overlay">
         <div class="modal-window">
             <div class="modal-header">
@@ -309,7 +309,7 @@
             }, 250); 
         }
 
-        // Floating Record UI Logic
+        // Floating FORM Logic
         function openRecordUI() {
             const modal = document.getElementById('record-modal-overlay');
             const iframe = document.getElementById('record-iframe');
