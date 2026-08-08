@@ -44,7 +44,7 @@
         }
         
         .entrance-logo {
-            width: 100px;
+            width: 140px; /* Adjusted logo size */
             height: auto;
             filter: drop-shadow(0 0 15px var(--tactical-blue));
             margin-bottom: 10px;
@@ -90,7 +90,7 @@
             color: #fff;
             padding: 12px 20px;
             border-radius: 50px;
-            cursor: move; /* Indicates draggability */
+            cursor: move;
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.2);
             backdrop-filter: blur(8px);
             transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.1s ease;
@@ -99,7 +99,7 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             user-select: none;
-            touch-action: none; /* Disables browser scrolling on touch drag */
+            touch-action: none;
         }
 
         .record-fab:hover {
@@ -298,12 +298,13 @@
             L.circleMarker(j.p, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
         });
 
-        // Fast Display Logic 
+        // Fast Display Logic with Adjusted Zoom-Out Animation
         function overdriveLaunch() {
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
 
-            map.flyTo([7.4, 122.3], 8, { duration: 0.3, easeLinearity: 0.1 });
+            // Adjusted zoom-out effect: wider zoom level (6.5) and smoother duration (0.8s)
+            map.flyTo([7.4, 122.3], 6.5, { duration: 0.8, easeLinearity: 0.1 });
 
             setTimeout(() => {
                 frame.style.visibility = "visible";
@@ -376,7 +377,6 @@
             const deltaX = clientX - startX;
             const deltaY = clientY - startY;
 
-            // If dragged beyond 5px threshold, treat it as a drag (not a tap)
             if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
                 hasMoved = true;
             }
@@ -384,7 +384,6 @@
             let newLeft = initialLeft + deltaX;
             let newTop = initialTop + deltaY;
 
-            // Screen edge boundary protection
             const maxLeft = window.innerWidth - fab.offsetWidth - 10;
             const maxTop = window.innerHeight - fab.offsetHeight - 10;
 
@@ -403,7 +402,6 @@
             fab.classList.remove('dragging');
         }
 
-        // Touch & Mouse Listeners
         fab.addEventListener('mousedown', startDrag);
         window.addEventListener('mousemove', moveDrag);
         window.addEventListener('mouseup', stopDrag);
@@ -412,14 +410,12 @@
         window.addEventListener('touchmove', moveDrag, { passive: true });
         window.addEventListener('touchend', stopDrag);
 
-        // Click handler: opens modal only if the user didn't drag the button
         fab.addEventListener('click', (e) => {
             if (!hasMoved) {
                 openRecordUI();
             }
         });
 
-        // Key controls: ESC to close modal + developer console blocking
         document.onkeydown = function(e) {
             if (e.key === "Escape") {
                 closeRecordUI();
@@ -429,7 +425,6 @@
             }
         };
 
-        // Automatic fresh cache reload if terminal is left idle
         let idleTime = 0;
         const reset = () => idleTime = 0;
         ['mousemove', 'keypress', 'touchstart'].forEach(evt => window.addEventListener(evt, reset));
