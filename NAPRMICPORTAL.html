@@ -14,8 +14,9 @@
             --tactical-blue: #00d4ff;
             --defense-green: #00ff66;
             --alert-red: #ff3366;
+            --alert-amber: #ffcc00;
             --bg-black: #010b1a;
-            --glass-bg: rgba(1, 11, 26, 0.85);
+            --glass-bg: rgba(1, 11, 26, 0.88);
         }
 
         body, html { 
@@ -33,39 +34,391 @@
         #hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; pointer-events: none;
-            background: radial-gradient(circle, transparent 20%, rgba(1, 11, 26, 0.95) 100%);
-            transition: opacity 0.25s ease-out;
+            background: radial-gradient(circle, transparent 10%, rgba(1, 11, 26, 0.97) 92%);
+            transition: opacity 0.5s ease-out;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* STORAGE PARTICLE FLOW CANVAS */
+        #particle-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+            pointer-events: none;
         }
 
         .header-main {
             text-align: center; color: white; text-transform: uppercase;
-            margin-top: 20px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .header-main h1 {
+            margin: 0;
+            font-size: 1.35rem;
+            letter-spacing: 5px;
+            font-weight: 900;
+            text-shadow: 0 0 20px var(--tactical-blue), 0 0 40px rgba(0, 212, 255, 0.4);
         }
         
-        /* SUPERVISIBLE LOGO STYLING */
-        .entrance-logo {
-            width: 220px;
-            height: auto;
-            filter: drop-shadow(0 0 25px var(--tactical-blue)) drop-shadow(0 0 50px rgba(0, 212, 255, 0.7));
-            margin-bottom: 15px;
-            animation: logoSuperGlow 2s ease-in-out infinite alternate;
+        /* ULTIMATE FLUSHED LOGO WRAPPER WITH TRIPLE ORBITING RINGS & 15 3D ASSETS */
+        .logo-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 360px;
+            height: 360px;
+            margin-bottom: 0px;
+            perspective: 1500px;
+            z-index: 3;
         }
+
+        .entrance-logo {
+            width: 155px;
+            height: auto;
+            position: relative;
+            z-index: 6;
+            filter: drop-shadow(0 0 25px var(--tactical-blue)) drop-shadow(0 0 50px rgba(0, 212, 255, 0.7));
+            animation: logoSuperGlow 2.2s ease-in-out infinite alternate;
+        }
+
+        /* TRIPLE ORBITING HOLOGRAPHIC SYSTEM */
+        .orbit-container-outer {
+            position: absolute; width: 100%; height: 100%;
+            animation: orbitSpinCW 24s linear infinite; z-index: 4; pointer-events: none;
+        }
+
+        .orbit-container-middle {
+            position: absolute; width: 78%; height: 78%;
+            animation: orbitSpinCCW 16s linear infinite; z-index: 4; pointer-events: none;
+        }
+
+        .orbit-container-inner {
+            position: absolute; width: 56%; height: 56%;
+            animation: orbitSpinCW 10s linear infinite; z-index: 4; pointer-events: none;
+        }
+
+        .orbit-item {
+            position: absolute; top: 50%; left: 50%;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes orbitSpinCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes orbitSpinCCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
 
         @keyframes logoSuperGlow {
             0% {
-                filter: drop-shadow(0 0 20px var(--tactical-blue)) drop-shadow(0 0 40px rgba(0, 212, 255, 0.5));
-                transform: scale(1);
+                filter: drop-shadow(0 0 15px var(--tactical-blue)) drop-shadow(0 0 30px rgba(0, 212, 255, 0.4));
+                transform: scale(0.98);
             }
             100% {
-                filter: drop-shadow(0 0 35px var(--tactical-blue)) drop-shadow(0 0 70px rgba(0, 212, 255, 0.9)) drop-shadow(0 0 90px rgba(0, 255, 102, 0.4));
+                filter: drop-shadow(0 0 35px var(--tactical-blue)) drop-shadow(0 0 70px rgba(0, 212, 255, 0.85)) drop-shadow(0 0 90px rgba(0, 255, 102, 0.35));
                 transform: scale(1.03);
             }
         }
 
-        .header-main h1 { margin: 0; font-size: 1.2rem; letter-spacing: 5px; font-weight: 900; text-shadow: 0 0 15px var(--tactical-blue); }
+        @keyframes modelFloat {
+            0% { transform: translateY(0px) scale(0.92); }
+            100% { transform: translateY(-6px) scale(1.05); }
+        }
 
-        /* HIGH VISIBILITY LABELS */
+        /* 15 DETAILED 3D RECORD & SAVING ASSETS */
+        .computer-3d {
+            position: relative; width: 18px; height: 16px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(-25deg);
+            animation: modelFloat 2.6s ease-in-out infinite alternate;
+        }
+        .pc-monitor {
+            position: absolute; width: 18px; height: 12px;
+            background: linear-gradient(135deg, #002244, #001122);
+            border: 1px solid var(--tactical-blue); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .pc-screen-glow { width: 12px; height: 7px; background: rgba(0, 212, 255, 0.3); }
+        .pc-stand { position: absolute; bottom: -2px; left: 6px; width: 6px; height: 3px; background: var(--tactical-blue); }
+
+        .laptop-3d {
+            position: relative; width: 20px; height: 14px;
+            transform-style: preserve-3d; transform: rotateX(35deg) rotateY(30deg);
+            animation: modelFloat 2.8s ease-in-out infinite alternate;
+        }
+        .laptop-screen {
+            position: absolute; top: 0; left: 1px; width: 18px; height: 10px;
+            background: linear-gradient(135deg, #003322, #001108); border: 1px solid var(--defense-green); border-radius: 2px 2px 0 0;
+        }
+        .laptop-base { position: absolute; bottom: 0; left: 0; width: 20px; height: 3px; background: var(--defense-green); border-radius: 1px; }
+
+        .bundled-docs-3d {
+            position: relative; width: 16px; height: 16px;
+            transform-style: preserve-3d; transform: rotateX(25deg) rotateY(-45deg);
+            animation: modelFloat 2.4s ease-in-out infinite alternate;
+        }
+        .doc-sheet {
+            position: absolute; width: 14px; height: 14px; background: #ffffff;
+            border: 1px solid var(--tactical-blue); border-radius: 1px;
+        }
+        .doc-sheet:nth-child(1) { transform: translateZ(0px) rotate(0deg); background: #f0f8ff; }
+        .doc-sheet:nth-child(2) { transform: translateZ(2px) rotate(4deg); background: #e6f7ff; }
+        .doc-sheet:nth-child(3) { transform: translateZ(4px) rotate(-3deg); background: #ffffff; border-color: var(--defense-green); }
+
+        .storage-box-3d {
+            position: relative; width: 18px; height: 14px;
+            transform-style: preserve-3d; transform: rotateX(25deg) rotateY(-30deg);
+            animation: modelFloat 3s ease-in-out infinite alternate;
+        }
+        .box-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #004466, #001a33); border: 1px solid var(--tactical-blue); border-radius: 1px;
+        }
+        .box-lid { position: absolute; top: -3px; left: -1px; width: 20px; height: 3px; background: var(--tactical-blue); border-radius: 1px; }
+
+        .book-3d {
+            position: relative; width: 14px; height: 18px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(40deg);
+            animation: modelFloat 2.5s ease-in-out infinite alternate;
+        }
+        .book-cover-3d {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--defense-green), #003311); border: 1px solid var(--defense-green); border-radius: 1px;
+            display: flex; flex-direction: column; justify-content: space-around; padding: 2px; box-sizing: border-box;
+        }
+        .line-3d { height: 1.5px; background: #fff; border-radius: 1px; opacity: 0.8; }
+        .line-3d.short { width: 60%; }
+
+        .folder-3d {
+            position: relative; width: 18px; height: 12px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(-15deg);
+            animation: modelFloat 2.2s ease-in-out infinite alternate;
+        }
+        .folder-tab { position: absolute; top: -3px; left: 3px; width: 7px; height: 3px; background: #ffcc00; border-radius: 1px 1px 0 0; }
+        .folder-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0099ff, #002b80); border: 1px solid var(--tactical-blue); border-radius: 1px;
+        }
+
+        .sheet-3d {
+            position: relative; width: 14px; height: 18px;
+            transform-style: preserve-3d; transform: rotateX(30deg) rotateY(25deg);
+            animation: modelFloat 2.9s ease-in-out infinite alternate;
+        }
+        .sheet-body {
+            position: absolute; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); border: 1px solid var(--tactical-blue); border-radius: 1px;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 1px; padding: 2px; box-sizing: border-box;
+        }
+        .cell { background: #002b80; border-radius: 0.5px; opacity: 0.7; }
+
+        .server-rack-3d {
+            position: relative; width: 14px; height: 20px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(-20deg);
+            animation: modelFloat 2.7s ease-in-out infinite alternate;
+        }
+        .server-unit {
+            position: absolute; width: 100%; height: 5px;
+            background: linear-gradient(135deg, #002244, #004466); border: 1px solid var(--tactical-blue); border-radius: 1px;
+            display: flex; align-items: center; justify-content: space-around;
+        }
+        .server-unit:nth-child(1) { top: 0px; }
+        .server-unit:nth-child(2) { top: 7px; }
+        .server-unit:nth-child(3) { top: 14px; }
+        .server-led { width: 2px; height: 2px; background: var(--defense-green); border-radius: 50%; box-shadow: 0 0 4px var(--defense-green); }
+
+        .database-3d {
+            position: relative; width: 14px; height: 18px;
+            transform-style: preserve-3d; transform: rotateX(35deg) rotateY(15deg);
+            animation: modelFloat 3.2s ease-in-out infinite alternate;
+        }
+        .db-disk {
+            position: absolute; width: 14px; height: 5px;
+            background: linear-gradient(90deg, #0088cc, #00d4ff); border: 1px solid #ffffff; border-radius: 50%;
+        }
+        .db-disk:nth-child(1) { top: 0px; }
+        .db-disk:nth-child(2) { top: 6px; }
+        .db-disk:nth-child(3) { top: 12px; }
+
+        .cloud-vault-3d {
+            position: relative; width: 20px; height: 14px;
+            transform-style: preserve-3d; transform: rotateX(25deg) rotateY(-30deg);
+            animation: modelFloat 2.4s ease-in-out infinite alternate;
+        }
+        .cloud-body {
+            position: absolute; width: 100%; height: 10px; bottom: 0;
+            background: linear-gradient(135deg, #00d4ff, #004488); border: 1px solid #fff; border-radius: 6px;
+        }
+        .cloud-lock {
+            position: absolute; top: 1px; left: 7px; width: 4px; height: 4px;
+            background: var(--defense-green); border-radius: 1px; box-shadow: 0 0 4px var(--defense-green);
+        }
+
+        .shield-archive-3d {
+            position: relative; width: 16px; height: 18px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(25deg);
+            animation: modelFloat 2.6s ease-in-out infinite alternate;
+        }
+        .shield-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #002244, var(--defense-green));
+            border: 1px solid #fff; border-radius: 2px 2px 8px 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .shield-star { width: 6px; height: 6px; background: #ffcc00; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+
+        .scanner-device-3d {
+            position: relative; width: 18px; height: 14px;
+            transform-style: preserve-3d; transform: rotateX(25deg) rotateY(-20deg);
+            animation: modelFloat 2.5s ease-in-out infinite alternate;
+        }
+        .scanner-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #112233, #004422); border: 1px solid var(--defense-green); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .scanner-beam { width: 14px; height: 2px; background: var(--alert-red); box-shadow: 0 0 6px var(--alert-red); }
+
+        .usb-drive-3d {
+            position: relative; width: 10px; height: 20px;
+            transform-style: preserve-3d; transform: rotateX(30deg) rotateY(35deg);
+            animation: modelFloat 2.3s ease-in-out infinite alternate;
+        }
+        .usb-body {
+            position: absolute; bottom: 0; width: 10px; height: 14px;
+            background: linear-gradient(135deg, #333, #666); border: 1px solid var(--tactical-blue); border-radius: 2px;
+        }
+        .usb-plug {
+            position: absolute; top: 0; left: 2px; width: 6px; height: 6px;
+            background: #silver; border: 1px solid #fff; border-radius: 1px;
+        }
+
+        .floppy-disk-3d {
+            position: relative; width: 16px; height: 16px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(-35deg);
+            animation: modelFloat 2.8s ease-in-out infinite alternate;
+        }
+        .floppy-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #222, #002244); border: 1px solid var(--tactical-blue); border-radius: 2px;
+        }
+        .floppy-label {
+            position: absolute; top: 1px; left: 3px; width: 10px; height: 7px;
+            background: #fff; border-radius: 1px;
+        }
+
+        .microchip-3d {
+            position: relative; width: 16px; height: 16px;
+            transform-style: preserve-3d; transform: rotateX(25deg) rotateY(25deg);
+            animation: modelFloat 2.6s ease-in-out infinite alternate;
+        }
+        .chip-body {
+            position: absolute; top: 2px; left: 2px; width: 12px; height: 12px;
+            background: #0b2211; border: 1px solid var(--defense-green); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .chip-core { width: 6px; height: 6px; background: var(--tactical-blue); box-shadow: 0 0 5px var(--tactical-blue); }
+
+        .lockbox-3d {
+            position: relative; width: 18px; height: 16px;
+            transform-style: preserve-3d; transform: rotateX(20deg) rotateY(-15deg);
+            animation: modelFloat 3.1s ease-in-out infinite alternate;
+        }
+        .lockbox-body {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #331111, #662222); border: 1px solid var(--alert-red); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .lockbox-dial { width: 5px; height: 5px; background: #ffcc00; border-radius: 50%; box-shadow: 0 0 4px #ffcc00; }
+
+        /* TRIPLE HOLOGRAPHIC RINGS */
+        .logo-orbit-ring-outer {
+            position: absolute; width: 320px; height: 320px;
+            border: 2px dashed rgba(0, 212, 255, 0.25);
+            border-top: 2px solid var(--tactical-blue); border-bottom: 2px solid var(--defense-green);
+            border-radius: 50%; animation: spinRingCW 20s linear infinite; z-index: 2;
+        }
+
+        .logo-orbit-ring-middle {
+            position: absolute; width: 250px; height: 250px;
+            border: 1px solid rgba(0, 255, 102, 0.2);
+            border-left: 2px solid var(--defense-green); border-right: 2px solid var(--tactical-blue);
+            border-radius: 50%; animation: spinRingCCW 14s linear infinite; z-index: 2;
+        }
+
+        .logo-orbit-ring-inner {
+            position: absolute; width: 180px; height: 180px;
+            border: 1px dashed rgba(255, 204, 0, 0.3);
+            border-top: 2px solid #ffcc00;
+            border-radius: 50%; animation: spinRingCW 8s linear infinite; z-index: 2;
+        }
+
+        @keyframes spinRingCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinRingCCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+
+        /* RECORDS-THEMED LOADING STATUS CONTAINER */
+        .records-loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+            gap: 12px;
+            position: relative;
+            z-index: 3;
+            width: 340px;
+        }
+
+        .loader-status-text {
+            font-family: monospace;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--tactical-blue);
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+            text-transform: uppercase;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .vault-progress-bar {
+            position: relative;
+            width: 100%;
+            height: 12px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 6px;
+            overflow: visible;
+            box-shadow: inset 0 0 8px rgba(0, 212, 255, 0.2);
+        }
+
+        .vault-progress-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.4), rgba(0, 255, 102, 0.4));
+            border-radius: 5px;
+            box-shadow: 0 0 12px var(--defense-green);
+            transition: width 0.4s ease-out;
+        }
+
+        /* INLINE TRAIN TRACK FOR ANIMATING ALL 15 3D ASSETS ACROSS BAR */
+        .inline-icons-track {
+            position: absolute;
+            top: -12px; left: 0;
+            width: 100%; height: 36px;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .traveling-icon-node {
+            position: absolute;
+            top: 2px;
+            transform: translateX(-50%);
+            transition: left 0.4s ease-out;
+            filter: drop-shadow(0 0 6px var(--tactical-blue));
+            animation: modelFloat 1.5s ease-in-out infinite alternate;
+        }
+
+        /* HIGH VISIBILITY MAP LABELS */
         .tactical-label {
             background: rgba(0, 20, 40, 0.85) !important;
             border: 1px solid var(--tactical-blue) !important;
@@ -81,38 +434,30 @@
 
         @keyframes nodePulse { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
         .pulse-ring { border: 2px solid var(--defense-green); border-radius: 50%; animation: nodePulse 1.2s infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #secure-frame {
             position: absolute; width: 100%; height: 100%; border: none;
             z-index: 100; opacity: 0; visibility: hidden;
-            transition: opacity 0.3s ease-in;
+            transition: opacity 0.4s ease-in;
         }
 
-        /* DRAGGABLE ASSISTED-TOUCH FLOATING ACTION BUTTON */
+        /* MOVABLE ASSISTED-TOUCH FORM BUTTON */
         .record-fab {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
+            bottom: 25px; right: 25px;
             z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 12px;
             background: rgba(1, 11, 26, 0.9);
             border: 1px solid var(--tactical-blue);
             color: #fff;
-            padding: 12px 20px;
+            padding: 10px 18px 10px 14px;
             border-radius: 50px;
             cursor: move;
             box-shadow: 0 0 15px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.2);
             backdrop-filter: blur(8px);
-            transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.1s ease;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            user-select: none;
-            touch-action: none;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; user-select: none; touch-action: none;
         }
 
         .record-fab:hover {
@@ -127,121 +472,177 @@
             border-color: var(--tactical-blue);
         }
 
-        .record-icon-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--tactical-blue);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--tactical-blue);
-            transition: background-color 0.3s ease;
-            pointer-events: none;
+        /* SECOND FAB: BLANK FORMS LIBRARY (amber theme, sits above the FORM button) */
+        .forms-fab {
+            bottom: 88px;
+            border-color: var(--alert-amber);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.35), inset 0 0 10px rgba(255, 204, 0, 0.15);
+        }
+        .forms-fab:hover {
+            border-color: var(--alert-amber);
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.6), inset 0 0 15px rgba(255, 204, 0, 0.3);
+            color: var(--alert-amber);
+        }
+        .forms-fab.dragging {
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.8);
+            border-color: var(--alert-amber);
         }
 
-        .record-fab:hover .record-icon-dot {
-            background-color: var(--defense-green);
-            box-shadow: 0 0 8px var(--defense-green);
+        .book-icon-3d {
+            position: relative; width: 22px; height: 26px;
+            transform-style: preserve-3d; transform: perspective(300px) rotateY(-20deg) rotateX(10deg);
+            pointer-events: none; transition: transform 0.3s ease;
         }
 
-        /* FORM MODAL CONTAINER */
-        #record-modal-overlay {
+        .record-fab:hover .book-icon-3d {
+            transform: perspective(300px) rotateY(0deg) rotateX(0deg) scale(1.1);
+        }
+
+        .book-cover {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--tactical-blue), #004488);
+            border: 1px solid #fff; border-radius: 2px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .forms-fab .book-cover {
+            background: linear-gradient(135deg, var(--alert-amber), #664c00);
+        }
+
+        .book-pages-edge {
+            position: absolute; right: -3px; top: 2px; width: 3px; height: 22px;
+            background: #e0e0e0; transform: rotateY(90deg);
+        }
+
+        /* FORM MODAL CONTAINER (shared structure for record entry + forms library) */
+        #record-modal-overlay, #forms-modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 5, 12, 0.85);
             backdrop-filter: blur(10px);
             z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        #record-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        #record-modal-overlay.active, #forms-modal-overlay.active {
+            opacity: 1; visibility: visible;
         }
 
         .modal-window {
-            position: relative;
-            width: 90%;
-            height: 88%;
-            max-width: 1400px;
+            position: relative; width: 90%; height: 88%; max-width: 1400px;
             background: var(--bg-black);
-            border: 1px solid var(--tactical-blue);
-            border-radius: 12px;
+            border: 1px solid var(--tactical-blue); border-radius: 12px;
             box-shadow: 0 0 35px rgba(0, 212, 255, 0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95); transition: transform 0.3s ease;
         }
 
-        #record-modal-overlay.active .modal-window {
-            transform: scale(1);
+        #forms-modal-overlay .modal-window {
+            border: 1px solid var(--alert-amber);
+            box-shadow: 0 0 35px rgba(255, 204, 0, 0.25);
         }
+
+        #record-modal-overlay.active .modal-window,
+        #forms-modal-overlay.active .modal-window { transform: scale(1); }
 
         .modal-header {
-            height: 45px;
-            background: rgba(0, 20, 40, 0.95);
+            height: 45px; background: rgba(0, 20, 40, 0.95);
             border-bottom: 1px solid rgba(0, 212, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            color: #fff;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-transform: uppercase;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; color: #fff; font-size: 0.8rem; letter-spacing: 2px;
+            font-weight: 700; text-transform: uppercase;
+        }
+
+        #forms-modal-overlay .modal-header {
+            border-bottom: 1px solid rgba(255, 204, 0, 0.3);
         }
 
         .close-btn {
-            background: transparent;
-            border: 1px solid var(--alert-red);
-            color: var(--alert-red);
-            padding: 4px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.75rem;
-            transition: all 0.2s ease;
+            background: transparent; border: 1px solid var(--alert-red); color: var(--alert-red);
+            padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;
+            font-size: 0.75rem; transition: all 0.2s ease;
         }
 
-        .close-btn:hover {
-            background: var(--alert-red);
-            color: #fff;
-            box-shadow: 0 0 10px var(--alert-red);
-        }
+        .close-btn:hover { background: var(--alert-red); color: #fff; box-shadow: 0 0 10px var(--alert-red); }
 
-        .modal-iframe-container {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            background: #000;
-        }
-
-        .modal-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .modal-iframe-container { flex: 1; position: relative; width: 100%; background: #000; display: flex; flex-direction: column; }
+        .modal-iframe { width: 100%; height: 100%; border: none; }
 
         .modal-loader {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-black);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: opacity 0.3s ease;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-black); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; transition: opacity 0.3s ease;
         }
+
+        .modal-linear-loader { width: 220px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .modal-progress-bar {
+            width: 100%; height: 5px; background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4); border-radius: 3px; overflow: hidden;
+            box-shadow: inset 0 0 6px rgba(0, 212, 255, 0.2);
+        }
+        .modal-progress-fill {
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, var(--tactical-blue), var(--defense-green));
+            animation: linearVaultProgress 1.8s ease-in-out infinite alternate;
+        }
+        @keyframes linearVaultProgress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* BLANK FORMS LIBRARY — READ-ONLY NOTICE BANNER + TOOLBAR */
+        .forms-notice-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255, 204, 0, 0.08);
+            border-bottom: 1px solid rgba(255, 204, 0, 0.35);
+            color: #ffe9a8;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            padding: 10px 16px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .forms-notice-banner .notice-icon {
+            flex-shrink: 0;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--alert-amber);
+            color: #1a1200;
+            font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            box-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+        }
+        .forms-notice-banner b { color: var(--alert-amber); }
+
+        .forms-toolbar {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            flex-wrap: wrap;
+            padding: 8px 16px;
+            background: rgba(0, 20, 40, 0.6);
+            border-bottom: 1px solid rgba(255, 204, 0, 0.2);
+        }
+        .forms-toolbar .toolbar-note {
+            font-family: monospace; font-size: 0.68rem; letter-spacing: 1px;
+            color: rgba(255, 233, 168, 0.75); text-transform: uppercase;
+        }
+        .forms-open-drive-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent; border: 1px solid var(--alert-amber); color: var(--alert-amber);
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 700;
+            font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase;
+            text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
+        }
+        .forms-open-drive-btn:hover {
+            background: var(--alert-amber); color: #1a1200; box-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+        }
+
+        .forms-drive-frame-wrap { flex: 1; position: relative; }
+        .forms-drive-frame { width: 100%; height: 100%; border: none; background: #fff; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -249,12 +650,88 @@
     <div id="map"></div>
 
     <div id="hud">
-        <img src="NAPPRO9.png" alt="PRO9 Logo" class="entrance-logo">
+        <!-- STORAGE PARTICLES & DATA SAVING CANVAS -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- ULTIMATE FLUSHED LOGO WRAPPER WITH TRIPLE ORBITING HOLOGRAPHIC RINGS & 15 ASSETS -->
+        <div class="logo-wrapper">
+            <div class="logo-orbit-ring-outer"></div>
+            <div class="logo-orbit-ring-middle"></div>
+            <div class="logo-orbit-ring-inner"></div>
+            
+            <!-- OUTER ORBIT RING (5 Assets at 150px Radius) -->
+            <div class="orbit-container-outer">
+                <div class="orbit-item" style="transform: rotate(0deg) translate(150px) rotate(0deg);">
+                    <div class="computer-3d"><div class="pc-monitor"><div class="pc-screen-glow"></div></div><div class="pc-stand"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(72deg) translate(150px) rotate(-72deg);">
+                    <div class="storage-box-3d"><div class="box-lid"></div><div class="box-body"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(144deg) translate(150px) rotate(-144deg);">
+                    <div class="server-rack-3d"><div class="server-unit"><div class="server-led"></div></div><div class="server-unit"><div class="server-led"></div></div><div class="server-unit"><div class="server-led"></div></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(216deg) translate(150px) rotate(-216deg);">
+                    <div class="cloud-vault-3d"><div class="cloud-lock"></div><div class="cloud-body"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(288deg) translate(150px) rotate(-288deg);">
+                    <div class="sheet-3d"><div class="sheet-body"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></div>
+                </div>
+            </div>
+
+            <!-- MIDDLE ORBIT RING (5 Assets at 115px Radius) -->
+            <div class="orbit-container-middle">
+                <div class="orbit-item" style="transform: rotate(0deg) translate(115px) rotate(0deg);">
+                    <div class="laptop-3d"><div class="laptop-screen"></div><div class="laptop-base"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(72deg) translate(115px) rotate(-72deg);">
+                    <div class="book-3d"><div class="book-cover-3d"><div class="line-3d"></div><div class="line-3d short"></div></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(144deg) translate(115px) rotate(-144deg);">
+                    <div class="folder-3d"><div class="folder-tab"></div><div class="folder-body"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(216deg) translate(115px) rotate(-216deg);">
+                    <div class="database-3d"><div class="db-disk"></div><div class="db-disk"></div><div class="db-disk"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(288deg) translate(115px) rotate(-288deg);">
+                    <div class="shield-archive-3d"><div class="shield-body"><div class="shield-star"></div></div></div>
+                </div>
+            </div>
+
+            <!-- INNER ORBIT RING (5 Assets at 80px Radius) -->
+            <div class="orbit-container-inner">
+                <div class="orbit-item" style="transform: rotate(0deg) translate(80px) rotate(0deg);">
+                    <div class="scanner-device-3d"><div class="scanner-body"><div class="scanner-beam"></div></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(72deg) translate(80px) rotate(-72deg);">
+                    <div class="usb-drive-3d"><div class="usb-body"></div><div class="usb-plug"></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(144deg) translate(80px) rotate(-144deg);">
+                    <div class="floppy-disk-3d"><div class="floppy-body"><div class="floppy-label"></div></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(216deg) translate(80px) rotate(-216deg);">
+                    <div class="microchip-3d"><div class="chip-body"><div class="chip-core"></div></div></div>
+                </div>
+                <div class="orbit-item" style="transform: rotate(288deg) translate(80px) rotate(-288deg);">
+                    <div class="lockbox-3d"><div class="lockbox-body"><div class="lockbox-dial"></div></div></div>
+                </div>
+            </div>
+
+            <img src="NAPPRO9.png" alt="PRO9 Logo" class="entrance-logo">
+        </div>
+        
         <div class="header-main">
             <h1>POLICE REGIONAL OFFICE 9</h1>
             <p style="font-size: 0.65rem; letter-spacing: 3px; color: var(--tactical-blue); margin-top: 5px;">RECORDS MANAGEMENT PORTAL | SECURE UPLINK</p>
         </div>
-        <div style="border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--tactical-blue); border-radius: 50%; width: 35px; height: 35px; animation: spin 0.8s linear infinite; margin-top: 20px;"></div>
+        
+        <div class="records-loader-container">
+            <div id="loading-status" class="loader-status-text">INITIALIZING SECURE CONNECTION...</div>
+            <div class="vault-progress-bar">
+                <div id="vault-fill" class="vault-progress-fill"></div>
+                <!-- Inline Train of All 15 Traversing Icons -->
+                <div id="inline-icons-track" class="inline-icons-track"></div>
+            </div>
+        </div>
     </div>
 
     <!-- MAIN IFRAME -->
@@ -264,13 +741,29 @@
             onload="overdriveLaunch()">
     </iframe>
 
-    <!-- MOVABLE ASSISTED-TOUCH FORM BUTTON -->
+    <!-- MOVABLE ASSISTED-TOUCH FORM BUTTON WITH 3D BOOK ICON -->
     <div id="drag-fab" class="record-fab">
-        <span class="record-icon-dot"></span>
-        <span style="pointer-events: none;">FORM</span>
+        <div class="book-icon-3d">
+            <div class="book-cover">
+                <div style="width: 8px; height: 12px; border: 1px solid rgba(255,255,255,0.7); border-radius: 1px;"></div>
+            </div>
+            <div class="book-pages-edge"></div>
+        </div>
+        <span style="pointer-events: none;">SUBMISSION FORM</span>
     </div>
 
-    <!-- FORM MODAL OVERLAY -->
+    <!-- MOVABLE ASSISTED-TOUCH BLANK FORMS LIBRARY BUTTON -->
+    <div id="drag-fab-forms" class="record-fab forms-fab">
+        <div class="book-icon-3d">
+            <div class="book-cover">
+                <div style="width: 8px; height: 12px; border: 1px solid rgba(255,255,255,0.7); border-radius: 1px;"></div>
+            </div>
+            <div class="book-pages-edge"></div>
+        </div>
+        <span style="pointer-events: none;">BLANK FORMS</span>
+    </div>
+
+    <!-- FORM MODAL OVERLAY (RECORD ENTRY / SUBMISSION) -->
     <div id="record-modal-overlay">
         <div class="modal-window">
             <div class="modal-header">
@@ -279,10 +772,49 @@
             </div>
             <div class="modal-iframe-container">
                 <div id="modal-loader" class="modal-loader">
-                    <div style="border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--tactical-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite;"></div>
-                    <span style="color: var(--tactical-blue); font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px; font-family: monospace;">INITIALIZING RECORD MODULE...</span>
+                    <div class="modal-linear-loader">
+                        <span style="color: var(--tactical-blue); font-size: 0.75rem; letter-spacing: 2px; font-family: monospace;">ACCESSING RECORDS DATABASE...</span>
+                        <div class="modal-progress-bar">
+                            <div class="modal-progress-fill"></div>
+                        </div>
+                    </div>
                 </div>
                 <iframe id="record-iframe" class="modal-iframe" allow="geolocation; camera; microphone; fullscreen; autoplay; display-capture;" onload="hideRecordLoader()"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLANK FORMS LIBRARY MODAL OVERLAY (READ-ONLY / DOWNLOAD ONLY) -->
+    <div id="forms-modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span>PRO9 // BLANK FORMS LIBRARY</span>
+                <button class="close-btn" onclick="closeFormsUI()">ESC [X]</button>
+            </div>
+            <div class="modal-iframe-container">
+                <div class="forms-notice-banner">
+                    <div class="notice-icon">!</div>
+                    <div>
+                        <b>VIEW &amp; DOWNLOAD ONLY.</b> This library is read-only — do not attempt to edit forms directly inside this window.
+                        Download the blank form, fill it out in Excel (or Word, for text forms), save your copy, then submit it through the
+                        <b>FORM</b> button's Record Entry Terminal. New blank forms are added here periodically by PRO9 Admin.
+                    </div>
+                </div>
+                <div class="forms-toolbar">
+                    <span class="toolbar-note">Google Drive · Read-only mirror</span>
+                    <a class="forms-open-drive-btn" href="https://drive.google.com/drive/u/0/folders/1AxhopSXlCP-_UUykOnwxrIe6huONXSwq" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>
+                </div>
+                <div class="forms-drive-frame-wrap">
+                    <div id="forms-modal-loader" class="modal-loader">
+                        <div class="modal-linear-loader">
+                            <span style="color: var(--alert-amber); font-size: 0.75rem; letter-spacing: 2px; font-family: monospace;">LOADING FORMS REPOSITORY...</span>
+                            <div class="modal-progress-bar">
+                                <div class="modal-progress-fill" style="background: linear-gradient(90deg, var(--alert-amber), var(--tactical-blue));"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <iframe id="forms-drive-iframe" class="forms-drive-frame" onload="hideFormsLoader()"></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -290,7 +822,163 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        // STORAGE PARTICLES & DATA SAVING ANIMATION ENGINE
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = [];
+        const particleCount = 70;
+
+        class DataParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8 - 0.7;
+                this.opacity = Math.random() * 0.7 + 0.2;
+                this.color = Math.random() > 0.3 ? '#00d4ff' : '#00ff66';
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.y < 0 || this.x < 0 || this.x > canvas.width) {
+                    this.reset();
+                    this.y = canvas.height + 10;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new DataParticle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 110) {
+                        ctx.save();
+                        ctx.globalAlpha = (1 - (dist / 110)) * 0.2;
+                        ctx.strokeStyle = '#00d4ff';
+                        ctx.lineWidth = 0.6;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        const statusMessages = [
+            "ESTABLISHING SECURE ENCRYPTION...",
+            "QUERYING RECORDS REPOSITORY...",
+            "VERIFYING PRO9 CLEARANCE...",
+            "SYNCHRONIZING DATABASE NODES...",
+            "LAUNCHING RECORDS PORTAL..."
+        ];
+        
+        // Full array of all 15 3D asset templates to animate in the loading progress train
+        const assetTemplates = [
+            `<div class="computer-3d"><div class="pc-monitor"><div class="pc-screen-glow"></div></div><div class="pc-stand"></div></div>`,
+            `<div class="laptop-3d"><div class="laptop-screen"></div><div class="laptop-base"></div></div>`,
+            `<div class="bundled-docs-3d"><div class="doc-sheet"></div><div class="doc-sheet"></div><div class="doc-sheet"></div></div>`,
+            `<div class="storage-box-3d"><div class="box-lid"></div><div class="box-body"></div></div>`,
+            `<div class="book-3d"><div class="book-cover-3d"><div class="line-3d"></div><div class="line-3d short"></div></div></div>`,
+            `<div class="folder-3d"><div class="folder-tab"></div><div class="folder-body"></div></div>`,
+            `<div class="sheet-3d"><div class="sheet-body"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></div>`,
+            `<div class="server-rack-3d"><div class="server-unit"><div class="server-led"></div></div><div class="server-unit"><div class="server-led"></div></div><div class="server-unit"><div class="server-led"></div></div></div>`,
+            `<div class="database-3d"><div class="db-disk"></div><div class="db-disk"></div><div class="db-disk"></div></div>`,
+            `<div class="cloud-vault-3d"><div class="cloud-lock"></div><div class="cloud-body"></div></div>`,
+            `<div class="shield-archive-3d"><div class="shield-body"><div class="shield-star"></div></div></div>`,
+            `<div class="scanner-device-3d"><div class="scanner-body"><div class="scanner-beam"></div></div></div>`,
+            `<div class="usb-drive-3d"><div class="usb-body"></div><div class="usb-plug"></div></div>`,
+            `<div class="floppy-disk-3d"><div class="floppy-body"><div class="floppy-label"></div></div></div>`,
+            `<div class="microchip-3d"><div class="chip-body"><div class="chip-core"></div></div></div>`,
+            `<div class="lockbox-3d"><div class="lockbox-body"><div class="lockbox-dial"></div></div></div>`
+        ];
+
+        // Initialize inline icon nodes on the track
+        const trackContainer = document.getElementById('inline-icons-track');
+        assetTemplates.forEach((htmlTemplate) => {
+            const node = document.createElement('div');
+            node.className = 'traveling-icon-node';
+            node.style.left = '0%';
+            node.innerHTML = htmlTemplate;
+            trackContainer.appendChild(node);
+        });
+
+        const iconNodes = trackContainer.querySelectorAll('.traveling-icon-node');
+
+        let msgIndex = 0;
+        let progressPercent = 0;
+        const statusEl = document.getElementById('loading-status');
+        const vaultFill = document.getElementById('vault-fill');
+
+        const statusInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % statusMessages.length;
+            if(statusEl) statusEl.textContent = statusMessages[msgIndex];
+        }, 600);
+
+        // Linear progress ticker & staggered icon train movement along the progress width
+        const progressInterval = setInterval(() => {
+            progressPercent += Math.floor(Math.random() * 8) + 5;
+            if (progressPercent > 100) progressPercent = 100;
+            if (vaultFill) vaultFill.style.width = progressPercent + '%';
+
+            // Stagger each icon along the current fill percentage range
+            iconNodes.forEach((node, i) => {
+                const spacingOffset = Math.max(0, progressPercent - (i * (100 / (iconNodes.length + 1))));
+                const currentPos = Math.min(progressPercent, spacingOffset);
+                node.style.left = currentPos + '%';
+            });
+
+            if (progressPercent >= 100) clearInterval(progressInterval);
+        }, 300);
+
         const RECORD_URL = "https://script.google.com/macros/s/AKfycbxJAfzfHoIeVLzF0-NjDa9UjMy2y6GutOJ5EE3Oc-XjBaX8fVcTStOxHqa_ck-NNXBk/exec";
+
+        // Blank Forms Library — read-only embedded Google Drive folder view.
+        // Folder ID pulled from: https://drive.google.com/drive/u/0/folders/1AxhopSXlCP-_UUykOnwxrIe6huONXSwq
+        const FORMS_FOLDER_ID = "1AxhopSXlCP-_UUykOnwxrIe6huONXSwq";
+        const FORMS_EMBED_URL = "https://drive.google.com/embeddedfolderview?id=" + FORMS_FOLDER_ID + "#grid";
 
         const jurisdictions = [
             { n: "SULU", p: [6.0, 121.0] },
@@ -311,8 +999,12 @@
             L.circleMarker(j.p, { radius: 15, color: '#00ff66', weight: 1, fillOpacity: 0, className: 'pulse-ring' }).addTo(map);
         });
 
-        // Fast Display Logic with Adjusted Zoom-Out Animation
         function overdriveLaunch() {
+            clearInterval(statusInterval);
+            clearInterval(progressInterval);
+            if(vaultFill) vaultFill.style.width = '100%';
+            iconNodes.forEach(node => node.style.left = '100%');
+            
             const frame = document.getElementById('secure-frame');
             const hud = document.getElementById('hud');
 
@@ -329,7 +1021,6 @@
             }, 250); 
         }
 
-        // Modal Display Controls
         function openRecordUI() {
             const modal = document.getElementById('record-modal-overlay');
             const iframe = document.getElementById('record-iframe');
@@ -354,83 +1045,111 @@
             setTimeout(() => loader.style.display = "none", 300);
         }
 
-        // ==========================================
-        // ASSISTED TOUCH DRAGGABLE BUTTON LOGIC
-        // ==========================================
-        const fab = document.getElementById('drag-fab');
-        let isDragging = false;
-        let hasMoved = false;
-        let startX, startY;
-        let initialLeft, initialTop;
+        // BLANK FORMS LIBRARY MODAL — always opens a fresh read-only Drive folder view.
+        // Google Drive's own permissions govern access; this embed only supports
+        // browsing/downloading, so there is no in-page "edit" affordance to worry about.
+        function openFormsUI() {
+            const modal = document.getElementById('forms-modal-overlay');
+            const iframe = document.getElementById('forms-drive-iframe');
+            const loader = document.getElementById('forms-modal-loader');
 
-        function startDrag(e) {
-            isDragging = true;
-            hasMoved = false;
-
-            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-
-            startX = clientX;
-            startY = clientY;
-
-            const rect = fab.getBoundingClientRect();
-            initialLeft = rect.left;
-            initialTop = rect.top;
-
-            fab.classList.add('dragging');
-        }
-
-        function moveDrag(e) {
-            if (!isDragging) return;
-
-            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-
-            const deltaX = clientX - startX;
-            const deltaY = clientY - startY;
-
-            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-                hasMoved = true;
+            if (!iframe.src || iframe.src === "about:blank") {
+                loader.style.opacity = "1";
+                loader.style.display = "flex";
+                iframe.src = FORMS_EMBED_URL;
             }
 
-            let newLeft = initialLeft + deltaX;
-            let newTop = initialTop + deltaY;
-
-            const maxLeft = window.innerWidth - fab.offsetWidth - 10;
-            const maxTop = window.innerHeight - fab.offsetHeight - 10;
-
-            newLeft = Math.max(10, Math.min(newLeft, maxLeft));
-            newTop = Math.max(10, Math.min(newTop, maxTop));
-
-            fab.style.left = `${newLeft}px`;
-            fab.style.top = `${newTop}px`;
-            fab.style.bottom = 'auto';
-            fab.style.right = 'auto';
+            modal.classList.add('active');
         }
 
-        function stopDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-            fab.classList.remove('dragging');
+        function closeFormsUI() {
+            document.getElementById('forms-modal-overlay').classList.remove('active');
         }
 
-        fab.addEventListener('mousedown', startDrag);
-        window.addEventListener('mousemove', moveDrag);
-        window.addEventListener('mouseup', stopDrag);
+        function hideFormsLoader() {
+            const loader = document.getElementById('forms-modal-loader');
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
 
-        fab.addEventListener('touchstart', startDrag, { passive: true });
-        window.addEventListener('touchmove', moveDrag, { passive: true });
-        window.addEventListener('touchend', stopDrag);
+        // DRAGGABLE ASSISTED-TOUCH BUTTON LOGIC (shared by both FABs)
+        function makeDraggable(fab, onTap) {
+            let isDragging = false;
+            let hasMoved = false;
+            let startX, startY;
+            let initialLeft, initialTop;
 
-        fab.addEventListener('click', (e) => {
-            if (!hasMoved) {
-                openRecordUI();
+            function startDrag(e) {
+                isDragging = true;
+                hasMoved = false;
+
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+                startX = clientX;
+                startY = clientY;
+
+                const rect = fab.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+
+                fab.classList.add('dragging');
             }
-        });
+
+            function moveDrag(e) {
+                if (!isDragging) return;
+
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+                const deltaX = clientX - startX;
+                const deltaY = clientY - startY;
+
+                if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                    hasMoved = true;
+                }
+
+                let newLeft = initialLeft + deltaX;
+                let newTop = initialTop + deltaY;
+
+                const maxLeft = window.innerWidth - fab.offsetWidth - 10;
+                const maxTop = window.innerHeight - fab.offsetHeight - 10;
+
+                newLeft = Math.max(10, Math.min(newLeft, maxLeft));
+                newTop = Math.max(10, Math.min(newTop, maxTop));
+
+                fab.style.left = `${newLeft}px`;
+                fab.style.top = `${newTop}px`;
+                fab.style.bottom = 'auto';
+                fab.style.right = 'auto';
+            }
+
+            function stopDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                fab.classList.remove('dragging');
+            }
+
+            fab.addEventListener('mousedown', startDrag);
+            window.addEventListener('mousemove', moveDrag);
+            window.addEventListener('mouseup', stopDrag);
+
+            fab.addEventListener('touchstart', startDrag, { passive: true });
+            window.addEventListener('touchmove', moveDrag, { passive: true });
+            window.addEventListener('touchend', stopDrag);
+
+            fab.addEventListener('click', () => {
+                if (!hasMoved) onTap();
+            });
+        }
+
+        makeDraggable(document.getElementById('drag-fab'), openRecordUI);
+        makeDraggable(document.getElementById('drag-fab-forms'), openFormsUI);
 
         document.onkeydown = function(e) {
             if (e.key === "Escape") {
                 closeRecordUI();
+                closeFormsUI();
             }
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
                 return false;
