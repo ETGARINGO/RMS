@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="NAP-PRO9.png">
+    <link rel="apple-touch-icon" href="NAP-PRO9.png">
+    
+    <title>Calendar of Activities - Monitoring Portal</title>
+    
+    <style>
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Montserrat', sans-serif; background-color: #e5e5e5; }
+        
+        .main-container { height: 100vh; position: relative; }
+        
+        /* Floating Toggle Button */
+        .fs-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            cursor: pointer;
+            background: rgba(26, 37, 47, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+            transition: background 0.3s;
+        }
+        .fs-toggle:hover { background: #e67e22; }
+
+        .sheet-container { height: 100%; width: 100%; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container" id="fullscreen-target">
+        <button class="fs-toggle" onclick="toggleFullscreen()">Full View</button>
+
+        <div class="sheet-container">
+            <iframe 
+                src="YOUR_CALENDAR_WEB_APP_OR_EMBED_URL_HERE"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        function toggleFullscreen() {
+            const elem = document.getElementById("fullscreen-target");
+            const btn = document.querySelector(".fs-toggle");
+
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    alert(`Error: ${err.message}`);
+                });
+                btn.textContent = "Exit Full View";
+            } else {
+                document.exitFullscreen();
+                btn.textContent = "Full View";
+            }
+        }
+
+        // Keeps button text in sync if user exits fullscreen via ESC key
+        document.addEventListener("fullscreenchange", () => {
+            const btn = document.querySelector(".fs-toggle");
+            if (!document.fullscreenElement) {
+                btn.textContent = "Full View";
+            } else {
+                btn.textContent = "Exit Full View";
+            }
+        });
+    </script>
+</body>
+</html>
