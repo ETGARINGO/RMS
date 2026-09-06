@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RECORDS | PNP</title>
+    <link rel="icon" type="image/png" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
+    <link rel="apple-touch-icon" href="https://images.seeklogo.com/logo-png/33/1/pnp-philippine-national-police-logo-png_seeklogo-338566.png">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInBody 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* NOTIFICATION TOAST POPUP */
+        .notify-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ffffff;
+            color: #1e293b;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            border-left: 4px solid #3b82f6;
+            transform: translateX(120%);
+            opacity: 0;
+            animation: slideInToast 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards,
+                       slideOutToast 0.5s cubic-bezier(0.16, 1, 0.3, 1) 4.2s forwards;
+        }
+
+        .notify-icon {
+            width: 24px;
+            height: 24px;
+            background: #eff6ff;
+            color: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .notify-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .notify-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .notify-text {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        @keyframes slideInToast {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutToast {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+
+        /* MAIN CONTENT */
+        .iframe-container {
+            flex: 1; /* Takes all available remaining space */
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.98);
+            animation: scaleUpIframe 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+        }
+
+        @keyframes scaleUpIframe {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* FOOTER */
+        .footer {
+            height: 30px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #e2e8f0;
+            transform: translateY(100%);
+            animation: slideUpFooter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+
+        @keyframes slideUpFooter {
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="notify-toast">
+        <div class="notify-icon">✓</div>
+        <div class="notify-content">
+            <span class="notify-title">System Ready</span>
+            <span class="notify-text">Attendance Form loaded successfully.</span>
+        </div>
+    </div>
+
+    <main class="iframe-container">
+        <iframe 
+            src="https://script.google.com/macros/s/AKfycbzKVuYkjJT6zSCJI3bhx7vY-AjfFkWw98dZo6VmAlMBdJOd5SM9vreC0X7huUuyrPdQ0g/exec" 
+            allowfullscreen>
+        </iframe>
+    </main>
+
+    <footer class="footer">
+        © 2026 PRO9 - RMIC
+    </footer>
+
+</body>
+</html>
