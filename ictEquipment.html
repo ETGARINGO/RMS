@@ -1,0 +1,1340 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no,
+                   viewport-fit=cover">
+
+    <!-- =====================================================
+         IT EQUIPMENT INVENTORY
+         LOGO / FAVICON
+    ====================================================== -->
+
+    <link rel="icon"
+          type="image/gif"
+          href="https://rms.rprmd9.site/Video.gif">
+
+    <link rel="apple-touch-icon"
+          href="https://rms.rprmd9.site/Video.gif">
+
+    <meta name="theme-color"
+          content="#0f172a">
+
+    <meta name="application-name"
+          content="IT Equipment Inventory">
+
+    <meta name="description"
+          content="IT Equipment Inventory Monitoring Portal">
+
+
+    <title>IT Equipment Inventory</title>
+
+
+    <style>
+
+        /* =====================================================
+           GLOBAL RESET
+        ====================================================== */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                #0f172a;
+
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        body {
+            min-width: 280px;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ====================================================== */
+
+        .main-container {
+
+            position: relative;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            height: 100dvh;
+
+            overflow: hidden;
+
+            background:
+                #0f172a;
+        }
+
+
+        /* =====================================================
+           IT EQUIPMENT INVENTORY BRAND
+        ====================================================== */
+
+        .branding {
+
+            position: absolute;
+
+            top: 12px;
+            left: 15px;
+
+            z-index: 9999;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding:
+                7px 12px;
+
+            min-height: 52px;
+
+            background:
+                rgba(15, 23, 42, 0.92);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.18);
+
+            border-radius: 9px;
+
+            box-shadow:
+                0 4px 16px
+                rgba(0,0,0,0.35);
+
+            backdrop-filter:
+                blur(10px);
+
+            -webkit-backdrop-filter:
+                blur(10px);
+
+            user-select: none;
+        }
+
+
+        /* =====================================================
+           LOGO
+        ====================================================== */
+
+        .branding-logo {
+
+            display: block;
+
+            width: 40px;
+            height: 40px;
+
+            object-fit: contain;
+
+            border-radius: 7px;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            flex-shrink: 0;
+        }
+
+
+        /* =====================================================
+           BRAND TEXT
+        ====================================================== */
+
+        .branding-text {
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            line-height: 1.1;
+        }
+
+
+        .branding-title {
+
+            color:
+                #ffffff;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                0.5px;
+
+            text-transform:
+                uppercase;
+
+            white-space:
+                nowrap;
+        }
+
+
+        .branding-subtitle {
+
+            margin-top:
+                4px;
+
+            color:
+                #cbd5e1;
+
+            font-size:
+                9px;
+
+            font-weight:
+                500;
+
+            letter-spacing:
+                0.3px;
+
+            white-space:
+                nowrap;
+        }
+
+
+        /* =====================================================
+           FULLSCREEN BUTTON
+        ====================================================== */
+
+        .fs-toggle {
+
+            position: absolute;
+
+            top: 15px;
+            right: 15px;
+
+            z-index: 10000;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            min-width: 88px;
+
+            min-height: 36px;
+
+            padding:
+                8px 12px;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.15);
+
+            border-radius: 7px;
+
+            background:
+                rgba(15, 23, 42, 0.92);
+
+            color:
+                #ffffff;
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                0.4px;
+
+            text-transform:
+                uppercase;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 4px 12px
+                rgba(0,0,0,0.35);
+
+            backdrop-filter:
+                blur(10px);
+
+            -webkit-backdrop-filter:
+                blur(10px);
+
+            transition:
+                all 0.2s ease;
+
+            touch-action:
+                manipulation;
+        }
+
+
+        .fs-toggle:hover {
+
+            background:
+                rgba(30, 58, 138, 0.95);
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        .fs-toggle:active {
+
+            transform:
+                scale(0.96);
+        }
+
+
+        /* =====================================================
+           IFRAME CONTAINER
+        ====================================================== */
+
+        .sheet-container {
+
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background:
+                #ffffff;
+        }
+
+
+        /* =====================================================
+           MAIN APPLICATION IFRAME
+        ====================================================== */
+
+        iframe {
+
+            display: block;
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+            padding: 0;
+
+            border: 0;
+
+            outline: none;
+
+            background:
+                #ffffff;
+
+            overflow: auto;
+
+            -webkit-overflow-scrolling:
+                touch;
+
+            overscroll-behavior:
+                contain;
+        }
+
+
+        /* =====================================================
+           LOADING SCREEN
+        ====================================================== */
+
+        .loading-screen {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 50;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-direction: column;
+
+            background:
+                #0f172a;
+
+            color:
+                #ffffff;
+
+            pointer-events: none;
+
+            transition:
+                opacity 0.4s ease,
+                visibility 0.4s ease;
+        }
+
+
+        .loading-screen.hidden {
+
+            opacity: 0;
+
+            visibility: hidden;
+        }
+
+
+        .loading-logo {
+
+            width: 65px;
+            height: 65px;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .loading-title {
+
+            font-size:
+                15px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                0.5px;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        .loading-text {
+
+            margin-top:
+                7px;
+
+            color:
+                #94a3b8;
+
+            font-size:
+                10px;
+        }
+
+
+        /* =====================================================
+           LOADING ANIMATION
+        ====================================================== */
+
+        .loader {
+
+            width: 28px;
+            height: 28px;
+
+            margin-top: 18px;
+
+            border:
+                3px solid
+                rgba(255,255,255,0.2);
+
+            border-top-color:
+                #ffffff;
+
+            border-radius:
+                50%;
+
+            animation:
+                spin 0.8s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE DEVICES
+        ====================================================== */
+
+        @media (max-width: 600px) {
+
+            .branding {
+
+                top:
+                    max(8px, env(safe-area-inset-top));
+
+                left:
+                    8px;
+
+                gap:
+                    7px;
+
+                padding:
+                    5px 8px;
+
+                min-height:
+                    42px;
+
+                border-radius:
+                    7px;
+            }
+
+
+            .branding-logo {
+
+                width:
+                    30px;
+
+                height:
+                    30px;
+            }
+
+
+            .branding-title {
+
+                font-size:
+                    10px;
+            }
+
+
+            .branding-subtitle {
+
+                margin-top:
+                    2px;
+
+                font-size:
+                    7px;
+            }
+
+
+            .fs-toggle {
+
+                top:
+                    max(8px, env(safe-area-inset-top));
+
+                right:
+                    8px;
+
+                min-width:
+                    70px;
+
+                min-height:
+                    32px;
+
+                padding:
+                    7px 9px;
+
+                font-size:
+                    8px;
+            }
+
+
+            .loading-logo {
+
+                width:
+                    55px;
+
+                height:
+                    55px;
+            }
+
+
+            .loading-title {
+
+                font-size:
+                    12px;
+            }
+        }
+
+
+        /* =====================================================
+           SMALL PHONES
+        ====================================================== */
+
+        @media (max-width: 380px) {
+
+            .branding-subtitle {
+
+                display:
+                    none;
+            }
+
+
+            .branding-title {
+
+                font-size:
+                    9px;
+            }
+
+
+            .branding {
+
+                padding:
+                    5px 7px;
+            }
+
+
+            .fs-toggle {
+
+                min-width:
+                    62px;
+
+                font-size:
+                    7px;
+            }
+        }
+
+
+        /* =====================================================
+           LANDSCAPE MOBILE
+        ====================================================== */
+
+        @media
+        (max-height: 500px)
+        and (orientation: landscape) {
+
+            .branding {
+
+                top:
+                    6px;
+
+                left:
+                    8px;
+
+                min-height:
+                    36px;
+
+                padding:
+                    4px 7px;
+            }
+
+
+            .branding-logo {
+
+                width:
+                    28px;
+
+                height:
+                    28px;
+            }
+
+
+            .branding-title {
+
+                font-size:
+                    9px;
+            }
+
+
+            .branding-subtitle {
+
+                display:
+                    none;
+            }
+
+
+            .fs-toggle {
+
+                top:
+                    6px;
+
+                right:
+                    8px;
+
+                min-height:
+                    30px;
+
+                padding:
+                    6px 9px;
+            }
+        }
+
+
+        /* =====================================================
+           FULLSCREEN MODE
+        ====================================================== */
+
+        :fullscreen .main-container {
+
+            width:
+                100vw;
+
+            height:
+                100vh;
+        }
+
+
+        :-webkit-full-screen .main-container {
+
+            width:
+                100vw;
+
+            height:
+                100vh;
+        }
+
+
+        /* =====================================================
+           PRINT / ACCESSIBILITY
+        ====================================================== */
+
+        @media print {
+
+            .branding,
+            .fs-toggle,
+            .loading-screen {
+
+                display:
+                    none !important;
+            }
+
+
+            iframe {
+
+                position:
+                    fixed;
+
+                inset:
+                    0;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         MAIN APPLICATION
+    ====================================================== -->
+
+    <div
+        class="main-container"
+        id="fullscreen-target"
+    >
+
+
+        <!-- =================================================
+             BRANDING
+        ================================================== -->
+
+        <div
+            class="branding"
+            id="branding"
+        >
+
+            <img
+                class="branding-logo"
+                src="https://rms.rprmd9.site/Video.gif"
+                alt="IT Equipment Inventory Logo"
+                loading="eager"
+            >
+
+
+            <div class="branding-text">
+
+                <div class="branding-title">
+                    IT Equipment Inventory
+                </div>
+
+                <div class="branding-subtitle">
+                    Inventory Monitoring Portal
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FULLSCREEN CONTROL
+        ================================================== -->
+
+        <button
+            type="button"
+            class="fs-toggle"
+            id="fullscreenButton"
+            onclick="toggleFullscreen()"
+            aria-label="Toggle fullscreen"
+            title="Toggle Fullscreen"
+        >
+
+            <span id="fullscreenIcon">
+                ⛶
+            </span>
+
+            <span id="fullscreenText">
+                Full View
+            </span>
+
+        </button>
+
+
+        <!-- =================================================
+             APPLICATION AREA
+        ================================================== -->
+
+        <div class="sheet-container">
+
+
+            <!-- =============================================
+                 LOADING SCREEN
+            ============================================== -->
+
+            <div
+                class="loading-screen"
+                id="loadingScreen"
+            >
+
+                <img
+                    class="loading-logo"
+                    src="https://rms.rprmd9.site/Video.gif"
+                    alt="Logo"
+                >
+
+
+                <div class="loading-title">
+                    IT Equipment Inventory
+                </div>
+
+
+                <div class="loading-text">
+                    Loading Inventory Portal...
+                </div>
+
+
+                <div class="loader"></div>
+
+            </div>
+
+
+            <!-- =============================================
+                 GOOGLE APPS SCRIPT WEB APP
+            ============================================== -->
+
+            <iframe
+                id="inventoryFrame"
+
+                src="https://script.google.com/macros/s/AKfycbwD9ZD0wNN88E7sUh2FGd6DaYQvmLD4FWvl0ps_O8Wqzh_jo6wLvEVRu0W_wT5eowzJ/exec"
+
+                title="IT Equipment Inventory"
+
+                allow="*"
+
+                allowfullscreen
+
+                webkitallowfullscreen
+
+                mozallowfullscreen
+
+                referrerpolicy="no-referrer-when-downgrade"
+
+                loading="eager"
+
+                scrolling="auto">
+            </iframe>
+
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =====================================================
+           ELEMENTS
+        ====================================================== */
+
+        const fullscreenTarget =
+            document.getElementById(
+                "fullscreen-target"
+            );
+
+        const fullscreenButton =
+            document.getElementById(
+                "fullscreenButton"
+            );
+
+        const fullscreenIcon =
+            document.getElementById(
+                "fullscreenIcon"
+            );
+
+        const fullscreenText =
+            document.getElementById(
+                "fullscreenText"
+            );
+
+        const inventoryFrame =
+            document.getElementById(
+                "inventoryFrame"
+            );
+
+        const loadingScreen =
+            document.getElementById(
+                "loadingScreen"
+            );
+
+
+        /* =====================================================
+           IFRAME LOADED
+        ====================================================== */
+
+        inventoryFrame.addEventListener(
+            "load",
+            function () {
+
+                setTimeout(
+                    function () {
+
+                        loadingScreen.classList.add(
+                            "hidden"
+                        );
+
+                    },
+                    300
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           FULLSCREEN CHECK
+        ====================================================== */
+
+        function isFullscreen() {
+
+            return !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+            );
+
+        }
+
+
+        /* =====================================================
+           ENTER FULLSCREEN
+        ====================================================== */
+
+        function enterFullscreen() {
+
+            const element =
+                fullscreenTarget;
+
+
+            if (
+                element.requestFullscreen
+            ) {
+
+                element
+                    .requestFullscreen()
+                    .catch(
+                        function () {}
+                    );
+
+            }
+
+            else if (
+                element.webkitRequestFullscreen
+            ) {
+
+                element.webkitRequestFullscreen();
+
+            }
+
+            else if (
+                element.mozRequestFullScreen
+            ) {
+
+                element.mozRequestFullScreen();
+
+            }
+
+            else if (
+                element.msRequestFullscreen
+            ) {
+
+                element.msRequestFullscreen();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           EXIT FULLSCREEN
+        ====================================================== */
+
+        function exitFullscreen() {
+
+            if (
+                document.exitFullscreen
+            ) {
+
+                document
+                    .exitFullscreen()
+                    .catch(
+                        function () {}
+                    );
+
+            }
+
+            else if (
+                document.webkitExitFullscreen
+            ) {
+
+                document.webkitExitFullscreen();
+
+            }
+
+            else if (
+                document.mozCancelFullScreen
+            ) {
+
+                document.mozCancelFullScreen();
+
+            }
+
+            else if (
+                document.msExitFullscreen
+            ) {
+
+                document.msExitFullscreen();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           TOGGLE FULLSCREEN
+        ====================================================== */
+
+        function toggleFullscreen() {
+
+            if (
+                isFullscreen()
+            ) {
+
+                exitFullscreen();
+
+            }
+
+            else {
+
+                enterFullscreen();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           UPDATE FULLSCREEN BUTTON
+        ====================================================== */
+
+        function updateFullscreenButton() {
+
+            if (
+                isFullscreen()
+            ) {
+
+                fullscreenIcon.textContent =
+                    "⛶";
+
+                fullscreenText.textContent =
+                    "Exit View";
+
+                fullscreenButton.setAttribute(
+                    "aria-label",
+                    "Exit fullscreen"
+                );
+
+                fullscreenButton.setAttribute(
+                    "title",
+                    "Exit Fullscreen"
+                );
+
+            }
+
+            else {
+
+                fullscreenIcon.textContent =
+                    "⛶";
+
+                fullscreenText.textContent =
+                    "Full View";
+
+                fullscreenButton.setAttribute(
+                    "aria-label",
+                    "Enter fullscreen"
+                );
+
+                fullscreenButton.setAttribute(
+                    "title",
+                    "Enter Fullscreen"
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           FULLSCREEN EVENTS
+        ====================================================== */
+
+        document.addEventListener(
+            "fullscreenchange",
+            updateFullscreenButton
+        );
+
+        document.addEventListener(
+            "webkitfullscreenchange",
+            updateFullscreenButton
+        );
+
+        document.addEventListener(
+            "mozfullscreenchange",
+            updateFullscreenButton
+        );
+
+        document.addEventListener(
+            "MSFullscreenChange",
+            updateFullscreenButton
+        );
+
+
+        /* =====================================================
+           KEYBOARD SHORTCUT
+           
+           F11 / ESC handled by browser.
+           F = Fullscreen
+        ====================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key.toLowerCase() === "f"
+                    &&
+                    !event.ctrlKey
+                    &&
+                    !event.altKey
+                    &&
+                    !event.shiftKey
+                ) {
+
+                    const active =
+                        document.activeElement;
+
+                    if (
+                        active &&
+                        (
+                            active.tagName === "INPUT" ||
+                            active.tagName === "TEXTAREA" ||
+                            active.tagName === "SELECT"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+                    toggleFullscreen();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           INITIAL BUTTON STATE
+        ====================================================== */
+
+        updateFullscreenButton();
+
+
+        /* =====================================================
+           PREVENT DOUBLE-TAP ZOOM ON MOBILE
+        ====================================================== */
+
+        let lastTouchEnd = 0;
+
+        document.addEventListener(
+            "touchend",
+            function (event) {
+
+                const now =
+                    Date.now();
+
+                if (
+                    now - lastTouchEnd <= 300
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+                lastTouchEnd =
+                    now;
+
+            },
+            {
+                passive: false
+            }
+        );
+
+
+        /* =====================================================
+           OPTIONAL AUTO FULLSCREEN
+           
+           Browsers normally block automatic fullscreen
+           without user interaction. Therefore this activates
+           only after the user's first interaction.
+        ====================================================== */
+
+        let autoFullscreenTriggered =
+            false;
+
+
+        function triggerAutoFullscreen() {
+
+            if (
+                autoFullscreenTriggered
+            ) {
+
+                return;
+
+            }
+
+
+            autoFullscreenTriggered =
+                true;
+
+
+            if (
+                !isFullscreen()
+            ) {
+
+                enterFullscreen();
+
+            }
+
+
+            window.removeEventListener(
+                "click",
+                triggerAutoFullscreen
+            );
+
+            window.removeEventListener(
+                "touchend",
+                triggerAutoFullscreen
+            );
+
+        }
+
+
+        /* =====================================================
+           ENABLE AUTO FULLSCREEN AFTER USER INTERACTION
+           
+           Exclude the fullscreen button itself so that
+           pressing it doesn't cause a duplicate action.
+        ====================================================== */
+
+        function handleFirstInteraction(event) {
+
+            if (
+                event.target === fullscreenButton ||
+                fullscreenButton.contains(event.target)
+            ) {
+
+                return;
+
+            }
+
+
+            triggerAutoFullscreen();
+
+        }
+
+
+        window.addEventListener(
+            "click",
+            handleFirstInteraction,
+            {
+                once: false,
+                passive: true
+            }
+        );
+
+
+        window.addEventListener(
+            "touchend",
+            handleFirstInteraction,
+            {
+                once: false,
+                passive: true
+            }
+        );
+
+    </script>
+
+
+</body>
+</html>
+```
