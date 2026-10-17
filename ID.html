@@ -69,7 +69,7 @@
 <body>
 
     <div class="main-container" id="fullscreen-target">
-        <button class="fs-toggle" onclick="toggleFullscreen()">Full View</button>
+        <button class="fs-toggle" onclick="toggleFullscreen()">⌞ ⌝</button>
 
         <div class="sheet-container">
             <iframe 
@@ -128,9 +128,9 @@
             const btn = document.querySelector(".fs-toggle");
             const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
             if (!isFullscreen) {
-                btn.textContent = "Full View";
+                btn.textContent = "⌞ ⌝";
             } else {
-                btn.textContent = "Exit Full View";
+                btn.textContent = "⛶";
             }
         }
     </script>
