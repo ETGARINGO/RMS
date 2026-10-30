@@ -32,6 +32,7 @@
             background-color: var(--ateneo-deep);
             color: #333;
             overflow: hidden; /* Prevents double scrollbars */
+            user-select: none; /* Disable user text selection */
         }
 
         /* --- PRELOADER --- */
@@ -149,8 +150,41 @@
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        /* Disable user text selection to keep it feeling like a desktop app */
-        body { user-select: none; }
+        /* --- FLOATING ASSISTIVETOUCH BUTTON --- */
+        #assistive-touch {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 36, 71, 0.35);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s, transform 0.1s, border-color 0.3s;
+            touch-action: none;
+            opacity: 0.5;
+        }
+
+        #assistive-touch:hover, #assistive-touch:active {
+            opacity: 0.95;
+            border-color: var(--accent-gold);
+        }
+
+        .touch-inner-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -179,7 +213,7 @@
         <!-- Body fits exactly between header and footer -->
         <main class="portal-body">
             <iframe id="survey-iframe" 
-                    src="https://script.google.com/macros/s/AKfycbyk92h_eA0ZyujFSAnY3XN8_srzJeRu6Irk9AU4sz8l4gZWqfcwQmJi6GACZDpmnM_71g/exec"
+                    src="https://script.google.com/macros/s/AKfycbzA_-Ph0t8jRATKNfRYeIcFN9K892iVmGnXWBwr164nnvn1xfHSwz663uk6NUmoqWZDew/exec"
                     onload="dismissLoader()"
                     title="Personnel Survey Form"
                     allow="geolocation; microphone; camera">
@@ -196,7 +230,14 @@
 
     </div>
 
+    <!-- Floating AssistiveTouch Button -->
+    <div id="assistive-touch" title="Double tap or long press for Admin">
+        <div class="touch-inner-circle"></div>
+    </div>
+
     <script>
+        const ADMIN_URL = "https://script.google.com/macros/s/AKfycbzF3eRDSNrDwaE6OLMyiWJ7drbSgOMshL1nWyT6q9x-CQNND68GrwEIndl9idfaYhykig/exec?page=admin";
+        
         // Dismiss loading screen when iframe is fully ready
         function dismissLoader() {
             const loader = document.getElementById('loader');
@@ -205,6 +246,14 @@
                 setTimeout(() => {
                     loader.style.display = 'none';
                 }, 600);
+            }
+        }
+
+        function showLoader() {
+            const loader = document.getElementById('loader');
+            if(loader) {
+                loader.style.display = 'flex';
+                loader.style.opacity = '1';
             }
         }
 
@@ -227,6 +276,96 @@
         }
         window.addEventListener('resize', adjustHeight);
         adjustHeight();
+
+        // Open Admin Panel Action
+        function openAdminPanel() {
+            showLoader();
+            document.getElementById('survey-iframe').src = ADMIN_URL;
+        }
+
+        /* --- AssistiveTouch Drag & Gesture Handlers --- */
+        const touchBtn = document.getElementById('assistive-touch');
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        let lastTap = 0;
+        let longPressTimer;
+
+        function startDrag(e) {
+            isDragging = false;
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            
+            startX = clientX;
+            startY = clientY;
+            initialX = touchBtn.offsetLeft;
+            initialY = touchBtn.offsetTop;
+
+            // Long Press Detection (500ms)
+            longPressTimer = setTimeout(() => {
+                if (!isDragging) {
+                    openAdminPanel();
+                }
+            }, 500);
+
+            if (e.type === 'touchstart') {
+                window.addEventListener('touchmove', moveDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            } else {
+                window.addEventListener('mousemove', moveDrag);
+                window.addEventListener('mouseup', endDrag);
+            }
+        }
+
+        function moveDrag(e) {
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                isDragging = true;
+                clearTimeout(longPressTimer); // Cancel long-press if dragged
+            }
+
+            if (isDragging) {
+                if (e.cancelable) e.preventDefault();
+                let left = initialX + dx;
+                let top = initialY + dy;
+
+                // Restrict within viewport bounds
+                left = Math.max(0, Math.min(window.innerWidth - touchBtn.offsetWidth, left));
+                top = Math.max(0, Math.min(window.innerHeight - touchBtn.offsetHeight, top));
+
+                touchBtn.style.left = left + 'px';
+                touchBtn.style.top = top + 'px';
+                touchBtn.style.right = 'auto';
+                touchBtn.style.bottom = 'auto';
+            }
+        }
+
+        function endDrag(e) {
+            clearTimeout(longPressTimer);
+
+            if (!isDragging) {
+                // Double Tap Detection
+                const currentTime = new Date().getTime();
+                const tapGap = currentTime - lastTap;
+
+                if (tapGap < 300 && tapGap > 0) {
+                    openAdminPanel();
+                }
+                lastTap = currentTime;
+            }
+
+            window.removeEventListener('mousemove', moveDrag);
+            window.removeEventListener('mouseup', endDrag);
+            window.removeEventListener('touchmove', moveDrag);
+            window.removeEventListener('touchend', endDrag);
+        }
+
+        touchBtn.addEventListener('mousedown', startDrag);
+        touchBtn.addEventListener('touchstart', startDrag, { passive: false });
     </script>
 </body>
 </html>
