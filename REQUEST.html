@@ -16,7 +16,6 @@
             --ateneo-deep: #002447;
             --accent-gold: #D4AF37;
             --bg-slate: #f1f5f9;
-            /* Using dynamic viewport units for perfect fit */
             --header-h: 8vh; 
             --footer-h: 3vh;
             --min-header: 65px;
@@ -27,12 +26,12 @@
         body, html { 
             margin: 0; padding: 0; 
             height: 100vh; width: 100vw;
-            height: 100dvh; /* Supporting modern mobile heights */
+            height: 100dvh;
             font-family: 'Inter', -apple-system, system-ui, sans-serif;
             background-color: var(--ateneo-deep);
             color: #333;
-            overflow: hidden; /* Prevents double scrollbars */
-            user-select: none; /* Disable user text selection */
+            overflow: hidden;
+            user-select: none;
         }
 
         /* --- PRELOADER --- */
@@ -62,7 +61,7 @@
             width: 100%;
         }
 
-        /* --- HEADER (Desktop Look Optimized) --- */
+        /* --- HEADER --- */
         .portal-header {
             flex: 0 0 auto;
             min-height: var(--min-header);
@@ -196,8 +195,6 @@
     </div>
 
     <div class="portal-wrapper">
-        
-        <!-- Header optimized for scaling -->
         <header class="portal-header">
             <div class="logo-group">
                 <div class="logo-frame">
@@ -210,7 +207,6 @@
             </div>
         </header>
 
-        <!-- Body fits exactly between header and footer -->
         <main class="portal-body">
             <iframe id="survey-iframe" 
                     src="https://script.google.com/macros/s/AKfycbw7Hk8iO7xDpVIpvZ3IAVz01guwkz0wvHFnvBvvdtBz_6MbmNJFGoqk1oHg9Q5eyq22TA/exec"
@@ -220,14 +216,12 @@
             </iframe>
         </main>
 
-        <!-- Footer -->
         <footer class="portal-footer">
             <div class="status-badge">
                 <div class="pulse-dot"></div>
                 <span>ENCRYPTED PORTAL • AUTHORIZED ACCESS ONLY</span>
             </div>
         </footer>
-
     </div>
 
     <!-- Floating AssistiveTouch Button -->
@@ -236,9 +230,9 @@
     </div>
 
     <script>
+        const MAIN_URL = "https://script.google.com/macros/s/AKfycbw7Hk8iO7xDpVIpvZ3IAVz01guwkz0wvHFnvBvvdtBz_6MbmNJFGoqk1oHg9Q5eyq22TA/exec";
         const ADMIN_URL = "https://script.google.com/macros/s/AKfycbw7Hk8iO7xDpVIpvZ3IAVz01guwkz0wvHFnvBvvdtBz_6MbmNJFGoqk1oHg9Q5eyq22TA/exec?page=admin";
         
-        // Dismiss loading screen when iframe is fully ready
         function dismissLoader() {
             const loader = document.getElementById('loader');
             if(loader) {
@@ -257,10 +251,8 @@
             }
         }
 
-        // Emergency timeout (10s) 
         setTimeout(dismissLoader, 10000);
 
-        // Security: Prevent typical "Right-Click" and "Inspect" behaviors
         window.addEventListener('keydown', function (e) {
             if (e.keyCode == 123 || 
                (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || 
@@ -270,17 +262,23 @@
             }
         });
 
-        // Auto-fix height issues on mobile browsers with address bars
         function adjustHeight() {
             document.body.style.height = window.innerHeight + "px";
         }
         window.addEventListener('resize', adjustHeight);
         adjustHeight();
 
-        // Open Admin Panel Action
+        // Open Admin Panel Action with Security Check
         function openAdminPanel() {
-            showLoader();
-            document.getElementById('survey-iframe').src = ADMIN_URL;
+            const isAdmin = confirm("Are you admin?");
+            if (isAdmin) {
+                showLoader();
+                document.getElementById('survey-iframe').src = ADMIN_URL;
+            } else {
+                // If click No, go back / keep main form
+                showLoader();
+                document.getElementById('survey-iframe').src = MAIN_URL;
+            }
         }
 
         /* --- AssistiveTouch Drag & Gesture Handlers --- */
@@ -300,7 +298,6 @@
             initialX = touchBtn.offsetLeft;
             initialY = touchBtn.offsetTop;
 
-            // Long Press Detection (500ms)
             longPressTimer = setTimeout(() => {
                 if (!isDragging) {
                     openAdminPanel();
@@ -325,7 +322,7 @@
 
             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                 isDragging = true;
-                clearTimeout(longPressTimer); // Cancel long-press if dragged
+                clearTimeout(longPressTimer);
             }
 
             if (isDragging) {
@@ -333,7 +330,6 @@
                 let left = initialX + dx;
                 let top = initialY + dy;
 
-                // Restrict within viewport bounds
                 left = Math.max(0, Math.min(window.innerWidth - touchBtn.offsetWidth, left));
                 top = Math.max(0, Math.min(window.innerHeight - touchBtn.offsetHeight, top));
 
@@ -348,7 +344,6 @@
             clearTimeout(longPressTimer);
 
             if (!isDragging) {
-                // Double Tap Detection
                 const currentTime = new Date().getTime();
                 const tapGap = currentTime - lastTap;
 
